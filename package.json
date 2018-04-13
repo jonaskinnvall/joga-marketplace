@@ -1,0 +1,21 @@
+{
+  "name": "tddd27_2018_joga",
+  "version": "1.0.0",
+  "description": "We plan to make a website were a user can create an account and log in to use the sites functions of adding items for sale for example. These items will be added to a dataset that we create to keep track of everything on the site.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.ida.liu.se/jonki910/TDDD27_2018_joga.git"
+  },
+  "author": "Jonas Kinnvall & Gabriel Berthold",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2"
+  }
+}
