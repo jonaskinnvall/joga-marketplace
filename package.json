@@ -2,8 +2,9 @@
   "name": "tddd27_2018_joga",
   "version": "1.0.0",
   "description": "We plan to make a website were a user can create an account and log in to use the sites functions of adding items for sale for example. These items will be added to a dataset that we create to keep track of everything on the site.",
-  "main": "index.js",
+  "main": "webpack.config.js",
   "scripts": {
+    "dev": "./node_modules/.bin/webpack-dev-server --content-base src --inline --hot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,9 +14,14 @@
   "author": "Jonas Kinnvall & Gabriel Berthold",
   "license": "ISC",
   "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "react-redux": "^5.0.7",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "webpack": "^4.6.0"
   }
 }
