@@ -1,13 +1,13 @@
 import React from "react"
 import ReactDOM from "react-dom"
 
-class layout extends React.Component {
+class Layout extends React.Component {
     render() {
         return(
-            <h1>Look at that!</h1>
+            <h1>FUNKA DIN JÄVLA IDIOT!</h1>
         );
-    }
-}
+    };
+};
 
 const app = document.getElementById('app');
 
