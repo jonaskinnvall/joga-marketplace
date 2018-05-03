@@ -1,13 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 
-class layout extends React.Component {
-    render() {
-        return(
-            <h1>Look at that!</h1>
-        );
-    }
-}
+import Layout from "./Layout"
 
 const app = document.getElementById('app');
 
