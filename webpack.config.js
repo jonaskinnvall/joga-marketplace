@@ -6,8 +6,6 @@ module.exports = {
   context: path.join(__dirname, "src"),
   devtool: debug ? "inline-sourcemap" : null,
   entry: "./js/client.js",
-  mode: 'production',
-
   module: {
     rules: [
       {
@@ -16,20 +14,18 @@ module.exports = {
         loader: 'babel-loader',
         query: {
           presets: ['react', 'es2015', 'stage-0'],
-          plugins: ['transform-class-properties','react-html-attrs','transform-decorators-legacy'],
+          plugins: ['transform-class-properties'],
         }
       }
     ]
   },
-  
-
   output: {
     path: __dirname + "/src/",
     filename: "client.min.js"
   },
   plugins: debug ? [] : [
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
   ],
 };
