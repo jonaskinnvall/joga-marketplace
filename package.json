@@ -4,7 +4,7 @@
   "description": "We plan to make a website were a user can create an account and log in to use the sites functions of adding items for sale for example. These items will be added to a dataset that we create to keep track of everything on the site.",
   "main": "webpack.config.js",
   "scripts": {
-    "dev": "./node_modules/.bin/webpack-dev-server --content-base src --inline --hot",
+    "dev": "./node_modules/.bin/webpack-dev-server --content-base src --inline --hot --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
