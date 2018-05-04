@@ -1,16 +1,28 @@
 import React from "react";
 
-import Footer from "../components/layout/Footer"
-import Header from "../components/layout/Header"
+import Footer from "./components/Footer"
+import Header from "./components/Header"
 
 export default class Layout extends React.Component {
+	constructor(){
+		super();
+		this.state = {title: "välkommen"};
 
-    render() {
+	}
+
+	changeTitle(title){
+		this.setState({title});
+	}
+
+
+	render() {
         return(
         	<div>
-            	<Header />
+            	<Header changeTitle={this.changeTitle.bind(this)} title={this.state.title}/>
+
                 <Footer /> 
             </div>
         );
     };
 };
+ 
