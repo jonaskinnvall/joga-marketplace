@@ -3,7 +3,7 @@ import {Switch, Route} from "react-router-dom"
 
 import Featured from "../pages/Featured"
 import Categories from "../pages/Categories"
-import Search from "../pages/Search"
+import SignIn from "../pages/SignIn"
 
 
 export default class Main extends React.Component{
@@ -14,7 +14,7 @@ export default class Main extends React.Component{
                 <Route exact path = "/" component = {Featured}/>
                 <Route path = "/feat" component = {Featured}/>
                 <Route path = "/cat" component = {Categories}/>
-                <Route path = "/ser" component = {Search}/>
+                <Route path = "/sign" component = {SignIn}/>
             </Switch>
         )
     }

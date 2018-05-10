@@ -45,7 +45,7 @@ export default class Header extends React.Component {
                 <ul className = "navbar-nav">
                     <li className = "nav-item"> <Link to="/">Featured</Link> </li>
                     <li className = "nav-item"> <Link to="/cat">Categories</Link> </li>
-                    <li className = "nav-item"> <Link to="/ser">Search</Link> </li>
+                    <li className = "nav-item"> <Link to="/sign">SignIn</Link> </li>
                 </ul>
                 <Title title={this.props.title}/>
                 <input value={this.props.title} onChange={this.handleChange.bind(this)}/>
