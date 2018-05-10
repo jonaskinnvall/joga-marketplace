@@ -1,7 +1,8 @@
 import React from "react";
 
-import Footer from "../components/Footer"
 import Header from "../components/Header"
+import Main from "../components/Main"
+import Footer from "../components/Footer"
 
 export default class Layout extends React.Component {
 	constructor(){
@@ -10,16 +11,22 @@ export default class Layout extends React.Component {
 
 	}
 
+
 	changeTitle(title){
 		this.setState({title});
 	}
 
 
 	render() {
-        return(
+		
+		const{location} = this.props;
+		
+		return(
         	<div>
-            	<Header changeTitle={this.changeTitle.bind(this)} title={this.state.title}/>
+            	<Header changeTitle={this.changeTitle.bind(this)} title={this.state.title} location = {location}/>
 
+				<Main />
+				<hr/>
                 <Footer /> 
             </div>
         );
