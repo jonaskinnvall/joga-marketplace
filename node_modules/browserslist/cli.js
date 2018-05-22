@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var fs = require('fs')
+
 var browserslist = require('./')
 var pkg = require('./package.json')
 var args = process.argv.slice(2)
@@ -60,20 +62,19 @@ if (isArg('--help') || isArg('-h')) {
     }
   }
 
-  if (!queries && !opts.config) {
-    if (browserslist.findConfig(process.cwd())) {
-      opts.path = process.cwd()
-    } else {
-      error(
-        'Browserslist config did not found. ' +
-        'Define queries or config path.' +
-        '\n\n' + USAGE
-      )
-    }
-  }
-
   var browsers
   try {
+    if (!queries && !opts.config) {
+      if (browserslist.findConfig(process.cwd())) {
+        opts.path = process.cwd()
+      } else {
+        error(
+          'Browserslist config was not found. ' +
+          'Define queries or config path.' +
+          '\n\n' + USAGE
+        )
+      }
+    }
     browsers = browserslist(queries, opts)
   } catch (e) {
     if (e.name === 'BrowserslistError') {
@@ -88,12 +89,20 @@ if (isArg('--help') || isArg('-h')) {
       process.stdout.write(browser + '\n')
     })
   } else {
-    var result = browserslist.coverage(browsers, country)
+    var stats
+    if (country) {
+      stats = country
+    } else if (opts.stats) {
+      stats = JSON.parse(fs.readFileSync(opts.stats))
+    }
+    var result = browserslist.coverage(browsers, stats)
     var round = Math.round(result * 100) / 100.0
 
     var end = 'globally'
     if (country && country !== 'global') {
       end = 'in the ' + country.toUpperCase()
+    } else if (opts.stats) {
+      end = 'in custom statistics'
     }
 
     process.stdout.write(
