@@ -7,5 +7,5 @@ export default class Search extends React.Component {
         return(
             <input />
         );
-    };
-};
+    }
+}

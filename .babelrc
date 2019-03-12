@@ -1,0 +1,15 @@
+{
+"presets": [
+        "react", 
+        "env",
+        //"@babel/plugin-proposal-object-rest-spread",
+        //"stage-0"
+],
+"plugins": [
+        "syntax-dynamic-import",
+        //"proposal-throw-expressions",
+        //"proposal-export-namespace-from",
+        "syntax-object-rest-spread",
+        "transform-class-properties"
+]
+}

@@ -1,0 +1,64 @@
+{
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "plugins": [
+        "react",
+        "babel"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "sourceType": "module",
+        "allowImportExportEverywhere": true,
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        }
+    },
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true,
+        "commonjs": true
+    },
+    "rules": {
+        "no-console": 0,
+        "no-mixed-spaces-and-tabs": 0,
+        "react/prop-types": [2],
+        "linebreak-style": ["error", "unix"],
+        "no-unused-vars": [
+            "warn",
+            { "vars": "all", "args": "none", "ignoreRestSiblings": false }
+        ],
+        "new-cap": 0,
+        "camelcase": 0,
+        "no-invalid-this": 0,
+        "object-curly-spacing": 0,
+        "quotes": 0,
+        "semi": 0,
+        "no-unused-expressions": 0,
+        "valid-typeof": 0,
+        "babel/new-cap": 1,
+        "babel/camelcase": 1,
+        "babel/no-invalid-this": 1,
+        "babel/object-curly-spacing": 1,
+        "babel/quotes": 1,
+        "babel/semi": 1,
+        "babel/no-unused-expressions": 1,
+        "babel/valid-typeof": 1
+      },
+      "settings": {
+          "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "version": "detect"
+          },
+          "propWrapperFunctions": [
+            "forbidExtraProps",
+            {"property": "freeze", "object": "Object"},
+            {"property": "myFavoriteWrapper"}
+        ],
+        "linkComponents": [
+            "Hyperlink",
+            {"name": "Link", "linkAttribute": "to"}
+          ]
+      }
+}
