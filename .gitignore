@@ -1,9 +1,9 @@
 
 #Dependencies
-node_modules/
+/node_modules/
 
 #Production
-dist/
+/dist/
 
 #Misc
-.DS_Store
+/.DS_Store
