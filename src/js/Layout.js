@@ -6,25 +6,27 @@ import Main from "./components/Main";
 import Footer from "./components/Footer";
 
 class Layout extends React.Component {
-	constructor(){
-		super();
-		this.state = {title: "Search"};
-	}
+    constructor() {
+        super();
+        this.state = { title: "Search" };
+    }
 
-	changeTitle(title){
-		this.setState({title});
-	}
-	
+    changeTitle(title) {
+        this.setState({ title });
+    }
 
-	render() {
-		const{location} = this.props;
-		return(
-        	<div>
-            	<Header changeTitle={this.changeTitle.bind(this)} title={this.state.title} location = {location}/>
-
-				<Main />
-				<hr/>
-                <Footer /> 
+    render() {
+        const { location } = this.props;
+        return (
+            <div>
+                <Header
+                    changeTitle={this.changeTitle.bind(this)}
+                    title={this.state.title}
+                    location={location}
+                />
+                <Main />
+                <hr />
+                <Footer />
             </div>
         );
     }
@@ -35,4 +37,3 @@ Layout.propTypes = {
 };
 
 export default Layout;
- 

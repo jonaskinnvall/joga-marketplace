@@ -5,36 +5,36 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
 module.exports = {
-  //context: path.join(__dirname, "src"),
-  devtool: debug ? "eval-source-map" : false,
-  entry: "./src/js/client.js",
-  module: {
-    rules: [
-      {
-        enforce: "pre",
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "eslint-loader"
-        }
-      },
-      { 
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
-        }
-      }
+    //context: path.join(__dirname, "src"),
+    devtool: debug ? "eval-source-map" : false,
+    entry: "./src/js/client.js",
+    module: {
+        rules: [
+            {
+                enforce: "pre",
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "eslint-loader"
+                }
+            },
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
+                }
+            }
+        ]
+    },
+    output: {
+        path: path.join(__dirname, "dist"),
+        filename: "client.min.js"
+    },
+    plugins: /*debug ? [] : */ [
+        new HtmlWebpackPlugin({
+            template: "./src/index.html",
+            filename: "./index.html"
+        })
     ]
-  },
-  output: {
-    path: path.join(__dirname, "dist"),
-    filename: "client.min.js"
-  },
-  plugins: /*debug ? [] : */[
-    new HtmlWebpackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
-    })
-  ]
 };

@@ -20,57 +20,57 @@ export const SIGNIN_USER_FAILURE = "SIGNIN_USER_FAILURE";
 //log out user
 export const LOGOUT_USER = "LOGOUT_USER";
 
-const ROOT_URL = location.href.indexOf("localhost") > 0 ? "http://localhost:8080/api" : "/api";
-
+const ROOT_URL =
+    location.href.indexOf("localhost") > 0
+        ? "http://localhost:8080/api"
+        : "/api";
 
 export function signUpUser(formValues) {
     const request = axios.post(`${ROOT_URL}/users/signup`, formValues);
     return {
-      type: SIGNUP_USER,
-      payload: request
+        type: SIGNUP_USER,
+        payload: request
     };
-  }
-  
-  export function signUpUserSuccess(user) {
-    return {
-      type: SIGNUP_USER_SUCCESS,
-      payload: user
-    };
-  }
-  
-  export function signUpUserFailure(error) {
-    return {
-      type: SIGNUP_USER_FAILURE,
-      payload: error
-    };
-  }
+}
 
+export function signUpUserSuccess(user) {
+    return {
+        type: SIGNUP_USER_SUCCESS,
+        payload: user
+    };
+}
 
+export function signUpUserFailure(error) {
+    return {
+        type: SIGNUP_USER_FAILURE,
+        payload: error
+    };
+}
 
 export function signInUser(formValues) {
     const request = axios.post(`${ROOT_URL}/users/signin`, formValues);
     return {
-      type: SIGNIN_USER,
-      payload: request
+        type: SIGNIN_USER,
+        payload: request
     };
-  }
-  
-  export function signInUserSuccess(user) {
+}
+
+export function signInUserSuccess(user) {
     return {
-      type: SIGNIN_USER_SUCCESS,
-      payload: user
+        type: SIGNIN_USER_SUCCESS,
+        payload: user
     };
-  }
-  
-  export function signInUserFailure(error) {
+}
+
+export function signInUserFailure(error) {
     return {
-      type: SIGNIN_USER_FAILURE,
-      payload: error
+        type: SIGNIN_USER_FAILURE,
+        payload: error
     };
-  }
-  
-  export function logoutUser() {
+}
+
+export function logoutUser() {
     return {
-      type: LOGOUT_USER
+        type: LOGOUT_USER
     };
-  }
+}

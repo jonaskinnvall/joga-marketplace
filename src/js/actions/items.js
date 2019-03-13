@@ -1,8 +1,5 @@
+// export const FETCH_ITEMS
 
-export const FETCH_ITEMS
+// export functionfetchItems(){
 
-
-
-//export functionfetchItems(){
-
-//}
+// }

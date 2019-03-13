@@ -2,9 +2,7 @@ import React from "react";
 
 class Footer extends React.Component {
     render() {
-        return(
-            <footer>Footer</footer>
-        );
+        return <footer>Footer</footer>;
     }
 }
 
