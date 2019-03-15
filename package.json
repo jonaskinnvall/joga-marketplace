@@ -4,9 +4,11 @@
     "description": "We plan to make a website were a user can create an account and log in to use the sites functions of adding items for sale for example. These items will be added to a dataset that we create to keep track of everything on the site.",
     "main": "./src/js/client.js",
     "scripts": {
-        "start": "webpack-dev-server --mode development --inline --hot --open --content-base ./dist",
+        "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "webpack --mode production"
+        "build": "webpack --mode production",
+        "client": "webpack-dev-server --mode development --inline --hot --open",
+        "server": "nodemon server/server.js"
     },
     "repository": {
         "type": "git",
@@ -15,6 +17,7 @@
     "author": "Jonas Kinnvall & Gabriel Berthold",
     "license": "ISC",
     "dependencies": {
+        "@babel/polyfill": "^7.2.5",
         "axios": "^0.18.0",
         "express": "^4.16.4",
         "history": "^4.7.2",
@@ -35,6 +38,7 @@
         "babel-preset-env": "^1.7.0",
         "babel-preset-react": "^6.24.1",
         "babel-preset-stage-0": "^6.24.1",
+        "concurrently": "^4.1.0",
         "eslint": "^5.14.1",
         "eslint-loader": "^2.1.2",
         "eslint-plugin-babel": "^5.3.0",

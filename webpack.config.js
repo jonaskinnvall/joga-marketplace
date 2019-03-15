@@ -7,7 +7,11 @@ const path = require("path");
 module.exports = {
     //context: path.join(__dirname, "src"),
     devtool: debug ? "eval-source-map" : false,
-    entry: "./src/js/client.js",
+    entry: ["@babel/polyfill", "./src/js/client.js"],
+    output: {
+        path: path.join(__dirname, "dist"),
+        filename: "client.min.js"
+    },
     module: {
         rules: [
             {
@@ -27,13 +31,22 @@ module.exports = {
             }
         ]
     },
-    output: {
-        path: path.join(__dirname, "dist"),
-        filename: "client.min.js"
+    devServer: {
+        contentBase: "./dist",
+        watchContentBase: true,
+        port: 3000,
+        proxy: [
+            {
+                context: "/api/",
+                target: "http://localhost:8080",
+                secure: false,
+                changeOrigin: true
+            }
+        ]
     },
     plugins: /*debug ? [] : */ [
         new HtmlWebpackPlugin({
-            template: "./src/index.html",
+            template: "./public/index.html",
             filename: "./index.html"
         })
     ]
