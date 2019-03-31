@@ -13,7 +13,7 @@ class Main extends React.Component {
             <Switch>
                 <Route exact path="/" component={Home} />
                 <Route path="/featured" component={Featured} />
-                <Route path="/cats" component={Categories} />
+                <Route path="/categories" component={Categories} />
                 <Route path="/login" component={LogIn} />
                 <Route path="/signup" component={SignUp} />
             </Switch>
