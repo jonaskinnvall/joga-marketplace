@@ -5,6 +5,8 @@ import Header from "./components/Header";
 import Main from "./components/Main";
 import Footer from "./components/Footer";
 
+import "../css/Layout.css";
+
 class Layout extends React.Component {
     constructor() {
         super();
@@ -18,15 +20,23 @@ class Layout extends React.Component {
     render() {
         const { location } = this.props;
         return (
-            <div>
-                <Header
-                    changeTitle={this.changeTitle.bind(this)}
-                    title={this.state.title}
-                    location={location}
-                />
-                <Main />
-                <hr />
-                <Footer />
+            <div className="App">
+                <div className="App-content">
+                    <div className="App-header">
+                        <Header
+                            changeTitle={this.changeTitle.bind(this)}
+                            title={this.state.title}
+                            location={location}
+                        />
+                    </div>
+                    <div className="App-main">
+                        <Main />
+                    </div>
+                    <div className="App-footer">
+                        <hr />
+                        <Footer />
+                    </div>
+                </div>
             </div>
         );
     }

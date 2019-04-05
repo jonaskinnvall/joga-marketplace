@@ -1,0 +1,17 @@
+/* .App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+} */
+/* .App-content:after {
+    content: "\00a0";
+    display: block;
+    margin-top: var(--space);
+    height: 0;
+    visibility: hidden;
+} */
+.App-footer {
+    position: fixed;
+    bottom: 0;
+    /* height: [footer-height]; */
+}
