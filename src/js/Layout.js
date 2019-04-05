@@ -1,11 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import "../css/Layout.css";
+
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Footer from "./components/Footer";
+import Callback from "./components/Callback";
 
-import "../css/Layout.css";
+// import Auth from "./Auth/Auth.js";
+
+// const auth = new Auth();
 
 class Layout extends React.Component {
     constructor() {
@@ -16,6 +21,16 @@ class Layout extends React.Component {
     changeTitle(title) {
         this.setState({ title });
     }
+
+    // login() {
+    //     auth.login();
+    // };
+
+    // logout() {
+    //     auth.logout();
+    //     this.props.setUser('');
+    //     this.forceUpdate();
+    // };
 
     render() {
         const { location } = this.props;

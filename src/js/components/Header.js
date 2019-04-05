@@ -1,11 +1,16 @@
 import React from "react";
 
-import PropTypes from "prop-types";
-import { Nav, Navbar, Button, Form, FormControl, Card } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
+import { Nav, Navbar, Button, Form, FormControl } from "react-bootstrap";
 import { LinkContainer, IndexLinkContainer } from "react-router-bootstrap";
+
+import PropTypes from "prop-types";
 
 //import Title from "./header/Title";
 // import Search from "./header/Search"
+import history from "../history.js";
+
+import auth0Client from "../Auth/Auth.js";
 
 class Header extends React.Component {
     handleChange(e) {
@@ -15,9 +20,19 @@ class Header extends React.Component {
 
     handleClick = e => {};
 
+    login = () => {
+        auth0Client.login();
+    };
+
+    logout = () => {
+        auth0Client.logout();
+        history.replace("/");
+        // this.props.history.replace("/");
+    };
+
     render() {
         return (
-            <div className="d-flex flex-column">
+            <div className=" d-flex flex-column">
                 <Navbar bg="primary" variant="dark">
                     {/* <Nav className="align-items-start"> */}
                     <Nav className="mr-auto">
@@ -46,9 +61,27 @@ class Header extends React.Component {
                     </Nav>
                     {/* <Nav className="align-items-end"> */}
                     <Nav className="ml-auto">
-                        <LinkContainer to="/login">
-                            <Nav.Link>Sign In / Sign Up</Nav.Link>
-                        </LinkContainer>
+                        {/* <LinkContainer to="/login"> */}
+                        {!auth0Client.isAuthenticated && (
+                            <Nav.Link onClick={this.login.bind(this)}>
+                                Sign In / Sign Up
+                            </Nav.Link>
+                        )}
+                        {auth0Client.isAuthenticated && (
+                            <Nav>
+                                <LinkContainer to="/profile">
+                                    <Nav.Link>
+                                        {/* {" "}
+                                        {auth0Client.getProfile().name}{" "} */}
+                                        Profile
+                                    </Nav.Link>
+                                </LinkContainer>
+                                <Nav.Link onClick={this.logout.bind(this)}>
+                                    Sign Out
+                                </Nav.Link>
+                            </Nav>
+                        )}
+                        {/* </LinkContainer> */}
                         {/* <Button variant="link" onClick={this.handleClick}>Link</Button>
                              <Card
                                  bg="primary"
@@ -80,4 +113,4 @@ Header.propTypes = {
     collapsed: PropTypes.bool
 };
 
-export default Header;
+export default withRouter(Header);

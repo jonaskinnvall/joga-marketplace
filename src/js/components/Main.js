@@ -4,8 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Featured from "../pages/Featured";
 import Categories from "../pages/Categories";
-import LogIn from "../pages/LogIn";
-import SignUp from "../pages/SignUp";
+import Profile from "../pages/Profile";
 
 class Main extends React.Component {
     render() {
@@ -14,8 +13,7 @@ class Main extends React.Component {
                 <Route exact path="/" component={Home} />
                 <Route path="/featured" component={Featured} />
                 <Route path="/categories" component={Categories} />
-                <Route path="/login" component={LogIn} />
-                <Route path="/signup" component={SignUp} />
+                <Route path="/profile" component={Profile} />
             </Switch>
         );
     }
