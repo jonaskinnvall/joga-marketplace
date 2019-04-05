@@ -7,6 +7,6 @@ These items will be added to a dataset that we create to keep track of everythin
 
 The site will be made using **React and Redux** for the client-side along with **Webpack** to bundle the code to one minified output file.
 
-**Node.js** **Express.js** will be used for the backend.
+**Node.js** with **Express.js** will be used for the backend.
 
 For later, testing will be done using **Jest**, maybe along with **Enzyme**.
