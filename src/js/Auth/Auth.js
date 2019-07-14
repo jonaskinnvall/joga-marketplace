@@ -1,4 +1,5 @@
 import auth0 from "auth0-js";
+import history from "../history";
 
 class Auth {
     constructor() {
@@ -35,8 +36,12 @@ class Auth {
     handleAuthentication() {
         return new Promise((resolve, reject) => {
             this.auth0.parseHash((err, authResult) => {
-                if (err) return reject(err);
+                if (err) {
+                    history.replace("/");
+                    return reject(err);
+                }
                 if (!authResult || !authResult.idToken) {
+                    history.replace("/");
                     return reject(err);
                 }
                 this.idToken = authResult.idToken;
@@ -47,6 +52,44 @@ class Auth {
             });
         });
     }
+
+    // handleAuthentication() {
+    //     this.auth0.parseHash((err, authResult) => {
+    //       if (authResult && authResult.accessToken && authResult.idToken) {
+    //         this.setSession(authResult);
+    //       } else if (err) {
+    //         history.replace("/");
+    //         console.log(err);
+    //         alert(`Error: ${err.error}. Check the console for further details.`);
+    //       }
+    //     });
+    // }
+
+    // setSession(authResult) {
+    //     // Set isLoggedIn flag in localStorage
+    //     localStorage.setItem("isLoggedIn", "true");
+
+    //     // Set the time that the access token will expire at
+    //     let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
+    //     this.accessToken = authResult.accessToken;
+    //     this.idToken = authResult.idToken;
+    //     this.expiresAt = expiresAt;
+
+    //     // navigate to the home route
+    //     history.replace("/");
+    // }
+
+    // renewSession() {
+    //     this.auth0.checkSession({}, (err, authResult) => {
+    //        if (authResult && authResult.accessToken && authResult.idToken) {
+    //          this.setSession(authResult);
+    //        } else if (err) {
+    //          this.logout();
+    //          console.log(err);
+    //          alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
+    //        }
+    //     });
+    //   }
 
     logout() {
         // clear id token, profile, and expiration

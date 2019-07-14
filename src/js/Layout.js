@@ -6,7 +6,7 @@ import "../css/Layout.css";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Footer from "./components/Footer";
-import Callback from "./components/Callback";
+import auth0Client from "./Auth/Auth";
 
 // import Auth from "./Auth/Auth.js";
 
@@ -15,12 +15,12 @@ import Callback from "./components/Callback";
 class Layout extends React.Component {
     constructor() {
         super();
-        this.state = { title: "Search" };
+        this.state = { hasAuth: false };
     }
 
-    changeTitle(title) {
-        this.setState({ title });
-    }
+    // changeTitle(title) {
+    //     this.setState({ title });
+    // }
 
     // login() {
     //     auth.login();
@@ -32,16 +32,33 @@ class Layout extends React.Component {
     //     this.forceUpdate();
     // };
 
+    componentDidMount() {
+        // const { renewSession } = this.props.auth;
+
+        // if (localStorage.getItem('isLoggedIn') === 'true') {
+        //   renewSession();
+        // }
+        this.checkAuthentication();
+    }
+
+    checkAuthentication = () => {
+        let authenticated = auth0Client.isAuthenticated();
+        if (authenticated) {
+            this.setState({ hasAuth: true });
+        }
+    };
+
     render() {
-        const { location } = this.props;
+        const { location, history } = this.props;
         return (
             <div className="App">
                 <div className="App-content">
                     <div className="App-header">
                         <Header
-                            changeTitle={this.changeTitle.bind(this)}
-                            title={this.state.title}
+                            // changeTitle={this.changeTitle.bind(this)}
+                            // title={this.state.title}
                             location={location}
+                            history={history}
                         />
                     </div>
                     <div className="App-main">
@@ -58,7 +75,8 @@ class Layout extends React.Component {
 }
 
 Layout.propTypes = {
-    location: PropTypes.any
+    location: PropTypes.object,
+    history: PropTypes.object
 };
 
 export default Layout;

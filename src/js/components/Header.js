@@ -7,28 +7,39 @@ import { LinkContainer, IndexLinkContainer } from "react-router-bootstrap";
 import PropTypes from "prop-types";
 
 //import Title from "./header/Title";
-// import Search from "./header/Search"
-import history from "../history.js";
+// // import Search from "./header/Search"
+// import history from "../history.js";
 
 import auth0Client from "../Auth/Auth.js";
 
 class Header extends React.Component {
-    handleChange(e) {
-        const title = e.target.value;
-        this.props.changeTitle(title);
+    constructor(props) {
+        super(props);
+        this.location = this.props.location;
+        this.history = this.props.history;
     }
+    // handleChange(e) {
+    //     const title = e.target.value;
+    //     this.props.changeTitle(title);
+    // }
 
-    handleClick = e => {};
+    // handleClick = e => {};
 
-    login = () => {
+    handleLogin = () => {
         auth0Client.login();
     };
 
-    logout = () => {
+    handleLogout = () => {
         auth0Client.logout();
-        history.replace("/");
-        // this.props.history.replace("/");
+        // history.replace("/");
+        console.log(this.history);
+        this.history.push("/");
+        // this.props.setUser('');
+        // this.forceUpdate();
     };
+    // componentDidMount() {
+    //     // history.push(location);
+    // }
 
     render() {
         return (
@@ -63,7 +74,7 @@ class Header extends React.Component {
                     <Nav className="ml-auto">
                         {/* <LinkContainer to="/login"> */}
                         {!auth0Client.isAuthenticated && (
-                            <Nav.Link onClick={this.login.bind(this)}>
+                            <Nav.Link onClick={this.handleLogin.bind(this)}>
                                 Sign In / Sign Up
                             </Nav.Link>
                         )}
@@ -71,34 +82,19 @@ class Header extends React.Component {
                             <Nav>
                                 <LinkContainer to="/profile">
                                     <Nav.Link>
-                                        {/* {" "}
-                                        {auth0Client.getProfile().name}{" "} */}
+                                        {/* { {" "}
+                                        {auth0Client.getProfile().name}{" "} } */}
                                         Profile
                                     </Nav.Link>
                                 </LinkContainer>
-                                <Nav.Link onClick={this.logout.bind(this)}>
+                                <Nav.Link
+                                    onClick={this.handleLogout.bind(this)}
+                                >
                                     Sign Out
                                 </Nav.Link>
                             </Nav>
                         )}
                         {/* </LinkContainer> */}
-                        {/* <Button variant="link" onClick={this.handleClick}>Link</Button>
-                             <Card
-                                 bg="primary"
-                                 text="white"
-                                 style={{ width: "18rem" }}
-                             >
-                                 <Card.Header>Header</Card.Header>
-                                 <Card.Body>
-                                     <Card.Title>Primary Card Title</Card.Title>
-                                     <Card.Text>
-                                         Some quick example text to build on the
-                                         card title and make up the bulk of the
-                                         cards content.
-                                     </Card.Text>
-                                 </Card.Body>
-                             </Card>
-                         <br /> */}
                     </Nav>
                 </Navbar>
             </div>
@@ -107,10 +103,10 @@ class Header extends React.Component {
 }
 
 Header.propTypes = {
-    changeTitle: PropTypes.func,
-    title: PropTypes.string,
-    location: PropTypes.any,
-    collapsed: PropTypes.bool
+    // changeTitle: PropTypes.func,
+    // title: PropTypes.string,
+    location: PropTypes.object,
+    history: PropTypes.object
 };
 
 export default withRouter(Header);
