@@ -12,6 +12,6 @@
 } */
 .App-footer {
     position: fixed;
-    bottom: 0;
+    bottom: 10px;
     /* height: [footer-height]; */
 }

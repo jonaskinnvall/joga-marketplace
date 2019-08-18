@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react';
 
 class Home extends React.Component {
-    state = { response: "", post: "", responseToPost: "" };
+    state = {response: '', post: '', responseToPost: ''};
 
     componentDidMount() {
         this.callAPI()
-            .then(res => this.setState({ response: res.express }))
+            .then(res => this.setState({response: res.express}))
             .catch(err => console.log(err));
     }
 
     callAPI = async () => {
-        const response = await fetch("/api/hello");
+        const response = await fetch('/api/hello');
         const body = await response.json();
 
         if (response.status !== 200) throw Error(body.message);
@@ -19,7 +19,7 @@ class Home extends React.Component {
     };
 
     render() {
-        console.log("Home");
+        console.log('Home');
         return (
             <div>
                 <h1>Home Page</h1>

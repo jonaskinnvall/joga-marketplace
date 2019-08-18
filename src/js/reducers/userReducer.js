@@ -6,7 +6,7 @@ import {
     SIGNIN_USER_SUCCESS,
     SIGNIN_USER_FAILURE,
     LOGOUT_USER
-} from "../actions/users";
+} from '../actions/users';
 
 const INITIAL_STATE = {
     user: null,
@@ -23,7 +23,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                status: "signup",
+                status: 'signup',
                 error: false,
                 loading: true
             };
@@ -31,7 +31,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: action.payload.user,
-                status: "authenticated",
+                status: 'authenticated',
                 error: null,
                 loading: false
             }; //<-- authenticated
@@ -40,7 +40,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                status: "signup",
+                status: 'signup',
                 error: error,
                 loading: false
             };
@@ -49,7 +49,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                status: "signin",
+                status: 'signin',
                 error: false,
                 loading: true
             };
@@ -57,7 +57,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: action.payload.user,
-                status: "authenticated",
+                status: 'authenticated',
                 error: null,
                 loading: false
             };
@@ -66,7 +66,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                status: "signin",
+                status: 'signin',
                 error: error,
                 loading: false
             };
@@ -75,7 +75,7 @@ function userReducer(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 user: null,
-                status: "logout",
+                status: 'logout',
                 error: null,
                 loading: false
             };

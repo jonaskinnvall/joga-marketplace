@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
 class Profile extends React.Component {
     render() {
-        console.log("Profile");
+        console.log('Profile');
         return (
             <div>
                 <h1>Profile Page</h1>

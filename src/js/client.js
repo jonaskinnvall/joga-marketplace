@@ -1,21 +1,22 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter as Router } from "react-router-dom";
-import { Provider } from "react-redux";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import { Provider } from 'react-redux';
 
-import Layout from "./Layout";
-import store from "./store";
-// import history from "./history";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const app = document.getElementById("app");
+// import Layout from './Layout';
+import App from './App';
+import store from './store';
+// import Auth from './Auth/Auth.js';
+
+// const auth = new Auth();
+
+const app = document.getElementById('app');
 
 ReactDOM.render(
     <Provider store={store}>
-        <Router>
-            <Layout />
-        </Router>
+        <App />
     </Provider>,
     app
 );

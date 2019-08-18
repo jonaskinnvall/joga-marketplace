@@ -1,26 +1,26 @@
-import React from "react";
+import React from 'react';
 //import {connect} from "react-redux";
 
 class Featured extends React.Component {
     state = {
-        response: "",
-        post: "",
-        responseToPost: ""
+        response: '',
+        post: '',
+        responseToPost: ''
     };
 
     handleSubmit = async e => {
         e.preventDefault();
-        const response = await fetch("/api/world", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ post: this.state.post })
+        const response = await fetch('/api/world', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({post: this.state.post})
         });
         const body = await response.text();
-        this.setState({ responseToPost: body });
+        this.setState({responseToPost: body});
     };
 
     render() {
-        console.log("feat");
+        console.log('feat');
         return (
             <div>
                 <h1>Featured Page</h1>
@@ -33,7 +33,7 @@ class Featured extends React.Component {
                     <input
                         type="text"
                         value={this.state.post}
-                        onChange={e => this.setState({ post: e.target.value })}
+                        onChange={e => this.setState({post: e.target.value})}
                     />
                     <button type="submit">Submit</button>
                 </form>
