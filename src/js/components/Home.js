@@ -1,11 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Home extends React.Component {
-    state = {response: '', post: '', responseToPost: ''};
+    constructor(props) {
+        super(props);
+        this.state = { response: '', post: '', responseToPost: '' };
+    }
 
     componentDidMount() {
         this.callAPI()
-            .then(res => this.setState({response: res.express}))
+            .then(res => this.setState({ response: res.express }))
             .catch(err => console.log(err));
     }
 
@@ -24,9 +28,20 @@ class Home extends React.Component {
             <div>
                 <h1>Home Page</h1>
                 <p>{this.state.response}</p>
+                <button
+                    onClick={() =>
+                        console.log('Profile', this.props.userProfile)
+                    }
+                >
+                    Show logged in profile
+                </button>
             </div>
         );
     }
 }
+
+Home.propTypes = {
+    userProfile: PropTypes.object
+};
 
 export default Home;

@@ -31,11 +31,11 @@ class Featured extends React.Component {
                         <strong>Post to server:</strong>
                     </p>
                     <input
-                        type="text"
+                        type='text'
                         value={this.state.post}
                         onChange={e => this.setState({post: e.target.value})}
                     />
-                    <button type="submit">Submit</button>
+                    <button type='submit'>Submit</button>
                 </form>
                 <p>{this.state.responseToPost}</p>
             </div>

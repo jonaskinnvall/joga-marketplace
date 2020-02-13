@@ -6,14 +6,13 @@ import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import '../css/App.css';
 
 import history from './history';
-import Callback from './components/Callback';
-import Footer from './components/Footer';
+import Auth from './Auth/Auth';
 
 import Home from './components/Home';
 import Featured from './components/Featured';
 import Profile from './components/Profile';
-
-import Auth from './Auth/Auth';
+import Callback from './components/Callback';
+import Footer from './components/Footer';
 
 const auth = new Auth();
 
@@ -31,9 +30,19 @@ class App extends Component {
     }
 
     componentDidMount() {
-        console.log('Auth', auth);
-        console.log('Profile', auth.getProfile());
+        console.log(auth);
+        console.log('Profile', auth.userProfile);
+        console.log('AccessToken2', auth.accessToken);
+        console.log('AccessToken2', auth['accessToken']);
+        let accessTok = auth.accessToken;
+        console.log('acc', accessTok);
+
+        if (auth.isAuthenticated()) {
+            this.setState({ isAuth: true });
+        }
+
         if (localStorage.getItem('isLoggedIn') === 'true') {
+            console.log('Renewing session');
             auth.renewSession();
         }
     }
@@ -46,6 +55,7 @@ class App extends Component {
         auth.logout();
     };
     render() {
+        // const { isAuthenticated } = auth.isAuthenticated;
         return (
             <Router history={history}>
                 <div className="App">
@@ -75,7 +85,7 @@ class App extends Component {
                                     </Form>
                                 </Nav>
                                 <Nav className="ml-auto">
-                                    {!auth.isAuthenticated() && (
+                                    {!this.state.isAuth && (
                                         <Nav.Link
                                             onClick={this.handleLogin.bind(
                                                 this
@@ -84,7 +94,7 @@ class App extends Component {
                                             Sign In / Sign Up
                                         </Nav.Link>
                                     )}
-                                    {auth.isAuthenticated() && (
+                                    {this.state.isAuth && (
                                         <Nav>
                                             <LinkContainer to="/profile">
                                                 <Nav.Link>Profile</Nav.Link>
@@ -104,7 +114,13 @@ class App extends Component {
                     </div>
                     <div className="App-main">
                         <Switch>
-                            <Route exact path="/" component={Home} />
+                            <Route
+                                exact
+                                path="/"
+                                component={props => (
+                                    <Home auth={auth} {...props} />
+                                )}
+                            />
                             <Route path="/featured" component={Featured} />
                             <Route
                                 path="/profile"
