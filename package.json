@@ -19,7 +19,6 @@
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.6.4",
         "@babel/polyfill": "^7.4.4",
-        "auth0-js": "^9.11.1",
         "axios": "^0.18.1",
         "body-parser": "^1.19.0",
         "bootstrap": "^4.3.1",
