@@ -28,6 +28,7 @@ ReactDOM.render(
             domain={AUTH_VAR.domain}
             client_id={AUTH_VAR.clientID}
             redirect_uri={AUTH_VAR.redirectUri}
+            audience={AUTH_VAR.audience}
             onRedirectCallback={onRedirectCallback}
         >
             <App />
