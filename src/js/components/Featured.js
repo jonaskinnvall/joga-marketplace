@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useAuth0 } from '../Auth/Auth';
 
 const Featured = () => {
-    const [showResult, setShowResult] = useState(false);
-    const [apiMessage, setApiMessage] = useState('');
-    const [apiReq, setApiReq] = useState({ post: '' });
+    const { getTokenSilently} = useAuth0();
 
-    const { getTokenSilently } = useAuth0();
+    const [showResult, setShowResult] = useState(false);
+    const [apiReq, setApiReq] = useState({ post: '' });
+    const [apiMessage, setApiMessage] = useState('');
 
     const callApi = async e => {
         e.preventDefault();
@@ -43,9 +43,7 @@ const Featured = () => {
                 ></input>
                 <button type="submit">Submit</button>
             </form>
-            {showResult && (
-                    <code>{JSON.stringify(apiMessage, null, 2)}</code>
-                )}
+            {showResult && <code>{JSON.stringify(apiMessage, null, 2)}</code>}
         </div>
     );
 };

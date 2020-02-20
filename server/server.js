@@ -81,7 +81,7 @@ app.get('/api/hello', (req, res) => {
 });
 
 app.get('/api/private', checkJwt, (req, res) => {
-    res.send({ express: 'Hello Autherized Express!' });
+    res.send({ express: 'Hello Authorized Express!' });
 });
 
 //POST ENDPOINTS
