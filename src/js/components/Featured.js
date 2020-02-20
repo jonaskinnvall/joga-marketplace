@@ -1,46 +1,53 @@
-import React from 'react';
-//import {connect} from "react-redux";
+import React, { useState } from 'react';
+import { useAuth0 } from '../Auth/Auth';
 
-class Featured extends React.Component {
-    state = {
-        response: '',
-        post: '',
-        responseToPost: ''
-    };
+const Featured = () => {
+    const [showResult, setShowResult] = useState(false);
+    const [apiMessage, setApiMessage] = useState('');
+    const [apiReq, setApiReq] = useState({ post: '' });
 
-    handleSubmit = async e => {
+    const { getTokenSilently } = useAuth0();
+
+    const callApi = async e => {
         e.preventDefault();
-        const response = await fetch('/api/world', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({post: this.state.post})
-        });
-        const body = await response.text();
-        this.setState({responseToPost: body});
+        try {
+            const token = await getTokenSilently();
+
+            const response = await fetch('/api/private', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ post: apiReq.post })
+            });
+
+            const responseData = await response.text();
+
+            setShowResult(true);
+            setApiMessage(responseData);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
-    render() {
-        console.log('feat');
-        return (
-            <div>
-                <h1>Featured Page</h1>
-                <h3>Lista</h3>
-                {/* <button onClick={() => this.handleClick()}>Press Me</button> */}
-                <form onSubmit={this.handleSubmit}>
-                    <p>
-                        <strong>Post to server:</strong>
-                    </p>
-                    <input
-                        type='text'
-                        value={this.state.post}
-                        onChange={e => this.setState({post: e.target.value})}
-                    />
-                    <button type='submit'>Submit</button>
-                </form>
-                <p>{this.state.responseToPost}</p>
-            </div>
-        );
-    }
-}
+    return (
+        <div>
+            <h1>Featured</h1>
+            <h3>External API</h3>
+            <form onSubmit={callApi}>
+                <input
+                    type="text"
+                    value={apiReq.post}
+                    onChange={e => setApiReq({ post: e.target.value })}
+                ></input>
+                <button type="submit">Submit</button>
+            </form>
+            {showResult && (
+                    <code>{JSON.stringify(apiMessage, null, 2)}</code>
+                )}
+        </div>
+    );
+};
 
 export default Featured;

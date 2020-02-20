@@ -1,41 +1,43 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-var cors = require('cors');
+const cors = require('cors');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
-const logger = require('morgan');
+const morgan = require('morgan');
 const helmet = require('helmet');
 
 require('dotenv').config({ path: 'secrets.env' });
 
 // Importing models
-var User = require('./models/users');
-var Item = require('./models/items');
+let User = require('./models/users');
+let Item = require('./models/items');
 
 // Set port
 const port = process.env.PORT || 3001;
 
 // Create express instance
 const app = express();
+
+app.use(helmet());
 app.use(cors());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(morgan('combined'));
 
 // Create router
 const router = express.Router();
 
 // MongoDB database
-var MongoDB = process.env.MONGODB_URI;
+let MongoDB = process.env.MONGODB_URI;
 
 // Connect backend with database
-mongoose.connect(MongoDB, { useNewUrlParser: true });
-var db = mongoose.connection;
+mongoose.connect(MongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+let db = mongoose.connection;
 
 db.once('open', () => console.log('Connected to DB!'));
 db.on('error', console.error.bind(console, 'MongoDB connection error'));
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(logger('dev'));
 
 //To prevent errors from Cross Origin Resource Sharing, we will set our headers to allow CORS with middleware like so:
 app.use(function(req, res, next) {
@@ -66,8 +68,10 @@ const checkJwt = jwt({
     // Validate the audience and the issuer.
     audience: process.env.AUTH_AUD,
     issuer: process.env.AUTH_DOMAIN,
-    algorithms: [process.env.AUTH_ALGO]
+    algorithms: ['RS256']
 });
+
+// app.use(checkJwt);
 
 //GET ENDPOINTS
 
@@ -76,35 +80,29 @@ app.get('/api/hello', (req, res) => {
     res.send({ express: 'Hello Express!' });
 });
 
-// //Create a SECURED GET route
-// app.get('/api/helloSec', checkJwt, (req, res) => {
-//     res.send({express: 'And your access token was validated!'});
-// });
-
-router.get('/', function(req, res) {
-    res.json({ message: 'API Initialized!' });
+app.get('/api/private', checkJwt, (req, res) => {
+    res.send({ express: 'Hello Autherized Express!' });
 });
-
-// app.get('/*', function(req, res) {
-//     res.sendFile(path.join(__dirname, 'path/to/your/index.html'), function(
-//         err
-//     ) {
-//         if (err) {
-//             res.status(500).send(err);
-//         }
-//     });
-// });
 
 //POST ENDPOINTS
 
 //Create POST route
-//Add author: req.user.name because of checkJwt!
-app.post('/api/world', checkJwt, (req, res) => {
+app.post('/api/public', (req, res) => {
     console.log(req.body);
+    console.log(req.user.name);
+
     res.send(
-        `I received your POST request. This is what you sent me: ${
-            req.body.post
-        }`
+        `I received your POST request. This is what you sent me: ${req.body.post}`
+    );
+});
+
+//Add author: req.user.name because of checkJwt!
+app.post('/api/private', checkJwt, (req, res) => {
+    console.log(req.body);
+
+    res.send(
+        `I received your POST request. This is what you sent me: ${req.body.post}`
+        // 'I received your POST request.'
     );
 });
 
