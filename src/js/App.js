@@ -54,8 +54,8 @@ function App() {
                             )}
                             {isAuthenticated && (
                                 <Nav>
-                                    <Nav.Link as={NavLink} to="/profile">
-                                        Profile
+                                    <Nav.Link as={NavLink} to="/profile"> 
+                                        Profile {/* TODO: Put users name or picture here?*/ }
                                     </Nav.Link>
 
                                     <Nav.Link onClick={() => logout()}>

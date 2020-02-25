@@ -32,6 +32,7 @@ const Featured = () => {
     };
 
     return (
+        // TODO: Set up grid of featured items
         <div>
             <h1>Featured</h1>
             <h3>External API</h3>

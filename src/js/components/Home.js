@@ -14,6 +14,7 @@ const Home = () => {
     });
 
     return (
+        // TODO: Set up grid for items, maybe category dependent
         <div>
             <h1>Home Page</h1>
             <p>{showResult && apiMessage}</p>

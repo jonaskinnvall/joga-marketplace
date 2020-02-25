@@ -24,7 +24,7 @@ app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(morgan('combined'));
+app.use(morgan('dev'));
 
 // Create router
 const router = express.Router();
@@ -33,7 +33,11 @@ const router = express.Router();
 let MongoDB = process.env.MONGODB_URI;
 
 // Connect backend with database
-mongoose.connect(MongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(MongoDB, {
+    dbName: 'joga-db',
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
 let db = mongoose.connection;
 
 db.once('open', () => console.log('Connected to DB!'));
@@ -71,40 +75,53 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-// app.use(checkJwt);
+// SET UP ROUTES
+// TODO: Set up POST, PUT etc. routes for users
+router.route('/users').post() //TODO: Check user, if new => post user to DB
 
-//GET ENDPOINTS
+// TODO: Set up route for items with POST and GET requests
+
+router
+    .route('/private')
+    .get(checkJwt, (req, res) => {
+        res.send({ express: 'Hello Authorized Express!' });
+    })
+    .post(checkJwt, (req, res) => {
+        res.send(
+            `I received your POST request. This is what you sent me: ${req.body.post}`
+            // 'I received your POST request.'
+        );
+    });
+
+router.get('/', (req, res) => {
+    res.json({ message: 'API Initialized!' });
+});
 
 //Create a GET route
-app.get('/api/hello', (req, res) => {
+router.get('/hello', (req, res) => {
     res.send({ express: 'Hello Express!' });
 });
 
-app.get('/api/private', checkJwt, (req, res) => {
-    res.send({ express: 'Hello Authorized Express!' });
-});
+// router.get('/private', checkJwt, (req, res) => {
+//     res.send({ express: 'Hello Authorized Express!' });
+// });
 
 //POST ENDPOINTS
+// app.use(checkJwt);
 
 //Create POST route
-app.post('/api/public', (req, res) => {
-    console.log(req.body);
-    console.log(req.user.name);
-
-    res.send(
-        `I received your POST request. This is what you sent me: ${req.body.post}`
-    );
-});
 
 //Add author: req.user.name because of checkJwt!
-app.post('/api/private', checkJwt, (req, res) => {
-    console.log(req.body);
+// router.post('/private', checkJwt, (req, res) => {
+//     console.log(req.body);
 
-    res.send(
-        `I received your POST request. This is what you sent me: ${req.body.post}`
-        // 'I received your POST request.'
-    );
-});
+//     res.send(
+//         `I received your POST request. This is what you sent me: ${req.body.post}`
+//         // 'I received your POST request.'
+//     );
+// });
+
+app.use('/api', router);
 
 // console.log that your server is up and running
 app.listen(port, () => console.log(`Listening on port ${port}`));
