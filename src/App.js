@@ -8,10 +8,10 @@ import { useAuth0 } from './Auth/Auth';
 import { setUser } from './actions/users';
 
 // Import App.css and component layouts
-import '../css/App.css';
+import './css/App.css';
 import Home from './components/Home';
 import Featured from './components/Featured';
-import Profile from './components/Profile';
+import Profile from './js/components/Profile';
 import Footer from './components/Footer';
 import PrivateRoute from './components/PrivRoute';
 

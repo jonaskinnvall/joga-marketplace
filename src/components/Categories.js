@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
 class Categories extends React.Component {
     render() {
-        console.log("Categories");
+        console.log('Categories');
         return <h1>Categories Page</h1>;
     }
 }

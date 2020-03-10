@@ -15,6 +15,7 @@ import { useAuth0 } from './Auth/Auth';
 // Create dummy user for test
 const user = {
     email: 'johndoe@gmail.com',
+    // eslint-disable-next-line babel/camelcase
     email_verified: true,
     sub: 'google-oauth2|2147627834623744883746'
 };
