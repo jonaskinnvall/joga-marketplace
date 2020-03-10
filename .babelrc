@@ -1,15 +1,11 @@
 {
     "presets": [
-        "react",
-        "env"
-        //"@babel/plugin-proposal-object-rest-spread",
-        //"stage-0"
+        "@babel/preset-react",
+        "@babel/preset-env"
     ],
     "plugins": [
-        "syntax-dynamic-import",
-        //"proposal-throw-expressions",
-        //"proposal-export-namespace-from",
-        "syntax-object-rest-spread",
-        "transform-class-properties"
+        "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-syntax-object-rest-spread",
+        "@babel/plugin-proposal-class-properties"
     ]
 }
