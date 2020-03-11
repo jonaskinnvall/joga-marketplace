@@ -7,7 +7,7 @@ const path = require('path');
 module.exports = {
     //context: path.join(__dirname, "src"),
     devtool: debug ? 'eval-source-map' : false,
-    entry: ['@babel/polyfill', './src/js/client.js'],
+    entry: ['@babel/polyfill', './src/client.js'],
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'client.min.js',

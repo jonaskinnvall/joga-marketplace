@@ -11,7 +11,7 @@ import { setUser } from './actions/users';
 import './css/App.css';
 import Home from './components/Home';
 import Featured from './components/Featured';
-import Profile from './js/components/Profile';
+import Profile from './components/Profile';
 import Footer from './components/Footer';
 import PrivateRoute from './components/PrivRoute';
 

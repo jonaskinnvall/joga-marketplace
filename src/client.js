@@ -6,7 +6,7 @@ import { Auth0Provider } from './Auth/Auth';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { AUTH_VAR } from '../../auth-var.json';
+import { AUTH_VAR } from '../auth-var.json';
 
 import App from './App';
 import store from './store';
