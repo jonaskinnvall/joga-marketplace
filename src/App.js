@@ -27,9 +27,8 @@ function App() {
     const stateUser = useSelector(state => state.user);
 
     useEffect(() => {
-        console.log(user);
         if (!loading) {
-            dispatch(setUser({ user }));
+            dispatch(setUser(user));
         }
         return;
     }, [loading]);
@@ -66,13 +65,12 @@ function App() {
                                 {isAuthenticated && stateUser ? (
                                     <Nav>
                                         <Nav.Link as={NavLink} to="/profile">
+                                            {stateUser.given_name}{' '}
                                             <img
                                                 src={stateUser.picture}
                                                 alt="Profile"
-                                            />{' '}
-                                            {stateUser.given_name}
+                                            />
                                         </Nav.Link>
-
                                         <Nav.Link onClick={() => logout()}>
                                             Log Out
                                         </Nav.Link>

@@ -11,7 +11,7 @@ require('dotenv').config({ path: 'secrets.env' });
 
 // Importing models
 let User = require('./models/users');
-let Item = require('./models/items');
+// let Item = require('./models/items');
 
 // Set port
 const port = process.env.PORT || 3001;
@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 // Create router
+// eslint-disable-next-line babel/new-cap
 const router = express.Router();
 
 // MongoDB database
@@ -77,7 +78,32 @@ const checkJwt = jwt({
 
 // SET UP ROUTES
 // TODO: Set up POST, PUT etc. routes for users
-router.route('/users').post() //TODO: Check user, if new => post user to DB
+
+router.route('/users/:id').get((req, res) => {
+    console.log('Get user id');
+    User.findOne({ userID: req.params.id }, (error, id) => {
+        if (error) return res.status(500).send('Error retrieving user!');
+        else if (!id) return res.status(404).send('User could not be found!');
+        res.status(200).send(id);
+    });
+});
+
+router.route('/users').post((req, res) => {
+    User.find({ userID: req.body.userID }, (error, id) => {
+        // Create new user if it doesn't exist
+        console.log('Server ID: ', id);
+        if (id == 0) {
+            let user = new User({
+                userID: req.body.userID,
+                name: req.body.name
+            });
+            user.save(error => {
+                if (error) return console.error(error);
+                res.json({ message: 'User added!' });
+            });
+        } else res.json({ message: 'User already exists.' });
+    });
+});
 
 // TODO: Set up route for items with POST and GET requests
 
@@ -101,10 +127,6 @@ router.get('/', (req, res) => {
 router.get('/hello', (req, res) => {
     res.send({ express: 'Hello Express!' });
 });
-
-// router.get('/private', checkJwt, (req, res) => {
-//     res.send({ express: 'Hello Authorized Express!' });
-// });
 
 //POST ENDPOINTS
 // app.use(checkJwt);

@@ -1,18 +1,41 @@
 // import axios from 'axios';
 import { SET_USER } from './actionTypes';
+import axios from 'axios';
 
-// TODO: Make setUser post user to DB
 // TODO: Add action to edit user data (items etc.)
+const URI =
+    location.href.indexOf('localhost') > 0
+        ? 'http://localhost:3001/api/'
+        : '/api/';
 
-// const URI =
-//     location.href.indexOf('localhost') > 0
-//         ? 'http://localhost:8080/api/'
-//         : '/api/';
+export const setUser = user => {
+    if (user) {
+        let userID = user.sub;
+        userID = userID.split('|')[1];
+        let URL = URI + 'users/';
+        let idURL = URL + userID;
 
-export function setUser(user) {
-    if (user != {}) {
-        return { type: SET_USER, payload: user.user };
+        let DB;
+
+        return dispatch =>
+            axios
+                .get(idURL)
+                .then(res => {
+                    DB = res.data;
+                    dispatch({ type: SET_USER, payload: { user, DB } });
+                })
+                .catch(error => {
+                    axios
+                        .post(URL, { userID: userID, name: user.name })
+                        .then(res => {
+                            DB = res.data;
+                            dispatch({
+                                type: SET_USER,
+                                payload: { user, DB }
+                            });
+                        });
+                });
     } else {
-        return { type: SET_USER, payload: user };
+        return dispatch => dispatch({ type: SET_USER, payload: { user } });
     }
-}
+};
