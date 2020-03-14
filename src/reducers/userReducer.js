@@ -1,19 +1,15 @@
-import { SET_USER } from '../actions/actionTypes';
+import { SET_USER, EDIT_USER } from '../actions/actionTypes';
 
 const INITIAL_STATE = {
     user: ''
 };
 
-// TODO: Add case for editing user data (itmes etc.)
 const userReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case SET_USER:
-            var user = action.payload.user;
-            return {
-                ...state,
-                user: user
-            };
-
+            return { ...state, user: action.payload.DB };
+        case EDIT_USER:
+            return { ...state, user: action.payload.updatedDB };
         default:
             return state;
     }

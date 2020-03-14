@@ -65,9 +65,9 @@ function App() {
                                 {isAuthenticated && stateUser ? (
                                     <Nav>
                                         <Nav.Link as={NavLink} to="/profile">
-                                            {stateUser.given_name}{' '}
+                                            {user.given_name}{' '}
                                             <img
-                                                src={stateUser.picture}
+                                                src={user.picture}
                                                 alt="Profile"
                                             />
                                         </Nav.Link>
@@ -77,7 +77,11 @@ function App() {
                                     </Nav>
                                 ) : (
                                     <Nav.Link
-                                        onClick={() => loginWithRedirect({})}
+                                        onClick={() =>
+                                            loginWithRedirect({
+                                                connection: 'google-oauth2'
+                                            })
+                                        }
                                     >
                                         Log in
                                     </Nav.Link>

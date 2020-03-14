@@ -37,7 +37,8 @@ let MongoDB = process.env.MONGODB_URI;
 mongoose.connect(MongoDB, {
     dbName: 'joga-db',
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 });
 let db = mongoose.connection;
 
@@ -76,22 +77,53 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-// SET UP ROUTES
-// TODO: Set up POST, PUT etc. routes for users
+// USER ROUTES
 
-router.route('/users/:id').get((req, res) => {
-    console.log('Get user id');
-    User.findOne({ userID: req.params.id }, (error, id) => {
-        if (error) return res.status(500).send('Error retrieving user!');
-        else if (!id) return res.status(404).send('User could not be found!');
-        res.status(200).send(id);
+//  Route to make changes, delete or retrieve specific users
+router
+    .route('/users/:id')
+    .get((req, res) => {
+        User.findOne({ userID: req.params.id }, (error, id) => {
+            if (error)
+                return res.status(500).send('Error retrieving user!', error);
+            else if (!id)
+                return res.status(404).send('User could not be found!');
+            res.status(200).json(id);
+        });
+    })
+    .put((req, res) => {
+        // Update user with changes based on userID
+        User.findOneAndUpdate(
+            { userID: req.params.id },
+            req.body.userUpdate,
+            { new: true },
+            (error, updatedUser) => {
+                if (error)
+                    return res.status(500).send('Error updating user!', error);
+                else if (!updatedUser)
+                    return res.status(404).send('User could not be found!');
+                res.status(200).json(updatedUser);
+            }
+        );
+    })
+    .delete((req, res) => {
+        // Delete user based on userID
+        User.findOneAndRemove(
+            { userID: req.params.id },
+            (error, removedUser) => {
+                console.log(removedUser);
+                if (error)
+                    return res.status(500).send('Error removing user!', error);
+                else if (!removedUser)
+                    return res.status(404).send('User could not be found!');
+                res.status(200).json('Removed user!');
+            }
+        );
     });
-});
 
 router.route('/users').post((req, res) => {
     User.find({ userID: req.body.userID }, (error, id) => {
         // Create new user if it doesn't exist
-        console.log('Server ID: ', id);
         if (id == 0) {
             let user = new User({
                 userID: req.body.userID,
@@ -118,10 +150,6 @@ router
             // 'I received your POST request.'
         );
     });
-
-router.get('/', (req, res) => {
-    res.json({ message: 'API Initialized!' });
-});
 
 //Create a GET route
 router.get('/hello', (req, res) => {

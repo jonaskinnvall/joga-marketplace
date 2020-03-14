@@ -5,7 +5,9 @@ let UserSchema = new Schema({
     userID: { type: String, required: true },
     name: { type: String, required: true },
     creationDate: { type: Date, default: Date.now },
-    itemsPosted: { type: Number, default: 0 }
+    nrItems: { type: Number, default: 0 },
+    postedItems: { type: [String] },
+    starredItems: { type: [String] }
 });
 
 module.exports = mongoose.model('User', UserSchema);
