@@ -1,6 +1,15 @@
 import React, { useEffect } from 'react';
 import { Router, Route, Switch, Link, NavLink } from 'react-router-dom';
-import { Nav, Navbar, Button, Form, FormControl } from 'react-bootstrap';
+import {
+    Nav,
+    Navbar,
+    Button,
+    Form,
+    FormControl,
+    Container,
+    Row,
+    Col
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import history from './history';
@@ -12,7 +21,7 @@ import './css/App.css';
 import Home from './components/Home';
 import Featured from './components/Featured';
 import Profile from './components/Profile';
-import Footer from './components/Footer';
+// import Footer from './components/Footer';
 import PrivateRoute from './components/PrivRoute';
 
 function App() {
@@ -38,7 +47,7 @@ function App() {
             {!loading ? (
                 <div className="App">
                     <div className="App-header">
-                        <Navbar bg="primary" variant="dark">
+                        <Navbar bg="success" variant="dark">
                             <Nav className="mr-auto">
                                 <Navbar.Brand as={Link} to="/">
                                     <strong>JoGa</strong>
@@ -99,7 +108,21 @@ function App() {
                     </div>
                     <div className="App-footer">
                         <hr />
-                        <Footer />
+                        <Container fluid>
+                            <Row>
+                                <Col>
+                                    <p>Jonas Kinnvall</p>
+                                </Col>
+                                <Col>
+                                    <p>
+                                        <a href="mailto:jonki910@student.liu.se">
+                                            jonki910@student.liu.se
+                                        </a>
+                                    </p>
+                                </Col>
+                                <Col>TDDD27 - Advanced Web programming</Col>
+                            </Row>
+                        </Container>
                     </div>
                 </div>
             ) : (
