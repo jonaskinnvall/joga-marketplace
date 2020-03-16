@@ -4,7 +4,7 @@ const INITIAL_STATE = {
     user: ''
 };
 
-const userReducer = (state = INITIAL_STATE, action) => {
+export const userReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case SET_USER:
             return { ...state, user: action.payload.DB };
@@ -15,4 +15,4 @@ const userReducer = (state = INITIAL_STATE, action) => {
     }
 };
 
-export default userReducer;
+// export userReducer;

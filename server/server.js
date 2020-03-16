@@ -83,16 +83,16 @@ const checkJwt = jwt({
 router
     .route('/users/:id')
     .get((req, res) => {
-        User.findOne({ userID: req.params.id }, (error, id) => {
+        User.findOne({ userID: req.params.id }, (error, user) => {
             if (error)
                 return res.status(500).send('Error retrieving user!', error);
-            else if (!id)
+            else if (!user)
                 return res.status(404).send('User could not be found!');
-            res.status(200).json(id);
+            res.status(200).json(user);
         });
     })
     .put((req, res) => {
-        // Update user with changes based on userID
+        // Update user with changes, found with userID
         User.findOneAndUpdate(
             { userID: req.params.id },
             req.body.userUpdate,
@@ -127,11 +127,12 @@ router.route('/users').post((req, res) => {
         if (id == 0) {
             let user = new User({
                 userID: req.body.userID,
-                name: req.body.name
+                name: req.body.name,
+                image: req.body.image
             });
             user.save(error => {
                 if (error) return console.error(error);
-                res.json({ message: 'User added!' });
+                res.json({ body: user, message: 'User added!' });
             });
         } else res.json({ message: 'User already exists.' });
     });

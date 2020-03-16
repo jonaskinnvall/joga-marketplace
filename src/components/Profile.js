@@ -5,25 +5,25 @@ import axios from 'axios';
 import { setUser, editUser } from '../actions/users';
 
 const Profile = () => {
-    const { loading, user, logout } = useAuth0();
+    const { loading, logout } = useAuth0();
     const dispatch = useDispatch();
-    const stateUser = useSelector(state => state.user);
-    if (loading || !user) {
+    const userState = useSelector(state => state.userState.user);
+    if (loading || !userState) {
         return <div>Loading...</div>;
     }
 
     const updateUser = () => {
-        let update = { ...stateUser };
-        update.postedItems++;
+        let update = { ...userState };
+        update.nrItems++;
 
         dispatch(editUser(update));
     };
 
     // JUST FOR NOW TO TEST AROUND: Function to delete user in DB
     const deleteUser = () => {
-        let URL = 'http://localhost:3001/api/users/' + stateUser.userID;
+        let URL = 'http://localhost:3001/api/users/' + userState.userID;
         logout();
-        axios.delete(URL).then(dispatch(setUser(user)));
+        axios.delete(URL).then(dispatch(setUser()));
     };
 
     return (
@@ -33,12 +33,11 @@ const Profile = () => {
                 <button onClick={deleteUser}>Delete user</button>
             </div>
             <div>
-                <h2>{stateUser.postedItems}</h2>
+                <h2>{userState.nrItems}</h2>
             </div>
             <Fragment>
-                <img src={user.picture} alt="Profile" />
-                <h2>{user.name}</h2>
-                <p>{user.email}</p>
+                <img src={userState.image} alt="Profile" />
+                <h2>{userState.name}</h2>
             </Fragment>
         </div>
     );

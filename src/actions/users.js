@@ -30,7 +30,8 @@ export const setUser = user => {
                             image: user.picture
                         })
                         .then(res => {
-                            DB = res.data;
+                            DB = res.data.body;
+                            console.log(res.data.message);
                             dispatch({
                                 type: SET_USER,
                                 payload: { DB }

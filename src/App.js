@@ -16,15 +16,15 @@ import history from './history';
 import { useAuth0 } from './Auth/Auth';
 import { setUser } from './actions/users';
 
-// Import App.css and component layouts
+// Import App.css and components
 import './css/App.css';
 import Home from './components/Home';
 import Featured from './components/Featured';
 import Profile from './components/Profile';
-// import Footer from './components/Footer';
 import PrivateRoute from './components/PrivRoute';
 
 function App() {
+    // Auth0 hook
     const {
         loading,
         isAuthenticated,
@@ -32,9 +32,13 @@ function App() {
         user,
         logout
     } = useAuth0();
-    const dispatch = useDispatch();
-    const stateUser = useSelector(state => state.user);
 
+    // React-Redux hooks
+    const dispatch = useDispatch();
+    const userState = useSelector(state => state.userState.user);
+
+    // Re-render when loading from Auth0 changes
+    // and dispatch user to DB and redux state
     useEffect(() => {
         if (!loading) {
             dispatch(setUser(user));
@@ -52,7 +56,6 @@ function App() {
                                 <Navbar.Brand as={Link} to="/">
                                     <strong>JoGa</strong>
                                 </Navbar.Brand>
-
                                 <Nav.Link as={NavLink} to="/featured">
                                     {' '}
                                     Featured{' '}
@@ -71,12 +74,12 @@ function App() {
                                 </Form>
                             </Nav>
                             <Nav className="ml-auto">
-                                {isAuthenticated && stateUser ? (
+                                {isAuthenticated && userState ? (
                                     <Nav>
                                         <Nav.Link as={NavLink} to="/profile">
                                             {user.given_name}{' '}
                                             <img
-                                                src={user.picture}
+                                                src={userState.image}
                                                 alt="Profile"
                                             />
                                         </Nav.Link>
