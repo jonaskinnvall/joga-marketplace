@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 
 import { userReducer as userState } from './userReducer';
-import { itemReducer as itemsState } from './itemReducer';
+import { itemReducer as itemState } from './itemReducer';
 
 const reducer = combineReducers({
     userState,
-    itemsState
+    itemState
 });
 
 export default reducer;

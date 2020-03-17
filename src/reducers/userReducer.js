@@ -1,7 +1,7 @@
 import { SET_USER, EDIT_USER } from '../actions/actionTypes';
 
 const INITIAL_STATE = {
-    user: ''
+    user: {}
 };
 
 export const userReducer = (state = INITIAL_STATE, action) => {
@@ -14,5 +14,3 @@ export const userReducer = (state = INITIAL_STATE, action) => {
             return state;
     }
 };
-
-// export userReducer;

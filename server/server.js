@@ -6,12 +6,13 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const fs = require('fs');
 
 require('dotenv').config({ path: 'secrets.env' });
 
 // Importing models
 let User = require('./models/users');
-// let Item = require('./models/items');
+let Item = require('./models/items');
 
 // Set port
 const port = process.env.PORT || 3001;
@@ -111,7 +112,6 @@ router
         User.findOneAndRemove(
             { userID: req.params.id },
             (error, removedUser) => {
-                console.log(removedUser);
                 if (error)
                     return res.status(500).send('Error removing user!', error);
                 else if (!removedUser)
@@ -138,7 +138,51 @@ router.route('/users').post((req, res) => {
     });
 });
 
-// TODO: Set up route for items with POST and GET requests
+// ITEM ROUTES
+
+router
+    .route('/items')
+    // Get all posts
+    .get((req, res) => {
+        Item.find((error, items) => {
+            res.json({ items });
+        });
+    })
+    // Post an item
+    .post(checkJwt, (req, res) => {
+        let item = new Item({
+            userID: req.body.userID,
+            category: req.body.category,
+            user: req.body.user,
+            title: req.body.title,
+            desc: req.body.desc,
+            image: req.body.image
+        });
+        item.save(error => {
+            if (error) return console.error(error);
+            res.json({ body: item, message: 'Item added!' });
+        });
+    });
+
+// TODO itemID routes
+router
+    .route('/items/:id')
+    .get((req, res) => {})
+    .put(checkJwt, (req, res) => {})
+    .delete((req, res) => {});
+
+//Route to ger items in specific category
+router.route('/items/:category').get((req, res) => {
+    Item.find({ category: req.body.category }, (error, items) => {
+        if (error)
+            return res.status(500).send('Error retrieving items!', error);
+        else if (!items)
+            return res
+                .status(404)
+                .send('Items could not be found with this category!');
+        res.status(200).json(items);
+    });
+});
 
 router
     .route('/private')

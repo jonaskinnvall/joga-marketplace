@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import history from './history';
 import { useAuth0 } from './Auth/Auth';
 import { setUser } from './actions/users';
+import { fetchItems } from './actions/items';
 
 // Import App.css and components
 import './css/App.css';
@@ -36,12 +37,16 @@ function App() {
     // React-Redux hooks
     const dispatch = useDispatch();
     const userState = useSelector(state => state.userState.user);
+    const itemState = useSelector(state => state.itemState.items);
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
     useEffect(() => {
         if (!loading) {
             dispatch(setUser(user));
+        }
+        if (!Array.isArray(itemState) || !itemState.length) {
+            dispatch(fetchItems());
         }
         return;
     }, [loading]);
@@ -51,7 +56,7 @@ function App() {
             {!loading ? (
                 <div className="App">
                     <div className="App-header">
-                        <Navbar bg="success" variant="dark">
+                        <Navbar bg="info" variant="dark">
                             <Nav className="mr-auto">
                                 <Navbar.Brand as={Link} to="/">
                                     <strong>JoGa</strong>
