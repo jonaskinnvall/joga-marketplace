@@ -15,15 +15,25 @@ export const itemReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 items: [...state.items, action.payload.newItem]
             };
+
         case EDIT_ITEM:
-            return [...state, action.payload.itemID];
+            return {
+                ...state,
+                items: [...state.items, action.payload.updatedItem]
+            };
+
         case DELETE_ITEM:
-            return [...state, action.payload.itemID];
+            var itemID = action.payload._id;
+            var newItems = state.items.filter(item => item._id != itemID);
+            return { ...state, items: [newItems] };
+
         case FETCH_ITEM:
-            return [...state, action.payload.itemID];
+            return { ...state, items: [...state.items, action.payload.itemDB] };
+
         case FETCH_ITEMS:
             var items = action.payload;
             return { ...state, items: items };
+
         default:
             return state;
     }

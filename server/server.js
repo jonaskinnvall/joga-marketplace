@@ -6,7 +6,7 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const fs = require('fs');
+// const fs = require('fs');
 
 require('dotenv').config({ path: 'secrets.env' });
 
@@ -121,6 +121,7 @@ router
         );
     });
 
+// Route to add user to DB if current user doesn't already exist
 router.route('/users').post((req, res) => {
     User.find({ userID: req.body.userID }, (error, id) => {
         // Create new user if it doesn't exist
@@ -140,6 +141,7 @@ router.route('/users').post((req, res) => {
 
 // ITEM ROUTES
 
+// Route to add items and retrieve all items in DB
 router
     .route('/items')
     // Get all posts
@@ -164,12 +166,40 @@ router
         });
     });
 
-// TODO itemID routes
+// Route to retrieve, update and delete items based on item's ID
 router
     .route('/items/:id')
-    .get((req, res) => {})
-    .put(checkJwt, (req, res) => {})
-    .delete((req, res) => {});
+    .get((req, res) => {
+        // Retrieve item based on itemID
+        Item.findById(req.params._id, (error, item) => {
+            res.json({ item });
+        });
+    })
+    .put(checkJwt, (req, res) => {
+        // Update item based on itemID
+        Item.findByIdAndUpdate(
+            req.params._id,
+            req.body.itemUpdate,
+            { new: true },
+            (error, updatedItem) => {
+                if (error)
+                    return res.status(500).send('Error updating item!', error);
+                else if (!updatedItem)
+                    return res.status(404).send('Item could not be found!');
+                res.status(200).json(updatedItem);
+            }
+        );
+    })
+    .delete(checkJwt, (req, res) => {
+        // Delete item based on itemID
+        Item.findByIdAndRemove(req.params._id, (error, removedItem) => {
+            if (error)
+                return res.status(500).send('Error removing item!', error);
+            else if (!removedItem)
+                return res.status(404).send('Item could not be found!');
+            res.status(200).json('Removed item!');
+        });
+    });
 
 //Route to ger items in specific category
 router.route('/items/:category').get((req, res) => {
@@ -179,42 +209,10 @@ router.route('/items/:category').get((req, res) => {
         else if (!items)
             return res
                 .status(404)
-                .send('Items could not be found with this category!');
+                .send('Items could not be found for this category!');
         res.status(200).json(items);
     });
 });
-
-router
-    .route('/private')
-    .get(checkJwt, (req, res) => {
-        res.send({ express: 'Hello Authorized Express!' });
-    })
-    .post(checkJwt, (req, res) => {
-        res.send(
-            `I received your POST request. This is what you sent me: ${req.body.post}`
-            // 'I received your POST request.'
-        );
-    });
-
-//Create a GET route
-router.get('/hello', (req, res) => {
-    res.send({ express: 'Hello Express!' });
-});
-
-//POST ENDPOINTS
-// app.use(checkJwt);
-
-//Create POST route
-
-//Add author: req.user.name because of checkJwt!
-// router.post('/private', checkJwt, (req, res) => {
-//     console.log(req.body);
-
-//     res.send(
-//         `I received your POST request. This is what you sent me: ${req.body.post}`
-//         // 'I received your POST request.'
-//     );
-// });
 
 app.use('/api', router);
 
