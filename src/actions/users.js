@@ -31,7 +31,6 @@ export const setUser = user => {
                         })
                         .then(res => {
                             DB = res.data.body;
-                            console.log(res.data.message);
                             dispatch({
                                 type: SET_USER,
                                 payload: { DB }
@@ -52,8 +51,16 @@ export const editUser = userUpdate => {
             .put(idURL, { userID: userUpdate.userID, userUpdate })
             .then(res => {
                 updatedDB = res.data;
-                console.log(updatedDB);
-
                 dispatch({ type: EDIT_USER, payload: { updatedDB } });
             });
+};
+
+export const deleteUserDB = user => {
+    let idURL = URI + 'users/' + user.userID;
+
+    return dispatch => {
+        axios.delete(idURL).then(() => {
+            dispatch(setUser());
+        });
+    };
 };

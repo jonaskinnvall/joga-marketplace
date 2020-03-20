@@ -6,6 +6,8 @@ import {
     FETCH_ITEM
 } from '../actions/actionTypes';
 
+import { editUser } from './users';
+
 import axios from 'axios';
 
 const URI =
@@ -25,11 +27,11 @@ export const fetchItems = () => {
 
 export const addItem = (user, item, token) => {
     let URL = URI + 'items/';
-    console.log(item);
     let newItem;
+    let newUser = { ...user };
 
-    return dispatch =>
-        axios
+    return dispatch => {
+        return axios
             .post(
                 URL,
                 {
@@ -44,11 +46,17 @@ export const addItem = (user, item, token) => {
             )
             .then(res => {
                 newItem = res.data.body;
-                dispatch({
+                return dispatch({
                     type: ADD_ITEM,
                     payload: { newItem }
                 });
+            })
+            .then(action => {
+                newUser.postedItems.push(action.payload.newItem._id);
+                newUser.nrItems++;
+                dispatch(editUser(newUser));
             });
+    };
 };
 
 export const editItem = itemUpdate => {
@@ -58,8 +66,6 @@ export const editItem = itemUpdate => {
     return dispatch =>
         axios.put(itemURL, { _id: itemUpdate._id, itemUpdate }).then(res => {
             updatedItem = res.data;
-            console.log(updatedItem);
-
             dispatch({ type: EDIT_ITEM, payload: { updatedItem } });
         });
 };
@@ -81,4 +87,13 @@ export const fetchItem = item => {
             itemDB = res.data;
             dispatch({ type: FETCH_ITEM, payload: { itemDB } });
         });
+};
+
+export const deleteAllItems = () => {
+    let URL = URI + '/items/';
+    return dispatch => {
+        return axios.delete(URL).then(() => {
+            dispatch(fetchItems());
+        });
+    };
 };

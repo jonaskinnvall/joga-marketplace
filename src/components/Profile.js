@@ -2,14 +2,14 @@ import React, { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Button, Col } from 'react-bootstrap';
 import { useAuth0 } from '../Auth/Auth';
-import axios from 'axios';
-import { setUser, editUser } from '../actions/users';
-import { addItem } from '../actions/items';
+import { deleteUserDB } from '../actions/users';
+import { addItem, deleteAllItems } from '../actions/items';
 
 const Profile = () => {
     const { loading, logout, getTokenSilently } = useAuth0();
     const dispatch = useDispatch();
     const userState = useSelector(state => state.userState.user);
+    // const itemState = useSelector(state => state.itemState.items);
     const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
     if (loading || !userState) {
         return <div>Loading...</div>;
@@ -19,17 +19,18 @@ const Profile = () => {
         e.preventDefault();
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
-        await dispatch(addItem(userUpdate, itemReq, token));
-
-        userUpdate.nrItems++;
-        await dispatch(editUser(userUpdate));
+        dispatch(addItem(userUpdate, itemReq, token));
     };
 
     // JUST FOR NOW TO TEST AROUND: Function to delete user in DB
     const deleteUser = () => {
-        let URL = 'http://localhost:3001/api/users/' + userState.userID;
+        let user = { ...userState };
+        dispatch(deleteUserDB(user));
         logout();
-        axios.delete(URL).then(dispatch(setUser()));
+    };
+
+    const deleteItems = () => {
+        dispatch(deleteAllItems());
     };
 
     return (
@@ -92,7 +93,12 @@ const Profile = () => {
                         Post item
                     </Button>
                 </Form>
+            </div>
+            <div>
                 <button onClick={deleteUser}>Delete user</button>
+            </div>
+            <div>
+                <button onClick={deleteItems}>Delete items</button>
             </div>
             <div>
                 <h2>{userState.nrItems}</h2>

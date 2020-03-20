@@ -41,14 +41,18 @@ function App() {
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
+    // followed by fetching all items from the DB
     useEffect(() => {
+        const setUserState = async () => {
+            await dispatch(setUser(user));
+        };
         if (!loading) {
-            dispatch(setUser(user));
+            setUserState();
+
+            if (!Array.isArray(itemState) || !itemState.length) {
+                dispatch(fetchItems());
+            }
         }
-        if (!Array.isArray(itemState) || !itemState.length) {
-            dispatch(fetchItems());
-        }
-        return;
     }, [loading]);
 
     return (

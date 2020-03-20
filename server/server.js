@@ -7,6 +7,7 @@ const jwksRsa = require('jwks-rsa');
 const morgan = require('morgan');
 const helmet = require('helmet');
 // const fs = require('fs');
+// TODO Fix so images can be added/uploaded to DB
 
 require('dotenv').config({ path: 'secrets.env' });
 
@@ -144,14 +145,14 @@ router.route('/users').post((req, res) => {
 // Route to add items and retrieve all items in DB
 router
     .route('/items')
-    // Get all posts
     .get((req, res) => {
+        // Get all posts
         Item.find((error, items) => {
             res.json({ items });
         });
     })
-    // Post an item
     .post(checkJwt, (req, res) => {
+        // Post an item
         let item = new Item({
             userID: req.body.userID,
             category: req.body.category,
@@ -163,6 +164,16 @@ router
         item.save(error => {
             if (error) return console.error(error);
             res.json({ body: item, message: 'Item added!' });
+        });
+    })
+    .delete((req, res) => {
+        // Delete all items from collection
+        Item.deleteMany((error, removedItems) => {
+            if (error)
+                return res.status(500).send('Error removing items!', error);
+            else if (!removedItems)
+                return res.status(404).send('Items could not be found!');
+            res.status(200).json('Removed all items!');
         });
     });
 
