@@ -1,0 +1,17 @@
+.cards {
+    width: 23rem;
+}
+.card-row {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.imgDiv {
+    height: 150px;
+}
+.card-img {
+    display: block;
+    margin: auto;
+    max-height: 100%;
+    width: auto;
+}

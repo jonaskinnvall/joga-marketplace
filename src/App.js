@@ -60,56 +60,66 @@ function App() {
             {!loading ? (
                 <div className="App">
                     <div className="App-header">
-                        <Navbar bg="info" variant="dark">
-                            <Nav className="mr-auto">
-                                <Navbar.Brand as={Link} to="/">
-                                    <strong>JoGa</strong>
-                                </Navbar.Brand>
-                                <Nav.Link as={NavLink} to="/featured">
-                                    {' '}
-                                    Featured{' '}
-                                </Nav.Link>
-                            </Nav>
-                            <Nav className="mx-auto">
-                                <Form inline>
-                                    <FormControl
-                                        type="text"
-                                        placeholder="Search"
-                                        className="mr-sm-2"
-                                    />
-                                    <Button variant="outline-light">
-                                        Search
-                                    </Button>
-                                </Form>
-                            </Nav>
-                            <Nav className="ml-auto">
-                                {isAuthenticated && userState ? (
-                                    <Nav>
-                                        <Nav.Link as={NavLink} to="/profile">
-                                            {user.given_name}{' '}
-                                            <img
-                                                src={userState.image}
-                                                alt="Profile"
-                                            />
-                                        </Nav.Link>
-                                        <Nav.Link onClick={() => logout()}>
-                                            Log Out
-                                        </Nav.Link>
-                                    </Nav>
-                                ) : (
-                                    <Nav.Link
-                                        onClick={() =>
-                                            loginWithRedirect({
-                                                connection: 'google-oauth2'
-                                            })
-                                        }
-                                    >
-                                        Log in
+                        <Navbar
+                            collapseOnSelect
+                            expand="md"
+                            bg="info"
+                            variant="dark"
+                        >
+                            <Navbar.Brand as={Link} to="/">
+                                <strong>JoGa</strong>
+                            </Navbar.Brand>
+                            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                            <Navbar.Collapse id="responsive-navbar-nav">
+                                <Nav className="mr-auto">
+                                    <Nav.Link as={NavLink} to="/featured">
+                                        {' '}
+                                        Featured{' '}
                                     </Nav.Link>
-                                )}
-                            </Nav>
+                                </Nav>
+                                <Nav className="mx-auto">
+                                    <Form inline>
+                                        <FormControl
+                                            type="text"
+                                            placeholder="Search"
+                                            className="mr-sm-2"
+                                        />
+                                        <Button variant="outline-light">
+                                            Search
+                                        </Button>
+                                    </Form>
+                                </Nav>
+                                <Nav className="ml-auto">
+                                    {isAuthenticated && userState ? (
+                                        <Nav>
+                                            <Nav.Link
+                                                as={NavLink}
+                                                to="/profile"
+                                            >
+                                                {user.given_name}{' '}
+                                                <img
+                                                    src={userState.image}
+                                                    alt="Profile"
+                                                />
+                                            </Nav.Link>
+                                            <Nav.Link onClick={() => logout()}>
+                                                Log Out
+                                            </Nav.Link>
+                                        </Nav>
+                                    ) : (
+                                        <Nav.Link
+                                            onClick={() =>
+                                                loginWithRedirect({
+                                                    connection: 'google-oauth2'
+                                                })
+                                            }
+                                        >
+                                            Log in
+                                        </Nav.Link>
+                                    )}
+                                </Nav>
+                            </Navbar.Collapse>
                         </Navbar>
-                        {/* </div> */}
                     </div>
                     <div className="App-main">
                         <Switch>
