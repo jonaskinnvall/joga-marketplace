@@ -1,9 +1,11 @@
 import React from 'react';
 import { Card, Button, Row, Badge } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import '../css/ItemCard.css';
 
-const ItemCard = item => {
+const ItemCard = ({ item }) => {
     const user = useSelector(state => state.userState.user);
     return (
         <div>
@@ -53,7 +55,7 @@ const ItemCard = item => {
                             </Button>
                         </Row>
                     </Card.Header>
-                    <div className="imgDiv">
+                    <div className="img-div">
                         <Card.Img
                             className="card-img"
                             variant="top"
@@ -85,3 +87,7 @@ const ItemCard = item => {
 };
 
 export default ItemCard;
+
+ItemCard.propTypes = {
+    item: PropTypes.object.isRequired
+};

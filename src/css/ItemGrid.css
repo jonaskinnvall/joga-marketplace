@@ -1,3 +1,11 @@
+.header-row {
+    justify-content: space-between;
+}
 .grid-row {
     justify-content: space-evenly;
+}
+
+.grid-btn {
+    height: 100%;
+    width: 5rem;
 }
