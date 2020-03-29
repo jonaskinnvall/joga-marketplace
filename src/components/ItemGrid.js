@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Container, Row, Button } from 'react-bootstrap';
+
 import PropTypes from 'prop-types';
 
 import ItemCard from './ItemCard';
+import SVG from './icons/SVG';
 import '../css/ItemGrid.css';
 
 const ItemGrid = ({ items }) => {
@@ -44,8 +46,7 @@ const ItemGrid = ({ items }) => {
                                     variant="light"
                                     className="grid-btn"
                                 >
-                                    {' '}
-                                    More{' '}
+                                    <SVG name="chevron" width="32" />
                                 </Button>
                             </div>
                         </Row>

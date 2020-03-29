@@ -9,3 +9,4 @@
 .DS_Store
 secrets.env
 auth-var.json
+images

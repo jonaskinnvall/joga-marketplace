@@ -3,7 +3,9 @@ import { Card, Button, Row, Badge } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import SVG from './icons/SVG';
 import '../css/ItemCard.css';
+import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
     const user = useSelector(state => state.userState.user);
@@ -14,13 +16,20 @@ const ItemCard = ({ item }) => {
                     <Card.Header>
                         <Row className="card-row" as="h2">
                             {item.title}
-                            <Button variant="info">
-                                {' '}
-                                Star <Badge>{item.stars}</Badge>
+                            <Button variant="outline-info" className="btn-row">
+                                <SVG name="star" width="1.5em" />
+                                {'    '}
+                                <Badge>{item.stars}</Badge>
                             </Button>
                         </Row>
                     </Card.Header>
-                    <Card.Img variant="top" />
+                    <div className="img-div">
+                        <Card.Img
+                            className="card-img"
+                            variant="top"
+                            src={puh}
+                        />
+                    </div>
                     <Card.Body>
                         <Row className="card-row">
                             <Card.Subtitle>{item.category}</Card.Subtitle>
