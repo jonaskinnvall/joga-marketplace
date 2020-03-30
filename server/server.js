@@ -179,7 +179,7 @@ router
 
 // Route to retrieve, update and delete items based on item's ID
 router
-    .route('/items/:id')
+    .route('/items/:_id')
     .get((req, res) => {
         // Retrieve item based on itemID
         Item.findById(req.params._id, (error, item) => {
@@ -188,6 +188,8 @@ router
     })
     .put(checkJwt, (req, res) => {
         // Update item based on itemID
+        console.log(req.params);
+        console.log(req.body);
         Item.findByIdAndUpdate(
             req.params._id,
             req.body.itemUpdate,

@@ -46,6 +46,7 @@ export const addItem = (user, item, token) => {
             )
             .then(res => {
                 newItem = res.data.body;
+                console.log(newItem);
                 return dispatch({
                     type: ADD_ITEM,
                     payload: { newItem }
@@ -59,15 +60,57 @@ export const addItem = (user, item, token) => {
     };
 };
 
-export const editItem = itemUpdate => {
-    let itemURL = URI + '/items/' + itemUpdate._id;
+export const editItem = (user, itemUpdate, token, starred) => {
+    console.log(itemUpdate._id);
+    let itemURL = URI + 'items/' + itemUpdate._id;
     let updatedItem;
+    let newUser = { ...user };
 
-    return dispatch =>
-        axios.put(itemURL, { _id: itemUpdate._id, itemUpdate }).then(res => {
-            updatedItem = res.data;
-            dispatch({ type: EDIT_ITEM, payload: { updatedItem } });
-        });
+    if (!starred) {
+        return dispatch => {
+            return axios
+                .put(
+                    itemURL,
+                    { _id: itemUpdate._id, itemUpdate },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then(res => {
+                    updatedItem = res.data;
+                    console.log(updatedItem);
+                    return dispatch({
+                        type: EDIT_ITEM,
+                        payload: { updatedItem }
+                    });
+                })
+                .then(action => {
+                    newUser.starredItems.push(action.payload.updatedItem._id);
+                    dispatch(editUser(newUser));
+                });
+        };
+    } else {
+        return dispatch => {
+            return axios
+                .put(
+                    itemURL,
+                    { _id: itemUpdate._id, itemUpdate },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then(res => {
+                    updatedItem = res.data;
+                    return dispatch({
+                        type: EDIT_ITEM,
+                        payload: { updatedItem }
+                    });
+                })
+                .then(action => {
+                    console.log(
+                        newUser.starredItems.pop(action.payload.updatedItem._id)
+                    );
+                    newUser.starredItems.pop(action.payload.updatedItem._id);
+                    dispatch(editUser(newUser));
+                });
+        };
+    }
 };
 
 export const deleteItem = itemDelete => {

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Star = ({
-    name = '',
+    name = 'star',
     style = {},
     width = '1em',
     viewBox = '0 0 16 16',
@@ -27,7 +27,7 @@ const Star = ({
 export default Star;
 
 Star.propTypes = {
-    name: PropTypes.object,
+    name: PropTypes.string,
     style: PropTypes.object,
     width: PropTypes.string,
     viewBox: PropTypes.string,

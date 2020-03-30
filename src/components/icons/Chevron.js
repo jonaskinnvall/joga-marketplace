@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Chevron = ({
-    name = '',
+    name = 'chevron-right',
     style = {},
     width = '1em',
     viewBox = '0 0 20 20',
@@ -26,7 +26,7 @@ const Chevron = ({
 export default Chevron;
 
 Chevron.propTypes = {
-    name: PropTypes.object,
+    name: PropTypes.string,
     style: PropTypes.object,
     width: PropTypes.string,
     viewBox: PropTypes.string,

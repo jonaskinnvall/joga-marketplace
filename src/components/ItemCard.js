@@ -1,14 +1,45 @@
 import React from 'react';
 import { Card, Button, Row, Badge } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { useAuth0 } from '../Auth/Auth';
 import SVG from './icons/SVG';
+import { editItem } from '../actions/items';
+
 import '../css/ItemCard.css';
 import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
+    const { loading, getTokenSilently } = useAuth0();
     const user = useSelector(state => state.userState.user);
+    const itemState = useSelector(state => state.itemState.items);
+    const dispatch = useDispatch();
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    const toggleStar = async e => {
+        e.preventDefault();
+        let token = await getTokenSilently();
+        let userUpdate = { ...user };
+        let itemUpdate = { ...item };
+        let starred = false;
+        if (!item.starredBy.includes(user.userID)) {
+            itemUpdate.starredBy.push(user.userID);
+            itemUpdate.stars++;
+        } else {
+            itemUpdate.starredBy.pop(user.userID);
+            // itemUpdate = itemState.filter(item => item._id != itemID);
+            itemUpdate.stars--;
+
+            starred = true;
+        }
+
+        dispatch(editItem(userUpdate, itemUpdate, token, starred));
+    };
+
     return (
         <div>
             {!user ? (
@@ -16,8 +47,12 @@ const ItemCard = ({ item }) => {
                     <Card.Header>
                         <Row className="card-row" as="h2">
                             {item.title}
-                            <Button variant="outline-info" className="btn-row">
-                                <SVG name="star" width="1.5em" />
+                            <Button
+                                variant="outline-info"
+                                className="btn-row"
+                                disabled
+                            >
+                                <SVG name="star-fill" width="1.5em" />
                                 {'    '}
                                 <Badge>{item.stars}</Badge>
                             </Button>
@@ -58,9 +93,27 @@ const ItemCard = ({ item }) => {
                     <Card.Header>
                         <Row className="card-row" as="h2">
                             {item.title}
-                            <Button variant="info">
-                                {' '}
-                                Star <Badge>{item.stars}</Badge>
+                            <Button
+                                variant="outline-info"
+                                className="btn-row"
+                                onClick={toggleStar}
+                            >
+                                {!item.starredBy.includes(user.userID) ? (
+                                    <SVG name="star" width="1.5em" />
+                                ) : (
+                                    <SVG name="star-fill" width="1.5em" />
+                                )}
+
+                                {'    '}
+                                <Badge>
+                                    {
+                                        itemState[
+                                            itemState.findIndex(
+                                                i => i._id === item._id
+                                            )
+                                        ].stars
+                                    }
+                                </Badge>
                             </Button>
                         </Row>
                     </Card.Header>

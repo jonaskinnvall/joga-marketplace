@@ -11,7 +11,7 @@ const SVG = props => {
             return <Chevron {...props} />;
         case 'star':
             return <Star {...props} />;
-        case 'starFilled':
+        case 'star-fill':
             return <StarFilled {...props} />;
         default:
             return;

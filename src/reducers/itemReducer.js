@@ -19,7 +19,19 @@ export const itemReducer = (state = INITIAL_STATE, action) => {
         case EDIT_ITEM:
             return {
                 ...state,
-                items: [...state.items, action.payload.updatedItem]
+                items: [
+                    ...state.items.map(item => {
+                        // If not item we want to change, keep as is
+                        if (item._id !== action.payload.updatedItem._id) {
+                            return item;
+                        }
+                        // Otherwise, change it
+                        return {
+                            ...item,
+                            ...action.payload.updatedItem
+                        };
+                    })
+                ]
             };
 
         case DELETE_ITEM:
