@@ -19,7 +19,7 @@ const Home = () => {
                     </div> */}
                     <div></div>
                     <ItemGrid
-                        items={itemState}
+                        itemsFromState={itemState}
                         // ?pressed={pressed}
                         // ?pressBtn={(rowID, press) => {
                         // ?    setPressed({ id: rowID, bool: press });
@@ -30,7 +30,7 @@ const Home = () => {
                     </div> */}
                     <div></div>
                     <ItemGrid
-                        items={itemState.filter(
+                        itemsFromState={itemState.filter(
                             item => item.category === 'Toys'
                         )}
                     />

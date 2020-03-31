@@ -1,14 +1,11 @@
 import { SET_USER, EDIT_USER } from '../actions/actionTypes';
+import produce from 'immer';
 
-const INITIAL_STATE = {};
-
-export const userReducer = (state = INITIAL_STATE, action) => {
+export const userReducer = produce((draft, action) => {
     switch (action.type) {
         case SET_USER:
-            return { ...state, ...action.payload.DB };
+            return action.payload.DB;
         case EDIT_USER:
-            return { ...state, ...action.payload.updatedDB };
-        default:
-            return state;
+            return action.payload.updatedDB;
     }
-};
+}, {});

@@ -7,7 +7,9 @@ import ItemCard from './ItemCard';
 import SVG from './icons/SVG';
 import '../css/ItemGrid.css';
 
-const ItemGrid = ({ items }) => {
+const ItemGrid = ({ itemsFromState }) => {
+    let items = [...itemsFromState];
+
     const [pressed, setPressed] = useState(false);
     return (
         <div>
@@ -65,7 +67,7 @@ const ItemGrid = ({ items }) => {
 export default ItemGrid;
 
 ItemGrid.propTypes = {
-    items: PropTypes.array.isRequired,
+    itemsFromState: PropTypes.array.isRequired,
     pressed: PropTypes.bool,
     pressBtn: PropTypes.func
 };

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { useAuth0 } from '../Auth/Auth';
 import SVG from './icons/SVG';
-import { editItem } from '../actions/items';
+import { toggleStar } from '../actions/items';
 
 import '../css/ItemCard.css';
 import puh from '../../images/Puh.jpg';
@@ -20,24 +20,19 @@ const ItemCard = ({ item }) => {
         return <div>Loading...</div>;
     }
 
-    const toggleStar = async e => {
+    const starToggle = async e => {
         e.preventDefault();
         let token = await getTokenSilently();
         let userUpdate = { ...user };
+        let id = itemState.findIndex(i => i._id === item._id);
+
         let itemUpdate = { ...item };
         let starred = false;
-        if (!item.starredBy.includes(user.userID)) {
-            itemUpdate.starredBy.push(user.userID);
-            itemUpdate.stars++;
-        } else {
-            itemUpdate.starredBy.pop(user.userID);
-            // itemUpdate = itemState.filter(item => item._id != itemID);
-            itemUpdate.stars--;
-
+        if (item.starredBy.includes(user.userID)) {
             starred = true;
         }
 
-        dispatch(editItem(userUpdate, itemUpdate, token, starred));
+        dispatch(toggleStar(userUpdate, itemUpdate, token, starred, id));
     };
 
     return (
@@ -96,7 +91,7 @@ const ItemCard = ({ item }) => {
                             <Button
                                 variant="outline-info"
                                 className="btn-row"
-                                onClick={toggleStar}
+                                onClick={starToggle}
                             >
                                 {!item.starredBy.includes(user.userID) ? (
                                     <SVG name="star" width="1.5em" />

@@ -133,7 +133,8 @@ router.route('/users').post((req, res) => {
                 image: req.body.image
             });
             user.save(error => {
-                if (error) return console.error(error);
+                if (error)
+                    return res.status(500).send('Error adding user!', error);
                 res.json({ body: user, message: 'User added!' });
             });
         } else res.json({ message: 'User already exists.' });
@@ -162,7 +163,7 @@ router
             image: req.body.image
         });
         item.save(error => {
-            if (error) return console.error(error);
+            if (error) return res.status(500).send('Error adding item!', error);
             res.json({ body: item, message: 'Item added!' });
         });
     })
@@ -188,16 +189,14 @@ router
     })
     .put(checkJwt, (req, res) => {
         // Update item based on itemID
-        console.log(req.params);
-        console.log(req.body);
         Item.findByIdAndUpdate(
             req.params._id,
-            req.body.itemUpdate,
+            req.body.item,
             { new: true },
             (error, updatedItem) => {
-                if (error)
+                if (error) {
                     return res.status(500).send('Error updating item!', error);
-                else if (!updatedItem)
+                } else if (!updatedItem)
                     return res.status(404).send('Item could not be found!');
                 res.status(200).json(updatedItem);
             }
