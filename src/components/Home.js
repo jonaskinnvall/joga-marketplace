@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import ItemGrid from './ItemGrid';
 
 const Home = () => {
-    const itemState = useSelector(state => state.itemState.items);
+    const itemState = useSelector(state => state.itemState);
     //? const [pressed, setPressed] = useState({ id: null, bool: false });
 
     return (

@@ -6,45 +6,39 @@ import {
     FETCH_ITEMS
 } from '../actions/actionTypes';
 
-const INITIAL_STATE = { items: [] };
+const INITIAL_STATE = [];
 
 export const itemReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case ADD_ITEM:
-            return {
-                ...state,
-                items: [...state.items, action.payload.newItem]
-            };
+            return [...state, action.payload.newItem];
 
         case EDIT_ITEM:
-            return {
+            return [
                 ...state,
-                items: [
-                    ...state.items.map(item => {
-                        // If not item we want to change, keep as is
-                        if (item._id !== action.payload.updatedItem._id) {
-                            return item;
-                        }
-                        // Otherwise, change it
-                        return {
-                            ...item,
-                            ...action.payload.updatedItem
-                        };
-                    })
-                ]
-            };
+                ...state.map(item => {
+                    // If not item we want to change, keep as is
+                    if (item._id !== action.payload.updatedItem._id) {
+                        return item;
+                    }
+                    // Otherwise, change it
+                    return {
+                        ...item,
+                        ...action.payload.updatedItem
+                    };
+                })
+            ];
 
         case DELETE_ITEM:
             var itemID = action.payload._id;
-            var newItems = state.items.filter(item => item._id != itemID);
-            return { ...state, items: [newItems] };
+            var newItems = state.filter(item => item._id != itemID);
+            return [...state, newItems];
 
         case FETCH_ITEM:
-            return { ...state, items: [...state.items, action.payload.itemDB] };
+            return [...state, action.payload.itemDB];
 
         case FETCH_ITEMS:
-            var items = action.payload;
-            return { ...state, items: items };
+            return [...state, ...action.payload];
 
         default:
             return state;

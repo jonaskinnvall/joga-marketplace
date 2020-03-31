@@ -9,7 +9,7 @@ import { addItem, deleteAllItems } from '../actions/items';
 const Profile = () => {
     const { loading, logout, getTokenSilently } = useAuth0();
     const dispatch = useDispatch();
-    const userState = useSelector(state => state.userState.user);
+    const userState = useSelector(state => state.userState);
     // const itemState = useSelector(state => state.itemState.items);
     const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
     if (loading || !userState) {

@@ -12,8 +12,8 @@ import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
     const { loading, getTokenSilently } = useAuth0();
-    const user = useSelector(state => state.userState.user);
-    const itemState = useSelector(state => state.itemState.items);
+    const user = useSelector(state => state.userState);
+    const itemState = useSelector(state => state.itemState);
     const dispatch = useDispatch();
 
     if (loading) {
@@ -42,7 +42,7 @@ const ItemCard = ({ item }) => {
 
     return (
         <div>
-            {!user ? (
+            {Object.keys(user).length === 0 ? (
                 <Card className="cards" border="info">
                     <Card.Header>
                         <Row className="card-row" as="h2">

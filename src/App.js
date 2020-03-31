@@ -36,8 +36,8 @@ function App() {
 
     // React-Redux hooks
     const dispatch = useDispatch();
-    const userState = useSelector(state => state.userState.user);
-    const itemState = useSelector(state => state.itemState.items);
+    const userState = useSelector(state => state.userState);
+    const itemState = useSelector(state => state.itemState);
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
