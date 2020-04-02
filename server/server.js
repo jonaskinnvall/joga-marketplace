@@ -79,8 +79,7 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-// USER ROUTES
-
+// ----------USER ROUTES----------
 //  Route to make changes, delete or retrieve specific users
 router
     .route('/users/:id')
@@ -122,27 +121,90 @@ router
         );
     });
 
-// Route to add user to DB if current user doesn't already exist
-router.route('/users').post((req, res) => {
-    User.find({ userID: req.body.userID }, (error, id) => {
-        // Create new user if it doesn't exist
-        if (id == 0) {
-            let user = new User({
-                userID: req.body.userID,
-                name: req.body.name,
-                image: req.body.image
-            });
-            user.save(error => {
-                if (error)
-                    return res.status(500).send('Error adding user!', error);
-                res.json({ body: user, message: 'User added!' });
-            });
-        } else res.json({ message: 'User already exists.' });
+router
+    .route('/users')
+    // Route to add user to DB if current user doesn't already exist
+    .post((req, res) => {
+        User.find({ userID: req.body.userID }, (error, id) => {
+            // Create new user if it doesn't exist
+            if (id == 0) {
+                let user = new User({
+                    userID: req.body.userID,
+                    name: req.body.name,
+                    image: req.body.image
+                });
+                user.save(error => {
+                    if (error)
+                        return res
+                            .status(500)
+                            .send('Error adding user!', error);
+                    res.json({ body: user, message: 'User added!' });
+                });
+            } else res.json({ message: 'User already exists.' });
+        });
+    })
+    // Route to update all users in DB if items are deleted
+    .put((req, res) => {
+        if (req.body.userUpdate.hasOwnProperty('nrItems')) {
+            User.updateMany(
+                {
+                    $or: [
+                        { nrItems: { $gt: 0 } },
+                        { starredItems: { $not: { $size: 0 } } }
+                    ]
+                },
+                {
+                    $set: {
+                        nrItems: req.body.userUpdate.nrItems,
+                        postedItems: req.body.userUpdate.postedItems,
+                        starredItems: req.body.userUpdate.starredItems
+                    }
+                },
+                (error, users) => {
+                    if (error)
+                        return res
+                            .status(500)
+                            .send('Error removing items from users!', error);
+                    else if (users.nModified == 0)
+                        return res
+                            .status(404)
+                            .send('No users that has posted or starred items!');
+
+                    return res
+                        .status(200)
+                        .json('Removed all items from users!');
+                }
+            );
+        } else {
+            User.updateMany(
+                {
+                    starredItems: { $not: { $size: 0 } }
+                },
+                {
+                    $pull: {
+                        starredItems: { $in: req.body.userUpdate }
+                    }
+                },
+                (error, users) => {
+                    if (error)
+                        return res
+                            .status(500)
+                            .send('Error removing items from users!', error);
+                    else if (users.nModified == 0)
+                        return res
+                            .status(404)
+                            .send('No users that has posted or starred items!');
+
+                    return res
+                        .status(200)
+                        .json('Removed all starred items from users!');
+                }
+            );
+        }
+        res.status(500);
     });
-});
 
-// ITEM ROUTES
-
+// ----------ITEM ROUTES----------
 // Route to add items and retrieve all items in DB
 router
     .route('/items')
@@ -168,14 +230,32 @@ router
         });
     })
     .delete((req, res) => {
-        // Delete all items from collection
-        Item.deleteMany((error, removedItems) => {
-            if (error)
-                return res.status(500).send('Error removing items!', error);
-            else if (!removedItems)
-                return res.status(404).send('Items could not be found!');
-            res.status(200).json('Removed all items!');
-        });
+        // Delete items that had been uploaded by deleted user
+        if (Array.isArray(req.body) && req.body.length) {
+            Item.deleteMany(
+                { _id: { $in: req.body } },
+                (error, removedItems) => {
+                    if (error)
+                        return res
+                            .status(500)
+                            .send('Error removing items!', error);
+                    else if (!removedItems)
+                        return res
+                            .status(404)
+                            .send('Items could not be found!');
+                    res.status(200).json('Removed items!');
+                }
+            );
+        } else {
+            // Delete all items from collection
+            Item.deleteMany((error, removedItems) => {
+                if (error)
+                    return res.status(500).send('Error removing items!', error);
+                else if (!removedItems)
+                    return res.status(404).send('Items could not be found!');
+                res.status(200).json('Removed all items!');
+            });
+        }
     });
 
 // Route to retrieve, update and delete items based on item's ID
@@ -214,17 +294,17 @@ router
     });
 
 //Route to ger items in specific category
-router.route('/items/:category').get((req, res) => {
-    Item.find({ category: req.body.category }, (error, items) => {
-        if (error)
-            return res.status(500).send('Error retrieving items!', error);
-        else if (!items)
-            return res
-                .status(404)
-                .send('Items could not be found for this category!');
-        res.status(200).json(items);
-    });
-});
+//? router.route('/items/:category').get((req, res) => {
+//     Item.find({ category: req.body.category }, (error, items) => {
+//         if (error)
+//             return res.status(500).send('Error retrieving items!', error);
+//         else if (!items)
+//             return res
+//                 .status(404)
+//                 .send('Items could not be found for this category!');
+//         res.status(200).json(items);
+//     });
+//? });
 
 app.use('/api', router);
 

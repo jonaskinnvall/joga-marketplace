@@ -7,7 +7,7 @@ import {
     TOGGLE_STAR
 } from '../actions/actionTypes';
 
-import { editUser } from './users';
+import { editUser, editAllUsers } from './users';
 
 import axios from 'axios';
 
@@ -63,7 +63,6 @@ export const addItem = (user, item, token) => {
 };
 
 export const editItem = (user, itemUpdate, token, starred) => {
-    console.log(itemUpdate._id);
     let itemURL = URI + 'items/' + itemUpdate._id;
     let updatedItem;
     let newUser = { ...user };
@@ -77,7 +76,6 @@ export const editItem = (user, itemUpdate, token, starred) => {
             )
             .then(res => {
                 updatedItem = res.data;
-                console.log(updatedItem);
                 return dispatch({
                     type: EDIT_ITEM,
                     payload: { updatedItem }
@@ -93,11 +91,11 @@ export const editItem = (user, itemUpdate, token, starred) => {
 export const toggleStar = (user, item, token, starred, id) => {
     let itemURL = URI + 'items/' + item._id;
     let updatedItem;
-    // let itemUpdate = { ...item };
 
     if (!starred) {
         item.starredBy = [...item.starredBy, user.userID];
         item.stars++;
+
         return dispatch => {
             return axios
                 .put(
@@ -124,6 +122,7 @@ export const toggleStar = (user, item, token, starred, id) => {
         let userID = user.userID;
         item.starredBy = item.starredBy.filter(user => user !== userID);
         item.stars--;
+
         return dispatch => {
             return axios
                 .put(
@@ -140,7 +139,6 @@ export const toggleStar = (user, item, token, starred, id) => {
                 })
                 .then(action => {
                     let itemID = action.payload.updatedItem._id;
-                    // let newUser = { ...user };
                     user.starredItems = user.starredItems.filter(
                         item => item !== itemID
                     );
@@ -151,7 +149,7 @@ export const toggleStar = (user, item, token, starred, id) => {
 };
 
 export const deleteItem = itemDelete => {
-    let itemURL = URI + '/items/' + itemDelete._id;
+    let itemURL = URI + 'items/' + itemDelete._id;
 
     return dispatch =>
         axios.put(itemURL).then(res => {
@@ -160,7 +158,7 @@ export const deleteItem = itemDelete => {
 };
 
 export const fetchItem = item => {
-    let itemURL = URI + '/items/' + item._id;
+    let itemURL = URI + 'items/' + item._id;
     let itemDB;
     return dispatch =>
         axios.get(itemURL).then(res => {
@@ -169,11 +167,25 @@ export const fetchItem = item => {
         });
 };
 
-export const deleteAllItems = () => {
-    let URL = URI + '/items/';
+export const deleteManyItems = items => {
+    let URL = URI + 'items/';
     return dispatch => {
-        return axios.delete(URL).then(() => {
+        return axios.delete(URL, { data: items }).then(() => {
             dispatch(fetchItems());
         });
+    };
+};
+
+export const deleteAllItems = user => {
+    let URL = URI + 'items/';
+    return dispatch => {
+        return axios
+            .delete(URL)
+            .then(() => {
+                return dispatch(fetchItems());
+            })
+            .then(() => {
+                dispatch(editAllUsers(user));
+            });
     };
 };

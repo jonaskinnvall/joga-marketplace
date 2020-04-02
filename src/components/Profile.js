@@ -10,7 +10,6 @@ const Profile = () => {
     const { loading, logout, getTokenSilently } = useAuth0();
     const dispatch = useDispatch();
     const userState = useSelector(state => state.userState);
-    // const itemState = useSelector(state => state.itemState);
     const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
     if (loading || !userState) {
         return <div>Loading...</div>;
@@ -23,15 +22,16 @@ const Profile = () => {
         dispatch(addItem(userUpdate, itemReq, token));
     };
 
-    // JUST FOR NOW TO TEST AROUND: Function to delete user in DB
-    const deleteUser = () => {
+    const deleteUser = async () => {
         let user = { ...userState };
-        dispatch(deleteUserDB(user));
+        await dispatch(deleteUserDB(user));
         logout();
     };
 
+    // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB
     const deleteItems = () => {
-        dispatch(deleteAllItems());
+        let user = { ...userState };
+        dispatch(deleteAllItems(user));
     };
 
     return (
