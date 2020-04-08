@@ -7,11 +7,11 @@ const path = require('path');
 module.exports = {
     //context: path.join(__dirname, "src"),
     devtool: debug ? 'eval-source-map' : false,
-    entry: ['@babel/polyfill', './src/client.js'],
+    entry: './src/client.js',
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'client.min.js',
-        publicPath: '/'
+        publicPath: '/',
     },
     module: {
         rules: [
@@ -20,30 +20,30 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'eslint-loader'
-                }
+                    loader: 'eslint-loader',
+                },
             },
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader'
-                }
+                    loader: 'babel-loader',
+                },
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: ['style-loader', 'css-loader'],
             },
             {
                 test: /\.(png|jp(e*)g|svg|gif)$/i,
                 use: [
                     {
                         loader: 'file-loader',
-                        options: { name: 'images/[hash]-[name].[ext]' }
-                    }
-                ]
-            }
-        ]
+                        options: { name: 'images/[hash]-[name].[ext]' },
+                    },
+                ],
+            },
+        ],
     },
     devServer: {
         historyApiFallback: true,
@@ -55,14 +55,14 @@ module.exports = {
                 context: '/api/',
                 target: 'http://localhost:3001',
                 secure: false,
-                changeOrigin: true
-            }
-        ]
+                changeOrigin: true,
+            },
+        ],
     },
     plugins: /*debug ? [] : */ [
         new HtmlWebpackPlugin({
             template: './public/index.html',
-            filename: './index.html'
-        })
-    ]
+            filename: './index.html',
+        }),
+    ],
 };

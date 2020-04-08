@@ -8,7 +8,7 @@ import {
     FormControl,
     Container,
     Row,
-    Col
+    Col,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -31,13 +31,13 @@ function App() {
         isAuthenticated,
         loginWithRedirect,
         user,
-        logout
+        logout,
     } = useAuth0();
 
     // React-Redux hooks
     const dispatch = useDispatch();
-    const userState = useSelector(state => state.userState);
-    const itemState = useSelector(state => state.itemState);
+    const userState = useSelector((state) => state.userState);
+    const itemState = useSelector((state) => state.itemState);
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
@@ -110,11 +110,11 @@ function App() {
                                         <Nav.Link
                                             onClick={() =>
                                                 loginWithRedirect({
-                                                    connection: 'google-oauth2'
+                                                    connection: 'google-oauth2',
                                                 })
                                             }
                                         >
-                                            Log in
+                                            Log In
                                         </Nav.Link>
                                     )}
                                 </Nav>
