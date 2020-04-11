@@ -1,25 +1,34 @@
-import React, { Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Form, Button, Col } from 'react-bootstrap';
+import { Container, Col, Row, Button, Image } from 'react-bootstrap';
 
 import { useAuth0 } from '../Auth/Auth';
 import { deleteUserDB } from '../actions/users';
 import { addItem, deleteAllItems } from '../actions/items';
+import ItemGrid from './ItemGrid';
+import PostItem from './PostItem';
+
+import '../css/Profile.css';
 
 const Profile = () => {
     const { loading, logout, getTokenSilently } = useAuth0();
     const dispatch = useDispatch();
-    const userState = useSelector(state => state.userState);
+    const userState = useSelector((state) => state.userState);
+    const itemState = useSelector((state) => state.itemState);
     const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
-    if (loading || !userState) {
-        return <div>Loading...</div>;
-    }
+    const [PostItemShow, setPostItemShow] = useState(false);
 
-    const postItem = async e => {
+    // Clear form inputs after closing modal
+    useEffect(() => {
+        if (!PostItemShow) setItemReq({ title: '', cat: '', desc: '' });
+    }, [PostItemShow]);
+
+    const postItem = async (e) => {
         e.preventDefault();
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
-        dispatch(addItem(userUpdate, itemReq, token));
+        await dispatch(addItem(userUpdate, itemReq, token));
+        setPostItemShow(false);
     };
 
     const deleteUser = async () => {
@@ -33,82 +42,101 @@ const Profile = () => {
         let user = { ...userState };
         dispatch(deleteAllItems(user));
     };
+    if (loading || !userState) {
+        return;
+    }
 
     return (
-        <div>
-            <div>
-                <Form onSubmit={postItem}>
-                    <Form.Row>
-                        <Form.Group as={Col}>
-                            <Form.Control
-                                size="lg"
-                                type="text"
-                                placeholder="Title"
-                                value={itemReq.title}
-                                onChange={e =>
-                                    setItemReq({
-                                        ...itemReq,
-                                        title: e.target.value
-                                    })
-                                }
-                            />
-                        </Form.Group>
-                        <Form.Group as={Col} controlId="formGridState">
-                            <Form.Control
-                                as="select"
-                                value={itemReq.cat}
-                                onChange={e =>
-                                    setItemReq({
-                                        ...itemReq,
-                                        cat: e.target.value
-                                    })
-                                }
-                            >
-                                <option>Category</option>
-                                <option>Games</option>
-                                <option>Toys</option>
-                                <option>Furniture</option>
-                            </Form.Control>
-                        </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
-                        <Col>
-                            <Form.Group controlId="exampleForm.ControlTextarea1">
-                                <Form.Control
-                                    as="textarea"
-                                    rows="3"
-                                    placeholder="Item Description"
-                                    value={itemReq.desc}
-                                    onChange={e =>
-                                        setItemReq({
-                                            ...itemReq,
-                                            desc: e.target.value
-                                        })
-                                    }
+        <>
+            {loading || !userState ? (
+                <div> Loading... </div>
+            ) : (
+                <Container className="cont" fluid>
+                    <Row className="prof-row">
+                        <Col className="user-col" xs={true}>
+                            <div className="prof-img-div">
+                                <Image
+                                    className="prof-img"
+                                    src={userState.image}
+                                    rounded
                                 />
-                            </Form.Group>
+                            </div>
+                            <div className="info-div">
+                                <h3 width="auto">{userState.name}</h3>
+                                <p>Posted items: {userState.nrItems}</p>
+
+                                {!Array.isArray(userState.starredItems) ||
+                                !userState.starredItems.length ? (
+                                    <p>Favorite items: 0</p>
+                                ) : (
+                                    <p>
+                                        Favorite items:{' '}
+                                        {userState.starredItems.length}
+                                    </p>
+                                )}
+                                <p>
+                                    Joined:{' '}
+                                    {userState.creationDate.split('T')[0]}
+                                </p>
+                            </div>
                         </Col>
-                        <Col></Col>
-                    </Form.Row>
-                    <Button variant="info" type="submit">
-                        Post item
-                    </Button>
-                </Form>
-            </div>
-            <div>
-                <button onClick={deleteUser}>Delete user</button>
-            </div>
-            <div>
-                <button onClick={deleteItems}>Delete items</button>
-            </div>
-            <div>
-                <h2>{userState.nrItems}</h2>
-            </div>
-            <Fragment>
-                <img src={userState.image} alt="Profile" />
-                <h2>{userState.name}</h2>
-            </Fragment>
-        </div>
+                        <Col xs={8}>
+                            {!Array.isArray(userState.postedItems) ||
+                            !userState.postedItems.length ? (
+                                <h1>You have not posted any items yet!</h1>
+                            ) : (
+                                <ItemGrid
+                                    itemsFromState={itemState.filter((item) =>
+                                        userState.postedItems.includes(item._id)
+                                    )}
+                                    title={'Your items'}
+                                />
+                            )}
+
+                            {!Array.isArray(userState.starredItems) ||
+                            !userState.starredItems.length ? (
+                                <h1>You have not starred any items yet!</h1>
+                            ) : (
+                                <ItemGrid
+                                    itemsFromState={itemState.filter((item) =>
+                                        userState.starredItems.includes(
+                                            item._id
+                                        )
+                                    )}
+                                    title={'Your favorite items'}
+                                />
+                            )}
+                            <Button
+                                variant="info"
+                                onClick={() => setPostItemShow(true)}
+                            >
+                                Add Item
+                            </Button>
+                            <PostItem
+                                post={postItem}
+                                req={itemReq}
+                                onReq={setItemReq}
+                                show={PostItemShow}
+                                onHide={() => setPostItemShow(false)}
+                            />
+                            <>
+                                <button onClick={deleteUser}>
+                                    Delete user
+                                </button>
+                            </>
+                            <>
+                                <button onClick={deleteItems}>
+                                    Delete items
+                                </button>
+                            </>
+                            <>
+                                <h2>{userState.nrItems}</h2>
+                            </>
+                        </Col>
+                    </Row>
+                </Container>
+            )}
+        </>
     );
 };
 

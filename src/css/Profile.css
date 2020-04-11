@@ -1,0 +1,34 @@
+.cont {
+    /* display:flex; */
+    margin-top: 50px;
+}
+.prof-row {
+    justify-content: center;
+}
+.user-col {
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.prof-img-div {
+    height: 250px;
+    /* width: 50%; */
+}
+
+.prof-img {
+    display: block;
+    margin: auto;
+    max-height: 100%;
+    width: auto;
+}
+.info-div {
+    display: block;
+    margin: auto;
+    max-height: 100%;
+    width: auto;
+    justify-content: center;
+}
+
+.info-div h3 {
+    width: 75%;
+}

@@ -12,19 +12,19 @@ import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
     const { loading, getTokenSilently } = useAuth0();
-    const user = useSelector(state => state.userState);
-    const itemState = useSelector(state => state.itemState);
+    const user = useSelector((state) => state.userState);
+    const itemState = useSelector((state) => state.itemState);
     const dispatch = useDispatch();
 
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    const starToggle = async e => {
+    const starToggle = async (e) => {
         e.preventDefault();
         let token = await getTokenSilently();
         let userUpdate = { ...user };
-        let id = itemState.findIndex(i => i._id === item._id);
+        let id = itemState.findIndex((i) => i._id === item._id);
 
         let itemUpdate = { ...item };
         let starred = false;
@@ -36,7 +36,7 @@ const ItemCard = ({ item }) => {
     };
 
     return (
-        <div>
+        <>
             {Object.keys(user).length === 0 ? (
                 <Card className="cards" border="info">
                     <Card.Header>
@@ -53,7 +53,7 @@ const ItemCard = ({ item }) => {
                             </Button>
                         </Row>
                     </Card.Header>
-                    <div className="img-div">
+                    <div className="card-img-div">
                         <Card.Img
                             className="card-img"
                             variant="top"
@@ -104,7 +104,7 @@ const ItemCard = ({ item }) => {
                                     {
                                         itemState[
                                             itemState.findIndex(
-                                                i => i._id === item._id
+                                                (i) => i._id === item._id
                                             )
                                         ].stars
                                     }
@@ -112,7 +112,7 @@ const ItemCard = ({ item }) => {
                             </Button>
                         </Row>
                     </Card.Header>
-                    <div className="img-div">
+                    <div className="card-img-div">
                         <Card.Img
                             className="card-img"
                             variant="top"
@@ -139,12 +139,12 @@ const ItemCard = ({ item }) => {
                     </Card.Footer>
                 </Card>
             )}
-        </div>
+        </>
     );
 };
 
 export default ItemCard;
 
 ItemCard.propTypes = {
-    item: PropTypes.object.isRequired
+    item: PropTypes.object.isRequired,
 };

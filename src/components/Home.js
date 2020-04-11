@@ -5,11 +5,11 @@ import { useSelector } from 'react-redux';
 import ItemGrid from './ItemGrid';
 
 const Home = () => {
-    const itemState = useSelector(state => state.itemState);
+    const itemState = useSelector((state) => state.itemState);
     //? const [pressed, setPressed] = useState({ id: null, bool: false });
 
     return (
-        <div>
+        <>
             {!Array.isArray(itemState) || !itemState.length ? (
                 <div>Loading...</div>
             ) : (
@@ -20,6 +20,7 @@ const Home = () => {
                     <div></div>
                     <ItemGrid
                         itemsFromState={itemState}
+                        title={'Items'}
                         // ?pressed={pressed}
                         // ?pressBtn={(rowID, press) => {
                         // ?    setPressed({ id: rowID, bool: press });
@@ -31,12 +32,13 @@ const Home = () => {
                     <div></div>
                     <ItemGrid
                         itemsFromState={itemState.filter(
-                            item => item.category === 'Toys'
+                            (item) => item.category === 'Toys'
                         )}
+                        title={'Toys'}
                     />
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

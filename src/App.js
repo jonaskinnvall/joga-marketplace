@@ -1,21 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Router, Route, Switch, Link, NavLink } from 'react-router-dom';
-import {
-    Nav,
-    Navbar,
-    Button,
-    Form,
-    FormControl,
-    Container,
-    Row,
-    Col,
-} from 'react-bootstrap';
+import { Nav, Navbar, Container, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import history from './history';
 import { useAuth0 } from './Auth/Auth';
 import { setUser } from './actions/users';
-import { fetchItems } from './actions/items';
+import { fetchItems, addItem } from './actions/items';
 
 // Import App.css and components
 import './css/App.css';
@@ -23,6 +14,7 @@ import Home from './components/Home';
 import Featured from './components/Featured';
 import Profile from './components/Profile';
 import PrivateRoute from './components/PrivRoute';
+import PostItem from './components/PostItem';
 
 function App() {
     // Auth0 hook
@@ -32,12 +24,15 @@ function App() {
         loginWithRedirect,
         user,
         logout,
+        getTokenSilently,
     } = useAuth0();
 
     // React-Redux hooks
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
+    const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
+    const [PostItemShow, setPostItemShow] = useState(false);
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
@@ -54,6 +49,19 @@ function App() {
             }
         }
     }, [loading]);
+
+    // Clear form inputs after closing modal
+    useEffect(() => {
+        if (!PostItemShow) setItemReq({ title: '', cat: '', desc: '' });
+    }, [PostItemShow]);
+
+    const postItem = async (e) => {
+        e.preventDefault();
+        let token = await getTokenSilently();
+        let userUpdate = { ...userState };
+        await dispatch(addItem(userUpdate, itemReq, token));
+        setPostItemShow(false);
+    };
 
     return (
         <Router history={history}>
@@ -77,7 +85,7 @@ function App() {
                                         Featured{' '}
                                     </Nav.Link>
                                 </Nav>
-                                <Nav className="mx-auto">
+                                {/* <Nav className="mx-auto">
                                     <Form inline>
                                         <FormControl
                                             type="text"
@@ -88,10 +96,26 @@ function App() {
                                             Search
                                         </Button>
                                     </Form>
-                                </Nav>
+                                </Nav> */}
                                 <Nav className="ml-auto">
                                     {isAuthenticated && userState ? (
                                         <Nav>
+                                            <Nav.Link
+                                                onClick={() =>
+                                                    setPostItemShow(true)
+                                                }
+                                            >
+                                                Add Item
+                                            </Nav.Link>
+                                            <PostItem
+                                                post={postItem}
+                                                req={itemReq}
+                                                onReq={setItemReq}
+                                                show={PostItemShow}
+                                                onHide={() =>
+                                                    setPostItemShow(false)
+                                                }
+                                            />
                                             <Nav.Link
                                                 as={NavLink}
                                                 to="/profile"
