@@ -31,7 +31,12 @@ function App() {
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-    const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
+    const [itemReq, setItemReq] = useState({
+        title: '',
+        cat: '',
+        desc: '',
+        price: '',
+    });
     const [PostItemShow, setPostItemShow] = useState(false);
 
     // Re-render when loading from Auth0 changes
@@ -52,7 +57,8 @@ function App() {
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!PostItemShow) setItemReq({ title: '', cat: '', desc: '' });
+        if (!PostItemShow)
+            setItemReq({ title: '', cat: '', desc: '', price: '' });
     }, [PostItemShow]);
 
     const postItem = async (e) => {
@@ -166,7 +172,7 @@ function App() {
                                         </a>
                                     </p>
                                 </Col>
-                                <Col>TDDD27 - Advanced Web programming</Col>
+                                <Col>TDDD27 - Advanced Web Programming</Col>
                             </Row>
                         </Container>
                     </div>

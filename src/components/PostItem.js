@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, Col, Button } from 'react-bootstrap';
+import { Modal, Form, Col, Button, InputGroup } from 'react-bootstrap';
 
 const PostItem = (props) => {
-    console.log('MODAL!');
-    console.log(props.req);
     const { post, req, onReq, ...rest } = props;
+
     return (
         <Modal
             {...rest}
@@ -16,17 +15,18 @@ const PostItem = (props) => {
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
                     {' '}
-                    Fill out the form to add a new item
+                    Fill out the form to post a new item
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={props.post}>
                     <Form.Row>
-                        <Form.Group as={Col}>
+                        <Form.Group as={Col} controlId="formTitle">
+                            <Form.Label as="h5">Title</Form.Label>
                             <Form.Control
                                 size="lg"
                                 type="text"
-                                placeholder="Title"
+                                placeholder="Name of item"
                                 value={req.title}
                                 onChange={(e) =>
                                     onReq({
@@ -36,7 +36,8 @@ const PostItem = (props) => {
                                 }
                             />
                         </Form.Group>
-                        <Form.Group as={Col} controlId="formGridState">
+                        <Form.Group as={Col} controlId="formCategory">
+                            <Form.Label>Categories</Form.Label>
                             <Form.Control
                                 as="select"
                                 value={req.cat}
@@ -47,7 +48,7 @@ const PostItem = (props) => {
                                     })
                                 }
                             >
-                                <option>Category</option>
+                                <option>Choose category for item</option>
                                 <option>Games</option>
                                 <option>Toys</option>
                                 <option>Furniture</option>
@@ -55,24 +56,52 @@ const PostItem = (props) => {
                         </Form.Group>
                     </Form.Row>
                     <Form.Row>
-                        <Col>
-                            <Form.Group controlId="exampleForm.ControlTextarea1">
+                        <Form.Group>
+                            <Form.Label>Image upload</Form.Label>
+                            <Form.File
+                                as={Col}
+                                id="formFile"
+                                label="Add image of item"
+                                custom
+                            />
+                        </Form.Group>
+                        <Form.Group as={Col} controlId="formPrice">
+                            <Form.Label>Price</Form.Label>
+                            <InputGroup>
                                 <Form.Control
-                                    as="textarea"
-                                    rows="3"
-                                    placeholder="Item Description"
-                                    value={req.desc}
+                                    type="text"
+                                    placeholder="Input desired price for item (number)"
+                                    value={req.price}
                                     onChange={(e) =>
                                         onReq({
                                             ...req,
-                                            desc: e.target.value,
+                                            price: e.target.value,
                                         })
                                     }
                                 />
-                            </Form.Group>
-                        </Col>
-                        <Col></Col>
+
+                                <InputGroup.Append>
+                                    <InputGroup.Text>kr</InputGroup.Text>
+                                </InputGroup.Append>
+                            </InputGroup>
+                        </Form.Group>
                     </Form.Row>
+
+                    <Form.Group controlId="formDesc">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows="3"
+                            placeholder="Describe the item with a short text"
+                            value={req.desc}
+                            onChange={(e) =>
+                                onReq({
+                                    ...req,
+                                    desc: e.target.value,
+                                })
+                            }
+                        />
+                    </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>

@@ -40,7 +40,7 @@ mongoose.connect(MongoDB, {
     dbName: 'joga-db',
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
 });
 let db = mongoose.connection;
 
@@ -48,7 +48,7 @@ db.once('open', () => console.log('Connected to DB!'));
 db.on('error', console.error.bind(console, 'MongoDB connection error'));
 
 //To prevent errors from Cross Origin Resource Sharing, we will set our headers to allow CORS with middleware like so:
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader(
@@ -70,13 +70,13 @@ const checkJwt = jwt({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: process.env.AUTH_JWKS
+        jwksUri: process.env.AUTH_JWKS,
     }),
 
     // Validate the audience and the issuer.
     audience: process.env.AUTH_AUD,
     issuer: process.env.AUTH_DOMAIN,
-    algorithms: ['RS256']
+    algorithms: ['RS256'],
 });
 
 // ----------USER ROUTES----------
@@ -131,9 +131,9 @@ router
                 let user = new User({
                     userID: req.body.userID,
                     name: req.body.name,
-                    image: req.body.image
+                    image: req.body.image,
                 });
-                user.save(error => {
+                user.save((error) => {
                     if (error)
                         return res
                             .status(500)
@@ -150,15 +150,15 @@ router
                 {
                     $or: [
                         { nrItems: { $gt: 0 } },
-                        { starredItems: { $not: { $size: 0 } } }
-                    ]
+                        { starredItems: { $not: { $size: 0 } } },
+                    ],
                 },
                 {
                     $set: {
                         nrItems: req.body.userUpdate.nrItems,
                         postedItems: req.body.userUpdate.postedItems,
-                        starredItems: req.body.userUpdate.starredItems
-                    }
+                        starredItems: req.body.userUpdate.starredItems,
+                    },
                 },
                 (error, users) => {
                     if (error)
@@ -178,12 +178,12 @@ router
         } else {
             User.updateMany(
                 {
-                    starredItems: { $not: { $size: 0 } }
+                    starredItems: { $not: { $size: 0 } },
                 },
                 {
                     $pull: {
-                        starredItems: { $in: req.body.userUpdate }
-                    }
+                        starredItems: { $in: req.body.userUpdate },
+                    },
                 },
                 (error, users) => {
                     if (error)
@@ -215,6 +215,7 @@ router
         });
     })
     .post(checkJwt, (req, res) => {
+        console.log(req.body);
         // Post an item
         let item = new Item({
             userID: req.body.userID,
@@ -222,9 +223,10 @@ router
             user: req.body.user,
             title: req.body.title,
             desc: req.body.desc,
-            image: req.body.image
+            price: req.body.price,
+            image: req.body.image,
         });
-        item.save(error => {
+        item.save((error) => {
             if (error) return res.status(500).send('Error adding item!', error);
             res.json({ body: item, message: 'Item added!' });
         });
@@ -292,19 +294,6 @@ router
             res.status(200).json('Removed item!');
         });
     });
-
-//Route to ger items in specific category
-//? router.route('/items/:category').get((req, res) => {
-//     Item.find({ category: req.body.category }, (error, items) => {
-//         if (error)
-//             return res.status(500).send('Error retrieving items!', error);
-//         else if (!items)
-//             return res
-//                 .status(404)
-//                 .send('Items could not be found for this category!');
-//         res.status(200).json(items);
-//     });
-//? });
 
 app.use('/api', router);
 

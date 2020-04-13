@@ -15,12 +15,18 @@ const Profile = () => {
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-    const [itemReq, setItemReq] = useState({ title: '', cat: '', desc: '' });
+    const [itemReq, setItemReq] = useState({
+        title: '',
+        cat: '',
+        desc: '',
+        price: '',
+    });
     const [PostItemShow, setPostItemShow] = useState(false);
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!PostItemShow) setItemReq({ title: '', cat: '', desc: '' });
+        if (!PostItemShow)
+            setItemReq({ title: '', cat: '', desc: '', price: '' });
     }, [PostItemShow]);
 
     const postItem = async (e) => {
@@ -42,13 +48,10 @@ const Profile = () => {
         let user = { ...userState };
         dispatch(deleteAllItems(user));
     };
-    if (loading || !userState) {
-        return;
-    }
 
     return (
         <>
-            {loading || !userState ? (
+            {loading || !userState || !userState.creationDate ? (
                 <div> Loading... </div>
             ) : (
                 <Container className="cont" fluid>
@@ -62,7 +65,7 @@ const Profile = () => {
                                 />
                             </div>
                             <div className="info-div">
-                                <h3 width="auto">{userState.name}</h3>
+                                <h4 width="auto">{userState.name}</h4>
                                 <p>Posted items: {userState.nrItems}</p>
 
                                 {!Array.isArray(userState.starredItems) ||
@@ -78,9 +81,35 @@ const Profile = () => {
                                     Joined:{' '}
                                     {userState.creationDate.split('T')[0]}
                                 </p>
+                                <Row className="btn-row">
+                                    <Col>
+                                        <Button
+                                            variant="info"
+                                            onClick={() =>
+                                                setPostItemShow(true)
+                                            }
+                                        >
+                                            Add Item
+                                        </Button>
+                                        <PostItem
+                                            post={postItem}
+                                            req={itemReq}
+                                            onReq={setItemReq}
+                                            show={PostItemShow}
+                                            onHide={() =>
+                                                setPostItemShow(false)
+                                            }
+                                        />
+                                    </Col>
+                                    <Col>
+                                        <Button variant="info">
+                                            Edit user
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </div>
                         </Col>
-                        <Col xs={8}>
+                        <Col xs={9}>
                             {!Array.isArray(userState.postedItems) ||
                             !userState.postedItems.length ? (
                                 <h1>You have not posted any items yet!</h1>
@@ -90,6 +119,7 @@ const Profile = () => {
                                         userState.postedItems.includes(item._id)
                                     )}
                                     title={'Your items'}
+                                    rowLength={3}
                                 />
                             )}
 
@@ -104,21 +134,9 @@ const Profile = () => {
                                         )
                                     )}
                                     title={'Your favorite items'}
+                                    rowLength={3}
                                 />
                             )}
-                            <Button
-                                variant="info"
-                                onClick={() => setPostItemShow(true)}
-                            >
-                                Add Item
-                            </Button>
-                            <PostItem
-                                post={postItem}
-                                req={itemReq}
-                                onReq={setItemReq}
-                                show={PostItemShow}
-                                onHide={() => setPostItemShow(false)}
-                            />
                             <>
                                 <button onClick={deleteUser}>
                                     Delete user
@@ -128,9 +146,6 @@ const Profile = () => {
                                 <button onClick={deleteItems}>
                                     Delete items
                                 </button>
-                            </>
-                            <>
-                                <h2>{userState.nrItems}</h2>
                             </>
                         </Col>
                     </Row>
