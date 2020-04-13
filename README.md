@@ -1,3 +1,10 @@
+# TODO
+
+-   Implement user and item edit forms
+-   Update Home and Featured routes
+-   Make it possible to add images to items
+-   Write more component tests
+
 # Functional Specification
 
 This will be a website like _Blocket_ were a user can create an account and log in by using a Google account. Log in with other accounts, e.g. Facebook, or with regular e-mail and password may be implemented later, but Google sign in works good and will be the only option for now at least.
