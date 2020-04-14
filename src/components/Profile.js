@@ -1,41 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Container, Col, Row, Button, Image } from 'react-bootstrap';
 
 import { useAuth0 } from '../Auth/Auth';
 import { deleteUserDB } from '../actions/users';
-import { addItem, deleteAllItems } from '../actions/items';
+import { deleteAllItems } from '../actions/items';
 import ItemGrid from './ItemGrid';
-import PostItem from './PostItem';
+import FormModal from './FormModal';
 
 import '../css/Profile.css';
 
-const Profile = () => {
-    const { loading, logout, getTokenSilently } = useAuth0();
+const Profile = ({
+    post,
+    itemReq,
+    setItemReq,
+    ModalShow,
+    setModalShow,
+    FormType,
+    setFormType,
+}) => {
+    const { loading, logout } = useAuth0();
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-    const [itemReq, setItemReq] = useState({
-        title: '',
-        cat: '',
-        desc: '',
-        price: '',
-    });
-    const [PostItemShow, setPostItemShow] = useState(false);
-
-    // Clear form inputs after closing modal
-    useEffect(() => {
-        if (!PostItemShow)
-            setItemReq({ title: '', cat: '', desc: '', price: '' });
-    }, [PostItemShow]);
-
-    const postItem = async (e) => {
-        e.preventDefault();
-        let token = await getTokenSilently();
-        let userUpdate = { ...userState };
-        await dispatch(addItem(userUpdate, itemReq, token));
-        setPostItemShow(false);
-    };
 
     const deleteUser = async () => {
         let user = { ...userState };
@@ -85,26 +73,50 @@ const Profile = () => {
                                     <Col>
                                         <Button
                                             variant="info"
-                                            onClick={() =>
-                                                setPostItemShow(true)
-                                            }
+                                            onClick={() => (
+                                                setModalShow(true),
+                                                setFormType('addItemProfile')
+                                            )}
                                         >
                                             Add Item
                                         </Button>
-                                        <PostItem
-                                            post={postItem}
-                                            req={itemReq}
-                                            onReq={setItemReq}
-                                            show={PostItemShow}
-                                            onHide={() =>
-                                                setPostItemShow(false)
-                                            }
-                                        />
+                                        {FormType === 'addItemProfile' && (
+                                            <FormModal
+                                                formType={FormType}
+                                                confirm={post}
+                                                req={itemReq}
+                                                onReq={setItemReq}
+                                                show={ModalShow}
+                                                onHide={() => (
+                                                    setModalShow(false),
+                                                    setFormType()
+                                                )}
+                                            />
+                                        )}
                                     </Col>
                                     <Col>
-                                        <Button variant="info">
+                                        <Button
+                                            variant="info"
+                                            onClick={() => (
+                                                setModalShow(true),
+                                                setFormType('editUser')
+                                            )}
+                                        >
                                             Edit user
                                         </Button>
+                                        {FormType === 'editUser' && (
+                                            <FormModal
+                                                formType={FormType}
+                                                confirm={post}
+                                                req={itemReq}
+                                                onReq={setItemReq}
+                                                show={ModalShow}
+                                                onHide={() => (
+                                                    setModalShow(false),
+                                                    setFormType()
+                                                )}
+                                            />
+                                        )}
                                     </Col>
                                 </Row>
                             </div>
@@ -156,3 +168,13 @@ const Profile = () => {
 };
 
 export default Profile;
+
+Profile.propTypes = {
+    post: PropTypes.func.isRequired,
+    itemReq: PropTypes.object.isRequired,
+    setItemReq: PropTypes.func.isRequired,
+    ModalShow: PropTypes.bool.isRequired,
+    setModalShow: PropTypes.func.isRequired,
+    FormType: PropTypes.string,
+    setFormType: PropTypes.func.isRequired,
+};

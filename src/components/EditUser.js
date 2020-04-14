@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, InputGroup, Col } from 'react-bootstrap';
 
-const PostItem = ({ req, onReq }) => {
+const EditUser = ({ req, onReq }) => {
     return (
         <Form>
             <Form.Row>
                 <Form.Group as={Col} controlId="formTitle">
-                    <Form.Label as="h5">Title</Form.Label>
+                    <Form.Label as="h5">Edit User Title</Form.Label>
                     <Form.Control
                         size="lg"
                         type="text"
@@ -41,12 +41,12 @@ const PostItem = ({ req, onReq }) => {
                 </Form.Group>
             </Form.Row>
             <Form.Row>
-                <Form.Group controlId="formImage">
+                <Form.Group>
                     <Form.Label>Image upload</Form.Label>
                     <Form.File
                         as={Col}
                         id="formFile"
-                        label="Add image of item (preferably landscape format)"
+                        label="Add image of item"
                         custom
                     />
                 </Form.Group>
@@ -91,9 +91,9 @@ const PostItem = ({ req, onReq }) => {
     );
 };
 
-export default PostItem;
+export default EditUser;
 
-PostItem.propTypes = {
+EditUser.propTypes = {
     req: PropTypes.object.isRequired,
     onReq: PropTypes.func.isRequired,
 };

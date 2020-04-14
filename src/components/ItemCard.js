@@ -1,20 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Row, Badge } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { useAuth0 } from '../Auth/Auth';
+import { toggleStar, editItem } from '../actions/items';
 import SVG from './icons/SVG';
-import { toggleStar } from '../actions/items';
+import FormModal from './FormModal';
 
 import '../css/ItemCard.css';
 import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
     const { loading, getTokenSilently } = useAuth0();
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-    const dispatch = useDispatch();
+
+    const [itemReq, setItemReq] = useState({
+        title: '',
+        cat: '',
+        desc: '',
+        price: '',
+    });
+    const [ModalShow, setModalShow] = useState(false);
+    const [FormType, setFormType] = useState();
+
+    // Clear form inputs after closing modal
+    useEffect(() => {
+        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+    }, [ModalShow]);
 
     const starToggle = async (e) => {
         e.preventDefault();
@@ -31,6 +46,23 @@ const ItemCard = ({ item }) => {
         dispatch(toggleStar(userUpdate, itemUpdate, token, starred, id));
     };
 
+    const editItemCard = async (e) => {
+        e.preventDefault();
+        let token = await getTokenSilently();
+        let id = itemState.findIndex((i) => i._id === item._id);
+        let itemUpdate = { ...item };
+        itemUpdate = {
+            ...itemUpdate,
+            title: itemReq.title,
+            category: itemReq.cat,
+            desc: itemReq.desc,
+            price: itemReq.price,
+        };
+
+        await dispatch(editItem(itemUpdate, token, id));
+        setModalShow(false);
+        setFormType();
+    };
     return (
         <>
             {loading ? (
@@ -93,6 +125,41 @@ const ItemCard = ({ item }) => {
                             <Card.Header>
                                 <Row className="card-row" as="h5">
                                     {item.title}
+                                    {item.userID === user.userID ? (
+                                        <Button
+                                            variant="outline-info"
+                                            className="card-btn-row"
+                                            onClick={() => (
+                                                setModalShow(true),
+                                                setFormType('editItem'),
+                                                setItemReq({
+                                                    title: item.title,
+                                                    cat: item.category,
+                                                    desc: item.desc,
+                                                    price: item.price,
+                                                })
+                                            )}
+                                        >
+                                            {' '}
+                                            <SVG name="gear" width="1.5em" />
+                                        </Button>
+                                    ) : (
+                                        <></>
+                                    )}
+
+                                    {FormType === 'editItem' && (
+                                        <FormModal
+                                            formType={FormType}
+                                            confirm={editItemCard}
+                                            req={itemReq}
+                                            onReq={setItemReq}
+                                            show={ModalShow}
+                                            onHide={() => (
+                                                setModalShow(false),
+                                                setFormType()
+                                            )}
+                                        />
+                                    )}
                                     <Button
                                         variant="outline-info"
                                         className="card-btn-row"

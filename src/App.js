@@ -14,7 +14,7 @@ import Home from './components/Home';
 import Featured from './components/Featured';
 import Profile from './components/Profile';
 import PrivateRoute from './components/PrivRoute';
-import PostItem from './components/PostItem';
+import FormModal from './components/FormModal';
 
 function App() {
     // Auth0 hook
@@ -31,13 +31,15 @@ function App() {
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
+
     const [itemReq, setItemReq] = useState({
         title: '',
         cat: '',
         desc: '',
         price: '',
     });
-    const [PostItemShow, setPostItemShow] = useState(false);
+    const [ModalShow, setModalShow] = useState(false);
+    const [FormType, setFormType] = useState();
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
@@ -57,16 +59,16 @@ function App() {
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!PostItemShow)
-            setItemReq({ title: '', cat: '', desc: '', price: '' });
-    }, [PostItemShow]);
+        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+    }, [ModalShow]);
 
     const postItem = async (e) => {
         e.preventDefault();
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
         await dispatch(addItem(userUpdate, itemReq, token));
-        setPostItemShow(false);
+        setModalShow(false);
+        setFormType();
     };
 
     return (
@@ -91,37 +93,30 @@ function App() {
                                         Featured{' '}
                                     </Nav.Link>
                                 </Nav>
-                                {/* <Nav className="mx-auto">
-                                    <Form inline>
-                                        <FormControl
-                                            type="text"
-                                            placeholder="Search"
-                                            className="mr-sm-2"
-                                        />
-                                        <Button variant="outline-light">
-                                            Search
-                                        </Button>
-                                    </Form>
-                                </Nav> */}
                                 <Nav className="ml-auto">
                                     {isAuthenticated && userState ? (
                                         <Nav>
                                             <Nav.Link
-                                                onClick={() =>
-                                                    setPostItemShow(true)
-                                                }
+                                                onClick={() => (
+                                                    setModalShow(true),
+                                                    setFormType('addItem')
+                                                )}
                                             >
                                                 Add Item
                                             </Nav.Link>
-                                            <PostItem
-                                                post={postItem}
-                                                req={itemReq}
-                                                onReq={setItemReq}
-                                                show={PostItemShow}
-                                                onHide={() =>
-                                                    setPostItemShow(false)
-                                                }
-                                            />
+                                            {FormType === 'addItem' && (
+                                                <FormModal
+                                                    formType={FormType}
+                                                    confirm={postItem}
+                                                    req={itemReq}
+                                                    onReq={setItemReq}
+                                                    show={ModalShow}
+                                                    onHide={() => (
+                                                        setModalShow(false),
+                                                        setFormType()
+                                                    )}
+                                                />
+                                            )}
                                             <Nav.Link
                                                 as={NavLink}
                                                 to="/profile"
@@ -155,7 +150,21 @@ function App() {
                         <Switch>
                             <Route exact path="/" component={Home} />
                             <Route path="/featured" component={Featured} />
-                            <PrivateRoute path="/profile" component={Profile} />
+                            <PrivateRoute
+                                path="/profile"
+                                render={(props) => (
+                                    <Profile
+                                        {...props}
+                                        post={postItem}
+                                        itemReq={itemReq}
+                                        setItemReq={setItemReq}
+                                        ModalShow={ModalShow}
+                                        setModalShow={setModalShow}
+                                        FormType={FormType}
+                                        setFormType={setFormType}
+                                    />
+                                )}
+                            />
                         </Switch>
                     </div>
                     <div className="App-footer">

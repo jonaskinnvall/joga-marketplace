@@ -4,7 +4,6 @@ import {
     EDIT_ITEM,
     DELETE_ITEM,
     FETCH_ITEM,
-    TOGGLE_STAR,
 } from '../actions/actionTypes';
 
 import { editUser, editAllUsers } from './users';
@@ -63,28 +62,23 @@ export const addItem = (user, item, token) => {
     };
 };
 
-export const editItem = (user, itemUpdate, token, starred) => {
-    let itemURL = URI + 'items/' + itemUpdate._id;
+export const editItem = (item, token, id) => {
+    let itemURL = URI + 'items/' + item._id;
     let updatedItem;
-    let newUser = { ...user };
 
     return (dispatch) => {
         return axios
             .put(
                 itemURL,
-                { _id: itemUpdate._id, itemUpdate },
+                { _id: item._id, item },
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             .then((res) => {
                 updatedItem = res.data;
                 return dispatch({
                     type: EDIT_ITEM,
-                    payload: { updatedItem },
+                    payload: { updatedItem, id },
                 });
-            })
-            .then((action) => {
-                newUser.starredItems.push(action.payload.updatedItem._id);
-                dispatch(editUser(newUser));
             });
     };
 };
@@ -107,7 +101,7 @@ export const toggleStar = (user, item, token, starred, id) => {
                 .then((res) => {
                     updatedItem = res.data;
                     return dispatch({
-                        type: TOGGLE_STAR,
+                        type: EDIT_ITEM,
                         payload: { updatedItem, id },
                     });
                 })
@@ -134,7 +128,7 @@ export const toggleStar = (user, item, token, starred, id) => {
                 .then((res) => {
                     updatedItem = res.data;
                     return dispatch({
-                        type: TOGGLE_STAR,
+                        type: EDIT_ITEM,
                         payload: { updatedItem, id },
                     });
                 })

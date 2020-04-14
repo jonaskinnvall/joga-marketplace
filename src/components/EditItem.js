@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, InputGroup, Col } from 'react-bootstrap';
 
-const PostItem = ({ req, onReq }) => {
+const EditItem = ({ req, onReq }) => {
     return (
         <Form>
             <Form.Row>
                 <Form.Group as={Col} controlId="formTitle">
-                    <Form.Label as="h5">Title</Form.Label>
+                    <Form.Label as="h5">Change Title</Form.Label>
                     <Form.Control
                         size="lg"
                         type="text"
@@ -22,7 +22,7 @@ const PostItem = ({ req, onReq }) => {
                     />
                 </Form.Group>
                 <Form.Group as={Col} controlId="formCategory">
-                    <Form.Label>Categories</Form.Label>
+                    <Form.Label>Change Category</Form.Label>
                     <Form.Control
                         as="select"
                         value={req.cat}
@@ -42,7 +42,7 @@ const PostItem = ({ req, onReq }) => {
             </Form.Row>
             <Form.Row>
                 <Form.Group controlId="formImage">
-                    <Form.Label>Image upload</Form.Label>
+                    <Form.Label>Change Image</Form.Label>
                     <Form.File
                         as={Col}
                         id="formFile"
@@ -51,7 +51,7 @@ const PostItem = ({ req, onReq }) => {
                     />
                 </Form.Group>
                 <Form.Group as={Col} controlId="formPrice">
-                    <Form.Label>Price</Form.Label>
+                    <Form.Label>Change Price</Form.Label>
                     <InputGroup>
                         <Form.Control
                             type="text"
@@ -73,7 +73,7 @@ const PostItem = ({ req, onReq }) => {
             </Form.Row>
 
             <Form.Group controlId="formDesc">
-                <Form.Label>Description</Form.Label>
+                <Form.Label>Change Item Description</Form.Label>
                 <Form.Control
                     as="textarea"
                     rows="3"
@@ -91,9 +91,9 @@ const PostItem = ({ req, onReq }) => {
     );
 };
 
-export default PostItem;
+export default EditItem;
 
-PostItem.propTypes = {
+EditItem.propTypes = {
     req: PropTypes.object.isRequired,
     onReq: PropTypes.func.isRequired,
 };
