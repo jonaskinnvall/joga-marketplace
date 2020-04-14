@@ -1,91 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, InputGroup, Col } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 
 const EditUser = ({ req, onReq }) => {
     return (
         <Form>
-            <Form.Row>
-                <Form.Group as={Col} controlId="formTitle">
-                    <Form.Label as="h5">Edit User Title</Form.Label>
-                    <Form.Control
-                        size="lg"
-                        type="text"
-                        placeholder="Name of item"
-                        value={req.title}
-                        onChange={(e) =>
-                            onReq({
-                                ...req,
-                                title: e.target.value,
-                            })
-                        }
-                    />
-                </Form.Group>
-                <Form.Group as={Col} controlId="formCategory">
-                    <Form.Label>Categories</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={req.cat}
-                        onChange={(e) =>
-                            onReq({
-                                ...req,
-                                cat: e.target.value,
-                            })
-                        }
-                    >
-                        <option>Choose category for item</option>
-                        <option>Games</option>
-                        <option>Toys</option>
-                        <option>Furniture</option>
-                    </Form.Control>
-                </Form.Group>
-            </Form.Row>
-            <Form.Row>
-                <Form.Group>
-                    <Form.Label>Image upload</Form.Label>
-                    <Form.File
-                        as={Col}
-                        id="formFile"
-                        label="Add image of item"
-                        custom
-                    />
-                </Form.Group>
-                <Form.Group as={Col} controlId="formPrice">
-                    <Form.Label>Price</Form.Label>
-                    <InputGroup>
-                        <Form.Control
-                            type="text"
-                            placeholder="Input desired price for item (number)"
-                            value={req.price}
-                            onChange={(e) =>
-                                onReq({
-                                    ...req,
-                                    price: e.target.value,
-                                })
-                            }
-                        />
-
-                        <InputGroup.Append>
-                            <InputGroup.Text>kr</InputGroup.Text>
-                        </InputGroup.Append>
-                    </InputGroup>
-                </Form.Group>
-            </Form.Row>
-
-            <Form.Group controlId="formDesc">
-                <Form.Label>Description</Form.Label>
+            <Form.Group controlId="formCategory">
+                <Form.Label>Favorite Category</Form.Label>
                 <Form.Control
-                    as="textarea"
-                    rows="3"
-                    placeholder="Describe the item with a short text"
-                    value={req.desc}
+                    as="select"
+                    value={req.favCat}
                     onChange={(e) =>
                         onReq({
                             ...req,
-                            desc: e.target.value,
+                            favCat: e.target.value,
                         })
                     }
-                />
+                >
+                    <option>Choose your favorite category</option>
+                    <option>Games</option>
+                    <option>Toys</option>
+                    <option>Furniture</option>
+                </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="formImage">
+                <Form.Label>Chaange profile picture</Form.Label>
+                <Form.File id="formFile" label="Change your picture" custom />
             </Form.Group>
         </Form>
     );

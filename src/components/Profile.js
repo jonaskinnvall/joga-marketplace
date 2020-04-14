@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Container, Col, Row, Button, Image } from 'react-bootstrap';
 
 import { useAuth0 } from '../Auth/Auth';
-import { deleteUserDB } from '../actions/users';
+import { editUser, deleteUserDB } from '../actions/users';
 import { deleteAllItems } from '../actions/items';
 import ItemGrid from './ItemGrid';
 import FormModal from './FormModal';
@@ -20,10 +20,12 @@ const Profile = ({
     FormType,
     setFormType,
 }) => {
-    const { loading, logout } = useAuth0();
+    const { loading, logout, getTokenSilently } = useAuth0();
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
+
+    const [userInfo, setUserInfo] = useState({ favCat: '' });
 
     const deleteUser = async () => {
         let user = { ...userState };
@@ -35,6 +37,21 @@ const Profile = ({
     const deleteItems = () => {
         let user = { ...userState };
         dispatch(deleteAllItems(user));
+    };
+
+    const editUserInfo = async (e) => {
+        e.preventDefault();
+        let token = await getTokenSilently();
+        let userUpdate = { ...userState };
+
+        userUpdate = {
+            ...userUpdate,
+            favCat: userInfo.favCat,
+        };
+
+        await dispatch(editUser(userUpdate, token));
+        setModalShow(false);
+        setFormType();
     };
 
     return (
@@ -58,11 +75,19 @@ const Profile = ({
 
                                 {!Array.isArray(userState.starredItems) ||
                                 !userState.starredItems.length ? (
-                                    <p>Favorite items: 0</p>
+                                    <p>Starred items: 0</p>
                                 ) : (
                                     <p>
-                                        Favorite items:{' '}
+                                        Starred items:{' '}
                                         {userState.starredItems.length}
+                                    </p>
+                                )}
+                                {!userState.favCat ? (
+                                    <p>Favorite category: None chosen</p>
+                                ) : (
+                                    <p>
+                                        {' '}
+                                        Favorite category: {userState.favCat}
                                     </p>
                                 )}
                                 <p>
@@ -107,9 +132,9 @@ const Profile = ({
                                         {FormType === 'editUser' && (
                                             <FormModal
                                                 formType={FormType}
-                                                confirm={post}
-                                                req={itemReq}
-                                                onReq={setItemReq}
+                                                confirm={editUserInfo}
+                                                req={userInfo}
+                                                onReq={setUserInfo}
                                                 show={ModalShow}
                                                 onHide={() => (
                                                     setModalShow(false),

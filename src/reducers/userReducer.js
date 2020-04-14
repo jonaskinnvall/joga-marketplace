@@ -6,6 +6,6 @@ export const userReducer = produce((draft, action) => {
         case SET_USER:
             return action.payload.DB;
         case EDIT_USER:
-            return action.payload.updatedDB;
+            return action.payload.updatedUser;
     }
 }, {});

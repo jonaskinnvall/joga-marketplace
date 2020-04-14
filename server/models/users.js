@@ -8,7 +8,8 @@ let UserSchema = new Schema({
     creationDate: { type: Date, default: Date.now },
     nrItems: { type: Number, default: 0 },
     postedItems: { type: [String] },
-    starredItems: { type: [String] }
+    starredItems: { type: [String] },
+    favCat: { type: String },
 });
 
 module.exports = mongoose.model('User', UserSchema);

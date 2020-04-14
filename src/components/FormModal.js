@@ -18,11 +18,11 @@ const FormModal = (props) => {
     } else if (formType === 'editItem') {
         title = 'Fill out the form to edit item information';
         component = <EditItem req={req} onReq={onReq} />;
-        button = 'Confirm Edit';
+        button = 'Confirm Changes';
     } else {
         title = 'Fill out the form to edit user information';
         component = <EditUser req={req} onReq={onReq} />;
-        button = 'Confirm Edit';
+        button = 'Confirm Changes';
     }
 
     return (
