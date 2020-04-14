@@ -9,7 +9,7 @@ const URI =
         ? 'http://localhost:3001/api/'
         : '/api/';
 
-export const setUser = user => {
+export const setUser = (user) => {
     if (user) {
         let userID = user.sub;
         userID = userID.split('|')[1];
@@ -17,43 +17,43 @@ export const setUser = user => {
         let idURL = URL + userID;
         let DB;
 
-        return dispatch =>
+        return (dispatch) =>
             axios
                 .get(idURL)
-                .then(res => {
+                .then((res) => {
                     DB = res.data;
                     dispatch({ type: SET_USER, payload: { DB } });
                 })
-                .catch(error => {
+                .catch((error) => {
                     axios
                         .post(URL, {
                             userID: userID,
                             name: user.name,
-                            image: user.picture
+                            image: user.picture,
                         })
-                        .then(res => {
+                        .then((res) => {
                             DB = res.data.body;
                             dispatch({
                                 type: SET_USER,
-                                payload: { DB }
+                                payload: { DB },
                             });
                         });
                 });
     } else {
-        return dispatch => dispatch({ type: SET_USER, payload: { user } });
+        return (dispatch) => dispatch({ type: SET_USER, payload: { user } });
     }
 };
 
-export const editUser = userUpdate => {
+export const editUser = (userUpdate) => {
     let idURL = URI + 'users/' + userUpdate.userID;
-    let updatedDB;
+    let updatedUser;
 
-    return dispatch =>
+    return (dispatch) =>
         axios
             .put(idURL, { userID: userUpdate.userID, userUpdate })
-            .then(res => {
-                updatedDB = res.data;
-                dispatch({ type: EDIT_USER, payload: { updatedDB } });
+            .then((res) => {
+                updatedUser = res.data;
+                dispatch({ type: EDIT_USER, payload: { updatedUser } });
             });
 };
 
@@ -66,14 +66,14 @@ export const editAllUsers = (user, items = null) => {
         let userUpdate = {
             nrItems: 0,
             postedItems: [],
-            starredItems: []
+            starredItems: [],
         };
 
         updatedDB.nrItems = 0;
         updatedDB.postedItems = [];
         updatedDB.starredItems = [];
 
-        return dispatch => {
+        return (dispatch) => {
             return axios.put(URL, { userUpdate }).then(() => {
                 dispatch({ type: EDIT_USER, payload: { updatedDB } });
             });
@@ -84,7 +84,7 @@ export const editAllUsers = (user, items = null) => {
         let updatedDB = {};
         let userUpdate = [...items];
 
-        return dispatch => {
+        return (dispatch) => {
             return axios.put(URL, { userUpdate }).then(() => {
                 dispatch({ type: SET_USER, payload: { updatedDB } });
             });
@@ -92,11 +92,11 @@ export const editAllUsers = (user, items = null) => {
     }
 };
 
-export const deleteUserDB = user => {
+export const deleteUserDB = (user) => {
     let idURL = URI + 'users/' + user.userID;
     let itemsToDelete = user.postedItems;
 
-    return dispatch => {
+    return (dispatch) => {
         return axios.delete(idURL).then(() => {
             // If user has posted items, delete those items too
             if (Array.isArray(itemsToDelete) && itemsToDelete.length) {

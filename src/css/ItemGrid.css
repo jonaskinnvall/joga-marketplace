@@ -2,10 +2,13 @@
     justify-content: space-between;
 }
 .grid-row {
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
 }
 
-.grid-btn {
-    height: 100%;
-    width: 5rem;
+.grid-btn-row {
+    height: 5rem;
+    width: 7rem;
+    margin: auto;
 }

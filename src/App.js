@@ -1,21 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Router, Route, Switch, Link, NavLink } from 'react-router-dom';
-import {
-    Nav,
-    Navbar,
-    Button,
-    Form,
-    FormControl,
-    Container,
-    Row,
-    Col
-} from 'react-bootstrap';
+import { Nav, Navbar, Container, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import history from './history';
 import { useAuth0 } from './Auth/Auth';
 import { setUser } from './actions/users';
-import { fetchItems } from './actions/items';
+import { fetchItems, addItem } from './actions/items';
 
 // Import App.css and components
 import './css/App.css';
@@ -23,6 +14,7 @@ import Home from './components/Home';
 import Featured from './components/Featured';
 import Profile from './components/Profile';
 import PrivateRoute from './components/PrivRoute';
+import FormModal from './components/FormModal';
 
 function App() {
     // Auth0 hook
@@ -31,13 +23,23 @@ function App() {
         isAuthenticated,
         loginWithRedirect,
         user,
-        logout
+        logout,
+        getTokenSilently,
     } = useAuth0();
 
     // React-Redux hooks
     const dispatch = useDispatch();
-    const userState = useSelector(state => state.userState);
-    const itemState = useSelector(state => state.itemState);
+    const userState = useSelector((state) => state.userState);
+    const itemState = useSelector((state) => state.itemState);
+
+    const [itemReq, setItemReq] = useState({
+        title: '',
+        cat: '',
+        desc: '',
+        price: '',
+    });
+    const [ModalShow, setModalShow] = useState(false);
+    const [FormType, setFormType] = useState();
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
@@ -54,6 +56,20 @@ function App() {
             }
         }
     }, [loading]);
+
+    // Clear form inputs after closing modal
+    useEffect(() => {
+        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+    }, [ModalShow]);
+
+    const postItem = async (e) => {
+        e.preventDefault();
+        let token = await getTokenSilently();
+        let userUpdate = { ...userState };
+        await dispatch(addItem(userUpdate, itemReq, token));
+        setModalShow(false);
+        setFormType();
+    };
 
     return (
         <Router history={history}>
@@ -77,21 +93,30 @@ function App() {
                                         Featured{' '}
                                     </Nav.Link>
                                 </Nav>
-                                <Nav className="mx-auto">
-                                    <Form inline>
-                                        <FormControl
-                                            type="text"
-                                            placeholder="Search"
-                                            className="mr-sm-2"
-                                        />
-                                        <Button variant="outline-light">
-                                            Search
-                                        </Button>
-                                    </Form>
-                                </Nav>
                                 <Nav className="ml-auto">
                                     {isAuthenticated && userState ? (
                                         <Nav>
+                                            <Nav.Link
+                                                onClick={() => (
+                                                    setModalShow(true),
+                                                    setFormType('addItem')
+                                                )}
+                                            >
+                                                Add Item
+                                            </Nav.Link>
+                                            {FormType === 'addItem' && (
+                                                <FormModal
+                                                    formType={FormType}
+                                                    confirm={postItem}
+                                                    req={itemReq}
+                                                    onReq={setItemReq}
+                                                    show={ModalShow}
+                                                    onHide={() => (
+                                                        setModalShow(false),
+                                                        setFormType()
+                                                    )}
+                                                />
+                                            )}
                                             <Nav.Link
                                                 as={NavLink}
                                                 to="/profile"
@@ -110,11 +135,11 @@ function App() {
                                         <Nav.Link
                                             onClick={() =>
                                                 loginWithRedirect({
-                                                    connection: 'google-oauth2'
+                                                    connection: 'google-oauth2',
                                                 })
                                             }
                                         >
-                                            Log in
+                                            Log In
                                         </Nav.Link>
                                     )}
                                 </Nav>
@@ -125,7 +150,21 @@ function App() {
                         <Switch>
                             <Route exact path="/" component={Home} />
                             <Route path="/featured" component={Featured} />
-                            <PrivateRoute path="/profile" component={Profile} />
+                            <PrivateRoute
+                                path="/profile"
+                                render={(props) => (
+                                    <Profile
+                                        {...props}
+                                        post={postItem}
+                                        itemReq={itemReq}
+                                        setItemReq={setItemReq}
+                                        ModalShow={ModalShow}
+                                        setModalShow={setModalShow}
+                                        FormType={FormType}
+                                        setFormType={setFormType}
+                                    />
+                                )}
+                            />
                         </Switch>
                     </div>
                     <div className="App-footer">
@@ -142,7 +181,7 @@ function App() {
                                         </a>
                                     </p>
                                 </Col>
-                                <Col>TDDD27 - Advanced Web programming</Col>
+                                <Col>TDDD27 - Advanced Web Programming</Col>
                             </Row>
                         </Container>
                     </div>

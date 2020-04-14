@@ -1,0 +1,39 @@
+.cont {
+    margin-top: 50px;
+}
+.prof-row {
+    justify-content: center;
+}
+.user-col {
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.prof-img-div {
+    height: 225px;
+    margin-bottom: 5px;
+}
+
+.prof-img {
+    display: block;
+    max-height: 100%;
+    width: auto;
+}
+.info-div {
+    display: block;
+    margin: auto;
+    max-height: 100%;
+    width: auto;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-row {
+    width: 50%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+}
+
+.btn-row button {
+    width: 5.75rem;
+}

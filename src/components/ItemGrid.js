@@ -7,24 +7,24 @@ import ItemCard from './ItemCard';
 import SVG from './icons/SVG';
 import '../css/ItemGrid.css';
 
-const ItemGrid = ({ itemsFromState }) => {
+const ItemGrid = ({ itemsFromState, title, rowLength }) => {
     let items = [...itemsFromState];
 
     const [pressed, setPressed] = useState(false);
     return (
-        <div>
+        <>
             {!Array.isArray(items) || !items.length ? (
                 <div> Loading... </div>
             ) : (
                 <Container fluid>
                     {!pressed ? (
                         <div>
-                            <h2>Items</h2>
+                            <h2>{title}</h2>
                         </div>
                     ) : (
                         <div>
                             <Row className="header-row">
-                                <h2>Items</h2>
+                                <h2>{title}</h2>
                                 {'        '}
                                 <Button
                                     variant="info"
@@ -37,37 +37,39 @@ const ItemGrid = ({ itemsFromState }) => {
                         </div>
                     )}
 
-                    {items.length > 3 && pressed == false ? (
-                        <Row className="grid-row">
-                            {items.slice(0, 3).map(item => (
-                                <ItemCard key={item._id} item={item} />
-                            ))}
-                            <div>
+                    {items.length > rowLength && pressed == false ? (
+                        <>
+                            <Row className="grid-row">
+                                {items.slice(0, rowLength).map((item) => (
+                                    <ItemCard key={item._id} item={item} />
+                                ))}
+                            </Row>
+                            <Row>
                                 <Button
                                     onClick={() => setPressed(true)}
                                     variant="light"
-                                    className="grid-btn"
+                                    className="grid-btn-row"
                                 >
                                     <SVG name="chevron" width="32" />
                                 </Button>
-                            </div>
-                        </Row>
+                            </Row>
+                        </>
                     ) : (
                         <Row className="grid-row">
-                            {items.map(item => (
+                            {items.map((item) => (
                                 <ItemCard key={item._id} item={item} />
                             ))}
                         </Row>
                     )}
                 </Container>
             )}
-        </div>
+        </>
     );
 };
 export default ItemGrid;
 
 ItemGrid.propTypes = {
     itemsFromState: PropTypes.array.isRequired,
-    pressed: PropTypes.bool,
-    pressBtn: PropTypes.func
+    title: PropTypes.string.isRequired,
+    rowLength: PropTypes.number,
 };
