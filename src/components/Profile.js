@@ -26,18 +26,23 @@ const Profile = ({
     const itemState = useSelector((state) => state.itemState);
 
     const [userInfo, setUserInfo] = useState({ favCat: '' });
+    // const [showAlert, setShowAlert] = useState({
+    //     alert: false,
+    //     confirm: false,
+    // });
 
-    const deleteUser = async () => {
-        let user = { ...userState };
-        await dispatch(deleteUserDB(user));
-        logout();
-    };
+    // TODO Function to confirm user wants to delete
+    // const deleteConfirm = async () => {
+    //     console.log('deleteConfirm');
 
-    // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB
-    const deleteItems = () => {
-        let user = { ...userState };
-        dispatch(deleteAllItems(user));
-    };
+    //     setShowAlert({ alert: true });
+    //     console.log(showAlert);
+
+    //     if (showAlert.confirm) {
+    //         console.log('in confirm');
+    //         // deleteUser();
+    //     }
+    // };
 
     const editUserInfo = async (e) => {
         e.preventDefault();
@@ -52,6 +57,18 @@ const Profile = ({
         await dispatch(editUser(userUpdate, token));
         setModalShow(false);
         setFormType();
+    };
+
+    const deleteUser = async () => {
+        let user = { ...userState };
+        await dispatch(deleteUserDB(user));
+        // logout();
+    };
+
+    // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB
+    const deleteItems = () => {
+        let user = { ...userState };
+        dispatch(deleteAllItems(user));
     };
 
     return (
@@ -133,6 +150,7 @@ const Profile = ({
                                             <FormModal
                                                 formType={FormType}
                                                 confirm={editUserInfo}
+                                                deleteFunc={deleteUser}
                                                 req={userInfo}
                                                 onReq={setUserInfo}
                                                 show={ModalShow}
@@ -174,11 +192,6 @@ const Profile = ({
                                     rowLength={3}
                                 />
                             )}
-                            <>
-                                <button onClick={deleteUser}>
-                                    Delete user
-                                </button>
-                            </>
                             <>
                                 <button onClick={deleteItems}>
                                     Delete items

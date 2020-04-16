@@ -5,52 +5,75 @@ import { Modal, Button } from 'react-bootstrap';
 import PostItem from './PostItem';
 import EditItem from './EditItem';
 import EditUser from './EditUser';
+import SVG from './icons/SVG';
 
 const FormModal = (props) => {
-    const { formType, confirm, req, onReq, ...rest } = props;
+    const { formType, confirm, deleteFunc, req, onReq, ...rest } = props;
 
-    let title, component, button;
+    let title, component, buttonCap;
 
     if (formType === 'addItem' || formType === 'addItemProfile') {
         title = 'Fill out the form to post a new item';
         component = <PostItem req={req} onReq={onReq} />;
-        button = 'Post Item';
+        buttonCap = 'Post Item';
     } else if (formType === 'editItem') {
         title = 'Fill out the form to edit item information';
         component = <EditItem req={req} onReq={onReq} />;
-        button = 'Confirm Changes';
+        buttonCap = 'Confirm Changes';
     } else {
         title = 'Fill out the form to edit user information';
         component = <EditUser req={req} onReq={onReq} />;
-        button = 'Confirm Changes';
+        buttonCap = 'Confirm Changes';
     }
 
     return (
-        <Modal
-            {...rest}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    {' '}
-                    {title}
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{component}</Modal.Body>
-            <Modal.Footer>
-                <Button variant="info" onClick={props.onHide}>
-                    {' '}
-                    Cancel
-                </Button>
+        <>
+            <Modal
+                {...rest}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        {' '}
+                        {title}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{component}</Modal.Body>
+                <Modal.Footer>
+                    {formType === 'editItem' ? (
+                        <Button
+                            className="mr-auto"
+                            variant="danger"
+                            onClick={deleteFunc}
+                        >
+                            <SVG name="trash" width="1.5em" />
+                            Delete Item
+                        </Button>
+                    ) : formType === 'editUser' ? (
+                        <Button
+                            className="mr-auto"
+                            variant="danger"
+                            onClick={deleteFunc}
+                        >
+                            <SVG name="trash" width="1.5em" /> Delete User
+                        </Button>
+                    ) : (
+                        <></>
+                    )}
 
-                <Button variant="info" onClick={confirm}>
-                    {' '}
-                    {button}
-                </Button>
-            </Modal.Footer>
-        </Modal>
+                    <Button variant="info" onClick={props.onHide}>
+                        {' '}
+                        Cancel
+                    </Button>
+                    <Button variant="info" onClick={confirm}>
+                        {' '}
+                        {buttonCap}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 };
 
@@ -59,6 +82,7 @@ export default FormModal;
 FormModal.propTypes = {
     formType: PropTypes.string.isRequired,
     confirm: PropTypes.func.isRequired,
+    deleteFunc: PropTypes.func,
     req: PropTypes.object.isRequired,
     onReq: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,

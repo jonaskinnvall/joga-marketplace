@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { useAuth0 } from '../Auth/Auth';
-import { toggleStar, editItem } from '../actions/items';
+import { toggleStar, editItem, deleteItem } from '../actions/items';
 import SVG from './icons/SVG';
 import FormModal from './FormModal';
 
@@ -63,6 +63,16 @@ const ItemCard = ({ item }) => {
         setModalShow(false);
         setFormType();
     };
+
+    const deleteItemCard = async () => {
+        let token = await getTokenSilently();
+        let id = itemState.findIndex((i) => i._id === item._id);
+        let itemDelete = { ...item };
+        let userUpdate = { ...user };
+
+        await dispatch(deleteItem(userUpdate, itemDelete, token, id));
+    };
+
     return (
         <>
             {loading ? (
@@ -151,6 +161,7 @@ const ItemCard = ({ item }) => {
                                         <FormModal
                                             formType={FormType}
                                             confirm={editItemCard}
+                                            deleteFunc={deleteItemCard}
                                             req={itemReq}
                                             onReq={setItemReq}
                                             show={ModalShow}

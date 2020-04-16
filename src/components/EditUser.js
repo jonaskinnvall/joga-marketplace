@@ -24,7 +24,7 @@ const EditUser = ({ req, onReq }) => {
                 </Form.Control>
             </Form.Group>
             <Form.Group controlId="formImage">
-                <Form.Label>Chaange profile picture</Form.Label>
+                <Form.Label>Change profile picture</Form.Label>
                 <Form.File id="formFile" label="Change your picture" custom />
             </Form.Group>
         </Form>
