@@ -79,8 +79,9 @@ export const editAllUsers = (user, items = null) => {
             });
         };
     } else if (Array.isArray(items) || items.length) {
-        // If user is deleted, remove stars from other
-        // users for those items that user has posted
+        // If user is deleted, or removes all their items,
+        // remove stars from other users for those items
+        // that user has posted
         let updateDB = [...items];
 
         return (dispatch) => {
@@ -120,10 +121,14 @@ export const editAllUsers = (user, items = null) => {
     }
 };
 
-export const deleteUserDB = (user) => {
+export const deleteUserDB = (user, items) => {
     let idURL = URI + 'users/' + user.userID;
     let itemsToDelete = user.postedItems;
     let itemsToggleStar = user.starredItems;
+    let itemIDs = [];
+    itemsToDelete.forEach((item) => {
+        itemIDs.push(items.findIndex((i) => i._id === item));
+    });
 
     return (dispatch) => {
         return axios
@@ -138,7 +143,9 @@ export const deleteUserDB = (user) => {
                 // If user has posted items, delete those items too
                 // along with editing all users that has starred the items
                 if (Array.isArray(itemsToDelete) && itemsToDelete.length) {
-                    return dispatch(deleteManyItems(itemsToDelete)).then(() => {
+                    return dispatch(
+                        deleteManyItems(itemsToDelete, itemIDs)
+                    ).then(() => {
                         return dispatch(editAllUsers(user, itemsToDelete));
                     });
                 }

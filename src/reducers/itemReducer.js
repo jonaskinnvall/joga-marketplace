@@ -27,9 +27,14 @@ export const itemReducer = produce((draft, action) => {
         case DELETE_ITEMS:
             if (action.payload.all) {
                 return action.payload.items;
+            } else {
+                // Loops through ids in reverse order and removes
+                // the items at those ids in from draft(state)
+                let itemIDs = action.payload.items;
+                itemIDs.reverse().forEach((id) => {
+                    draft.splice(id, 1);
+                });
+                return;
             }
-        // TODO Fix delete many items
-        // console.log(JSON.stringify(draft));
-        // return;
     }
 }, []);

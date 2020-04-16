@@ -61,8 +61,9 @@ const Profile = ({
 
     const deleteUser = async () => {
         let user = { ...userState };
-        await dispatch(deleteUserDB(user));
-        // logout();
+        let items = [...itemState];
+        await dispatch(deleteUserDB(user, items));
+        logout();
     };
 
     // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB

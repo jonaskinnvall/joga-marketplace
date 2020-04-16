@@ -170,13 +170,13 @@ export const deleteItem = (user, deleteItem, token, id) => {
     };
 };
 
-export const deleteManyItems = (items) => {
+export const deleteManyItems = (items, ids) => {
     let URL = URI + 'items/';
     return (dispatch) => {
         return axios.delete(URL, { data: items }).then(() => {
             dispatch({
                 type: DELETE_ITEMS,
-                payload: { items: items, all: false },
+                payload: { items: ids, all: false },
             });
         });
     };
