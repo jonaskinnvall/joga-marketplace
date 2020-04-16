@@ -3,7 +3,7 @@ import {
     FETCH_ITEMS,
     EDIT_ITEM,
     DELETE_ITEM,
-    FETCH_ITEM,
+    DELETE_ITEMS,
 } from '../actions/actionTypes';
 
 import { editUser, editAllUsers } from './users';
@@ -83,6 +83,15 @@ export const editItem = (item, token, id) => {
     };
 };
 
+export const editManyItems = (user, items) => {
+    let URL = URI + 'items/';
+    return (dispatch) => {
+        return axios.put(URL, { user: user }).then(() => {
+            dispatch(fetchItems());
+        });
+    };
+};
+
 export const toggleStar = (user, item, token, starred, id) => {
     let itemURL = URI + 'items/' + item._id;
     let updatedItem;
@@ -143,30 +152,32 @@ export const toggleStar = (user, item, token, starred, id) => {
     }
 };
 
-export const deleteItem = (itemDelete) => {
-    let itemURL = URI + 'items/' + itemDelete._id;
+export const deleteItem = (user, deleteItem, token, id) => {
+    let itemURL = URI + 'items/' + deleteItem._id;
 
-    return (dispatch) =>
-        axios.put(itemURL).then((res) => {
-            dispatch({ type: DELETE_ITEM, payload: { itemDelete } });
-        });
+    return (dispatch) => {
+        return axios
+            .delete(itemURL, { headers: { Authorization: `Bearer ${token}` } })
+            .then((res) => {
+                return dispatch({
+                    type: DELETE_ITEM,
+                    payload: { id },
+                });
+            })
+            .then(() => {
+                dispatch(editAllUsers(user, deleteItem));
+            });
+    };
 };
 
-export const fetchItem = (item) => {
-    let itemURL = URI + 'items/' + item._id;
-    let itemDB;
-    return (dispatch) =>
-        axios.get(itemURL).then((res) => {
-            itemDB = res.data;
-            dispatch({ type: FETCH_ITEM, payload: { itemDB } });
-        });
-};
-
-export const deleteManyItems = (items) => {
+export const deleteManyItems = (items, ids) => {
     let URL = URI + 'items/';
     return (dispatch) => {
         return axios.delete(URL, { data: items }).then(() => {
-            dispatch(fetchItems());
+            dispatch({
+                type: DELETE_ITEMS,
+                payload: { items: ids, all: false },
+            });
         });
     };
 };
@@ -177,7 +188,10 @@ export const deleteAllItems = (user) => {
         return axios
             .delete(URL)
             .then(() => {
-                return dispatch(fetchItems());
+                return dispatch({
+                    type: DELETE_ITEMS,
+                    payload: { items: [], all: true },
+                });
             })
             .then(() => {
                 dispatch(editAllUsers(user));

@@ -2,7 +2,7 @@
 import { SET_USER, EDIT_USER } from './actionTypes';
 import axios from 'axios';
 
-import { deleteManyItems } from './items';
+import { editManyItems, deleteManyItems } from './items';
 
 const URI =
     location.href.indexOf('localhost') > 0
@@ -62,48 +62,93 @@ export const editAllUsers = (user, items = null) => {
 
     //If all items are deleted, delete items from all users
     if (!items) {
-        let updatedDB = { ...user };
-        let userUpdate = {
+        let updatedUser = { ...user };
+        let updateDB = {
             nrItems: 0,
             postedItems: [],
             starredItems: [],
         };
 
-        updatedDB.nrItems = 0;
-        updatedDB.postedItems = [];
-        updatedDB.starredItems = [];
+        updatedUser.nrItems = 0;
+        updatedUser.postedItems = [];
+        updatedUser.starredItems = [];
 
         return (dispatch) => {
-            return axios.put(URL, { userUpdate }).then(() => {
-                dispatch({ type: EDIT_USER, payload: { updatedDB } });
+            return axios.put(URL, { updateDB }).then(() => {
+                dispatch({ type: EDIT_USER, payload: { updatedUser } });
             });
         };
-    } else {
-        // If user is deleted, remove stars from other
-        // users for those items that user has posted
-        let updatedDB = {};
-        let userUpdate = [...items];
+    } else if (Array.isArray(items) || items.length) {
+        // If user is deleted, or removes all their items,
+        // remove stars from other users for those items
+        // that user has posted
+        let updateDB = [...items];
 
         return (dispatch) => {
-            return axios.put(URL, { userUpdate }).then(() => {
-                dispatch({ type: SET_USER, payload: { updatedDB } });
-            });
+            return axios
+                .put(URL, { updateDB })
+                .then(() => {
+                    return;
+                })
+                .catch((error) => {
+                    // Return regardless of api call
+                    // responds with 404 or not
+                    return;
+                });
+        };
+    } else {
+        // If single item is deleted, remove item from
+        // current user and other users starredItems
+        let updatedUser = { ...user };
+        updatedUser.nrItems--;
+        updatedUser.postedItems = updatedUser.postedItems.filter((id) => {
+            return id !== items._id;
+        });
+        let updateDB = [items];
+
+        return (dispatch) => {
+            return axios
+                .put(URL, { updateDB })
+                .then(() => {
+                    dispatch(editUser(updatedUser));
+                })
+                .catch((error) => {
+                    // Update user regardless of api call
+                    // responds with 404 or not
+                    dispatch(editUser(updatedUser));
+                });
         };
     }
 };
 
-export const deleteUserDB = (user) => {
+export const deleteUserDB = (user, items) => {
     let idURL = URI + 'users/' + user.userID;
     let itemsToDelete = user.postedItems;
+    let itemsToggleStar = user.starredItems;
+    let itemIDs = [];
+    itemsToDelete.forEach((item) => {
+        itemIDs.push(items.findIndex((i) => i._id === item));
+    });
 
     return (dispatch) => {
-        return axios.delete(idURL).then(() => {
-            // If user has posted items, delete those items too
-            if (Array.isArray(itemsToDelete) && itemsToDelete.length) {
-                return dispatch(deleteManyItems(itemsToDelete)).then(() => {
-                    dispatch(editAllUsers(user, itemsToDelete));
-                });
-            }
-        });
+        return axios
+            .delete(idURL)
+            .then(() => {
+                // If user has starred items, remove those stars
+                if (Array.isArray(itemsToggleStar) && itemsToggleStar.length) {
+                    return dispatch(editManyItems(user, itemsToggleStar));
+                }
+            })
+            .then(() => {
+                // If user has posted items, delete those items too
+                // along with editing all users that has starred the items
+                if (Array.isArray(itemsToDelete) && itemsToDelete.length) {
+                    return dispatch(
+                        deleteManyItems(itemsToDelete, itemIDs)
+                    ).then(() => {
+                        return dispatch(editAllUsers(user, itemsToDelete));
+                    });
+                }
+            });
     };
 };

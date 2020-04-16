@@ -145,7 +145,7 @@ router
     })
     // Route to update all users in DB if items are deleted
     .put((req, res) => {
-        if (req.body.userUpdate.hasOwnProperty('nrItems')) {
+        if (req.body.updateDB.hasOwnProperty('nrItems')) {
             User.updateMany(
                 {
                     $or: [
@@ -155,9 +155,9 @@ router
                 },
                 {
                     $set: {
-                        nrItems: req.body.userUpdate.nrItems,
-                        postedItems: req.body.userUpdate.postedItems,
-                        starredItems: req.body.userUpdate.starredItems,
+                        nrItems: req.body.updateDB.nrItems,
+                        postedItems: req.body.updateDB.postedItems,
+                        starredItems: req.body.updateDB.starredItems,
                     },
                 },
                 (error, users) => {
@@ -178,11 +178,11 @@ router
         } else {
             User.updateMany(
                 {
-                    starredItems: { $not: { $size: 0 } },
+                    starredItems: { $in: req.body.updateDB },
                 },
                 {
                     $pull: {
-                        starredItems: { $in: req.body.userUpdate },
+                        starredItems: { $in: req.body.updateDB },
                     },
                 },
                 (error, users) => {
@@ -193,7 +193,7 @@ router
                     else if (users.nModified == 0)
                         return res
                             .status(404)
-                            .send('No users that has posted or starred items!');
+                            .send('No users that has starred those items!');
 
                     return res
                         .status(200)
@@ -215,7 +215,6 @@ router
         });
     })
     .post(checkJwt, (req, res) => {
-        console.log(req.body);
         // Post an item
         let item = new Item({
             userID: req.body.userID,
@@ -227,9 +226,37 @@ router
             image: req.body.image,
         });
         item.save((error) => {
-            if (error) return res.status(500).send('Error adding item!', error);
+            if (error) return res.status(500).send('Error adding item!');
             res.json({ body: item, message: 'Item added!' });
         });
+    })
+    // Route to update many items in DB if user is deleted
+    .put((req, res) => {
+        Item.updateMany(
+            {
+                starredBy: { $in: req.body.user.userID },
+            },
+            {
+                $inc: { stars: -1 },
+                $pull: {
+                    starredBy: { $in: req.body.user.userID },
+                },
+            },
+            (error, users) => {
+                if (error)
+                    return res
+                        .status(500)
+                        .send('Error removing user from items!', error);
+                else if (users.nModified == 0)
+                    return res
+                        .status(404)
+                        .send('Users has not starred any items!');
+
+                return res
+                    .status(200)
+                    .json('Removed user from items starredBy!');
+            }
+        );
     })
     .delete((req, res) => {
         // Delete items that had been uploaded by deleted user

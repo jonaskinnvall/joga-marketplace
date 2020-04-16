@@ -11,7 +11,7 @@ import { fetchItems, addItem } from './actions/items';
 // Import App.css and components
 import './css/App.css';
 import Home from './components/Home';
-import Featured from './components/Featured';
+import Categories from './components/Categories';
 import Profile from './components/Profile';
 import PrivateRoute from './components/PrivRoute';
 import FormModal from './components/FormModal';
@@ -88,9 +88,9 @@ function App() {
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                             <Navbar.Collapse id="responsive-navbar-nav">
                                 <Nav className="mr-auto">
-                                    <Nav.Link as={NavLink} to="/featured">
+                                    <Nav.Link as={NavLink} to="/categories">
                                         {' '}
-                                        Featured{' '}
+                                        Categories{' '}
                                     </Nav.Link>
                                 </Nav>
                                 <Nav className="ml-auto">
@@ -149,7 +149,7 @@ function App() {
                     <div className="App-main">
                         <Switch>
                             <Route exact path="/" component={Home} />
-                            <Route path="/featured" component={Featured} />
+                            <Route path="/categories" component={Categories} />
                             <PrivateRoute
                                 path="/profile"
                                 render={(props) => (

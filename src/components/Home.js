@@ -13,14 +13,18 @@ const Home = () => {
                 <div>Loading...</div>
             ) : (
                 <>
-                    <ItemGrid itemsFromState={itemState} title={'Items'} rowLength={4} />
+                    <ItemGrid
+                        itemsFromState={itemState.filter(
+                            (item) => item.stars >= 1
+                        )}
+                        title={'Featured Items (1 star or more for now)'}
+                        rowLength={4}
+                    />
 
                     <ItemGrid
-                            itemsFromState={itemState.filter(
-                                (item) => item.category === 'Toys'
-                            )}
-                            title={'Toys'}
-                            rowLength={4}
+                        itemsFromState={itemState}
+                        title={'All Items'}
+                        rowLength={4}
                     />
                 </>
             )}
