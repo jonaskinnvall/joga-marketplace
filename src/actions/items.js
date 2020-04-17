@@ -57,7 +57,7 @@ export const addItem = (user, item, token) => {
                     action.payload.newItem._id,
                 ];
                 user.nrItems++;
-                dispatch(editUser(user));
+                dispatch(editUser(user, token));
             });
     };
 };
@@ -83,12 +83,18 @@ export const editItem = (item, token, id) => {
     };
 };
 
-export const editManyItems = (user, items) => {
+export const editManyItems = (user, items, token) => {
     let URL = URI + 'items/';
     return (dispatch) => {
-        return axios.put(URL, { user: user }).then(() => {
-            dispatch(fetchItems());
-        });
+        return axios
+            .put(
+                URL,
+                { user: user },
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            .then(() => {
+                dispatch(fetchItems());
+            });
     };
 };
 
@@ -119,7 +125,7 @@ export const toggleStar = (user, item, token, starred, id) => {
                         ...user.starredItems,
                         action.payload.updatedItem._id,
                     ];
-                    dispatch(editUser(user));
+                    dispatch(editUser(user, token));
                 });
         };
     } else {
@@ -146,7 +152,7 @@ export const toggleStar = (user, item, token, starred, id) => {
                     user.starredItems = user.starredItems.filter(
                         (item) => item !== itemID
                     );
-                    dispatch(editUser(user));
+                    dispatch(editUser(user, token));
                 });
         };
     }
@@ -165,28 +171,34 @@ export const deleteItem = (user, deleteItem, token, id) => {
                 });
             })
             .then(() => {
-                dispatch(editAllUsers(user, deleteItem));
+                dispatch(editAllUsers(user, token, deleteItem));
             });
     };
 };
 
-export const deleteManyItems = (items, ids) => {
-    let URL = URI + 'items/';
-    return (dispatch) => {
-        return axios.delete(URL, { data: items }).then(() => {
-            dispatch({
-                type: DELETE_ITEMS,
-                payload: { items: ids, all: false },
-            });
-        });
-    };
-};
-
-export const deleteAllItems = (user) => {
+export const deleteManyItems = (toDelete, updated, token) => {
     let URL = URI + 'items/';
     return (dispatch) => {
         return axios
-            .delete(URL)
+            .delete(
+                URL,
+                { data: toDelete },
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            .then(() => {
+                dispatch({
+                    type: DELETE_ITEMS,
+                    payload: { items: updated, all: false },
+                });
+            });
+    };
+};
+
+export const deleteAllItems = (user, token) => {
+    let URL = URI + 'items/';
+    return (dispatch) => {
+        return axios
+            .delete(URL, { headers: { Authorization: `Bearer ${token}` } })
             .then(() => {
                 return dispatch({
                     type: DELETE_ITEMS,
@@ -194,7 +206,7 @@ export const deleteAllItems = (user) => {
                 });
             })
             .then(() => {
-                dispatch(editAllUsers(user));
+                dispatch(editAllUsers(user, token));
             });
     };
 };

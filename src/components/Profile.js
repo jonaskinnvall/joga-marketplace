@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { Container, Col, Row, Button, Image } from 'react-bootstrap';
 
 import { useAuth0 } from '../Auth/Auth';
-import { editUser, deleteUserDB } from '../actions/users';
-import { deleteAllItems } from '../actions/items';
+import { editUser, editAllUsers, deleteUserDB } from '../actions/users';
+import { deleteManyItems, deleteAllItems } from '../actions/items';
 import ItemGrid from './ItemGrid';
 import FormModal from './FormModal';
 
@@ -60,16 +60,40 @@ const Profile = ({
     };
 
     const deleteUser = async () => {
+        let token = await getTokenSilently();
         let user = { ...userState };
         let items = [...itemState];
-        await dispatch(deleteUserDB(user, items));
+        await dispatch(deleteUserDB(user, items, token));
+        setModalShow(false);
+        setFormType();
         logout();
     };
 
     // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB
-    const deleteItems = () => {
+    const deleteItems = async () => {
+        let token = await getTokenSilently();
         let user = { ...userState };
-        dispatch(deleteAllItems(user));
+        dispatch(deleteAllItems(user, token));
+    };
+
+    const deleteMyItems = async () => {
+        let token = await getTokenSilently();
+        let user = { ...userState };
+        let items = [...itemState];
+        let itemsToDelete = user.postedItems;
+        user.nrItems = 0;
+        user.postedItems = user.postedItems.filter(
+            (item) => !itemsToDelete.includes(item)
+        );
+        let updatedItems = items.filter(
+            (item) => !itemsToDelete.includes(item._id)
+        );
+
+        await dispatch(editUser(user, token));
+        await dispatch(deleteManyItems(itemsToDelete, updatedItems, token));
+        await dispatch(editAllUsers(user, token, itemsToDelete));
+        setModalShow(false);
+        setFormType();
     };
 
     return (
@@ -152,6 +176,7 @@ const Profile = ({
                                                 formType={FormType}
                                                 confirm={editUserInfo}
                                                 deleteFunc={deleteUser}
+                                                deleteItems={deleteMyItems}
                                                 req={userInfo}
                                                 onReq={setUserInfo}
                                                 show={ModalShow}

@@ -44,20 +44,24 @@ export const setUser = (user) => {
     }
 };
 
-export const editUser = (userUpdate) => {
+export const editUser = (userUpdate, token) => {
     let idURL = URI + 'users/' + userUpdate.userID;
     let updatedUser;
 
     return (dispatch) =>
         axios
-            .put(idURL, { userID: userUpdate.userID, userUpdate })
+            .put(
+                idURL,
+                { userID: userUpdate.userID, userUpdate },
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
             .then((res) => {
                 updatedUser = res.data;
                 dispatch({ type: EDIT_USER, payload: { updatedUser } });
             });
 };
 
-export const editAllUsers = (user, items = null) => {
+export const editAllUsers = (user, token, items = null) => {
     let URL = URI + 'users/';
 
     //If all items are deleted, delete items from all users
@@ -74,9 +78,15 @@ export const editAllUsers = (user, items = null) => {
         updatedUser.starredItems = [];
 
         return (dispatch) => {
-            return axios.put(URL, { updateDB }).then(() => {
-                dispatch({ type: EDIT_USER, payload: { updatedUser } });
-            });
+            return axios
+                .put(
+                    URL,
+                    { updateDB },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then(() => {
+                    dispatch({ type: EDIT_USER, payload: { updatedUser } });
+                });
         };
     } else if (Array.isArray(items) || items.length) {
         // If user is deleted, or removes all their items,
@@ -86,7 +96,11 @@ export const editAllUsers = (user, items = null) => {
 
         return (dispatch) => {
             return axios
-                .put(URL, { updateDB })
+                .put(
+                    URL,
+                    { updateDB },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
                 .then(() => {
                     return;
                 })
@@ -108,35 +122,40 @@ export const editAllUsers = (user, items = null) => {
 
         return (dispatch) => {
             return axios
-                .put(URL, { updateDB })
+                .put(
+                    URL,
+                    { updateDB },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
                 .then(() => {
-                    dispatch(editUser(updatedUser));
+                    dispatch(editUser(updatedUser, token));
                 })
                 .catch((error) => {
                     // Update user regardless of api call
                     // responds with 404 or not
-                    dispatch(editUser(updatedUser));
+                    dispatch(editUser(updatedUser, token));
                 });
         };
     }
 };
 
-export const deleteUserDB = (user, items) => {
+export const deleteUserDB = (user, items, token) => {
     let idURL = URI + 'users/' + user.userID;
     let itemsToDelete = user.postedItems;
     let itemsToggleStar = user.starredItems;
-    let itemIDs = [];
-    itemsToDelete.forEach((item) => {
-        itemIDs.push(items.findIndex((i) => i._id === item));
-    });
+    let updatedItems = items.filter(
+        (item) => !itemsToDelete.includes(item._id)
+    );
 
     return (dispatch) => {
         return axios
-            .delete(idURL)
+            .delete(idURL, { headers: { Authorization: `Bearer ${token}` } })
             .then(() => {
                 // If user has starred items, remove those stars
                 if (Array.isArray(itemsToggleStar) && itemsToggleStar.length) {
-                    return dispatch(editManyItems(user, itemsToggleStar));
+                    return dispatch(
+                        editManyItems(user, itemsToggleStar, token)
+                    );
                 }
             })
             .then(() => {
@@ -144,9 +163,11 @@ export const deleteUserDB = (user, items) => {
                 // along with editing all users that has starred the items
                 if (Array.isArray(itemsToDelete) && itemsToDelete.length) {
                     return dispatch(
-                        deleteManyItems(itemsToDelete, itemIDs)
+                        deleteManyItems(itemsToDelete, updatedItems, token)
                     ).then(() => {
-                        return dispatch(editAllUsers(user, itemsToDelete));
+                        return dispatch(
+                            editAllUsers(user, token, itemsToDelete)
+                        );
                     });
                 }
             });

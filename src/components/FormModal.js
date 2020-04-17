@@ -8,7 +8,15 @@ import EditUser from './EditUser';
 import SVG from './icons/SVG';
 
 const FormModal = (props) => {
-    const { formType, confirm, deleteFunc, req, onReq, ...rest } = props;
+    const {
+        formType,
+        confirm,
+        deleteFunc,
+        deleteItems,
+        req,
+        onReq,
+        ...rest
+    } = props;
 
     let title, component, buttonCap;
 
@@ -52,13 +60,22 @@ const FormModal = (props) => {
                             Delete Item
                         </Button>
                     ) : formType === 'editUser' ? (
-                        <Button
-                            className="mr-auto"
-                            variant="danger"
-                            onClick={deleteFunc}
-                        >
-                            <SVG name="trash" width="1.5em" /> Delete User
-                        </Button>
+                        <>
+                            <Button
+                                variant="danger"
+                                onClick={deleteFunc}
+                            >
+                                <SVG name="trash" width="1.5em" /> Delete User
+                            </Button>
+                            <Button
+                                className="mr-auto"
+                                variant="danger"
+                                onClick={deleteItems}
+                            >
+                                <SVG name="trash" width="1.5em" /> Delete My
+                                Items
+                            </Button>
+                        </>
                     ) : (
                         <></>
                     )}
@@ -83,6 +100,7 @@ FormModal.propTypes = {
     formType: PropTypes.string.isRequired,
     confirm: PropTypes.func.isRequired,
     deleteFunc: PropTypes.func,
+    deleteItems: PropTypes.func,
     req: PropTypes.object.isRequired,
     onReq: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
