@@ -1,9 +1,12 @@
-# TODO
+# TODOs
 
--   Implement user and item edit forms
--   Update Home and Featured routes
--   Make it possible to add images to items
--   Write more component tests
+-   [x] Implement user and item edit forms
+-   [x] Update Home and Featured routes
+-   [ ] Make it possible to add images to items
+-   [ ] Write more component tests
+-   [ ] Improve UI
+-   [ ] Deploy site
+-   [ ] Screencasts
 
 # Functional Specification
 
