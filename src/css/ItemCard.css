@@ -6,21 +6,20 @@
     margin-right: 27px;
     margin-bottom: 15px;
 }
+
 .card-row {
     align-items: center;
     justify-content: space-between;
 }
 
-.card-btn-row {
-    align-items: center;
-}
-
 .card-img-div {
     height: 150px;
 }
+
 .card-img {
     display: block;
     margin: auto;
     max-height: 100%;
+    max-width: 100%;
     width: auto;
 }

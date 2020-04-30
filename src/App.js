@@ -72,7 +72,6 @@ function App() {
 
     useEffect(() => {
         if (typeof itemReq.image === 'string') {
-            console.log(itemReq);
             dispatchItem();
             setModalShow(false);
             setFormType();
@@ -100,7 +99,6 @@ function App() {
     const postItem = async (e) => {
         e.preventDefault();
 
-        // const imageURL = window.URL.createObjectURL(itemReq.image);
         if (itemReq.image) {
             readFile();
         } else {
@@ -108,13 +106,7 @@ function App() {
             setModalShow(false);
             setFormType();
         }
-
-        console.log(itemReq);
-        // setModalShow(false);
-        // setFormType();
     };
-    console.log(itemReq);
-    console.log(ModalShow);
 
     return (
         <Router history={history}>

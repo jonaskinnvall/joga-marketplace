@@ -56,7 +56,6 @@ const ItemCard = ({ item }) => {
 
     useEffect(() => {
         if (typeof itemReq.image === 'string') {
-            console.log(itemReq);
             dispatchItem();
             setModalShow(false);
             setFormType();
@@ -67,7 +66,7 @@ const ItemCard = ({ item }) => {
         let token = await getTokenSilently();
         let id = itemState.findIndex((i) => i._id === item._id);
         let itemUpdate = { ...item };
-        console.log(itemReq);
+
         itemUpdate = {
             ...itemUpdate,
             title: itemReq.title,
@@ -93,7 +92,7 @@ const ItemCard = ({ item }) => {
 
     const editItemCard = async (e) => {
         e.preventDefault();
-        console.log(itemReq);
+
         if (itemReq.image) {
             readFile();
         } else {
@@ -101,10 +100,6 @@ const ItemCard = ({ item }) => {
             setModalShow(false);
             setFormType();
         }
-
-        // await dispatch(editItem(itemUpdate, token, id));
-        // setModalShow(false);
-        // setFormType();
     };
 
     const deleteItemCard = async () => {
@@ -115,7 +110,7 @@ const ItemCard = ({ item }) => {
 
         await dispatch(deleteItem(userUpdate, itemDelete, token, id));
     };
-    console.log(itemReq);
+
     return (
         <>
             {loading ? (
@@ -129,10 +124,15 @@ const ItemCard = ({ item }) => {
                                     {item.title}
                                     <Button
                                         variant="outline-info"
-                                        className="card-btn-row"
+                                        // className="card-btn-row"
+                                        className="ml-auto"
                                         disabled
                                     >
-                                        <SVG name="star-fill" width="1.5em" />
+                                        <SVG
+                                            name="star-fill"
+                                            width="1.5em"
+                                            fill="#DEE600"
+                                        />
                                         {'    '}
                                         <Badge>{item.stars}</Badge>
                                     </Button>
@@ -179,26 +179,75 @@ const ItemCard = ({ item }) => {
                                 <Row className="card-row" as="h5">
                                     {item.title}
                                     {item.userID === user.userID ? (
+                                        <>
+                                            <Button
+                                                variant="outline-info"
+                                                className="ml-auto"
+                                                onClick={() => (
+                                                    setModalShow(true),
+                                                    setFormType('editItem'),
+                                                    setItemReq({
+                                                        ...itemReq,
+                                                        title: item.title,
+                                                        cat: item.category,
+                                                        desc: item.desc,
+                                                        price: item.price,
+                                                    })
+                                                )}
+                                            >
+                                                {' '}
+                                                <SVG
+                                                    name="gear"
+                                                    width="1.5em"
+                                                />
+                                            </Button>
+                                            <Button
+                                                variant="outline-info"
+                                                disabled
+                                            >
+                                                <SVG
+                                                    name="star-fill"
+                                                    width="1.5em"
+                                                    fill="#DEE600"
+                                                />
+                                                {'    '}
+                                                <Badge>{item.stars}</Badge>
+                                            </Button>
+                                        </>
+                                    ) : (
                                         <Button
                                             variant="outline-info"
                                             className="card-btn-row"
-                                            onClick={() => (
-                                                setModalShow(true),
-                                                setFormType('editItem'),
-                                                setItemReq({
-                                                    ...itemReq,
-                                                    title: item.title,
-                                                    cat: item.category,
-                                                    desc: item.desc,
-                                                    price: item.price,
-                                                })
-                                            )}
+                                            onClick={starToggle}
                                         >
-                                            {' '}
-                                            <SVG name="gear" width="1.5em" />
+                                            {!item.starredBy.includes(
+                                                user.userID
+                                            ) ? (
+                                                <SVG
+                                                    name="star"
+                                                    width="1.5em"
+                                                />
+                                            ) : (
+                                                <SVG
+                                                    name="star-fill"
+                                                    width="1.5em"
+                                                    fill="#DEE600"
+                                                />
+                                            )}
+
+                                            {'    '}
+                                            <Badge>
+                                                {
+                                                    itemState[
+                                                        itemState.findIndex(
+                                                            (i) =>
+                                                                i._id ===
+                                                                item._id
+                                                        )
+                                                    ].stars
+                                                }
+                                            </Badge>
                                         </Button>
-                                    ) : (
-                                        <></>
                                     )}
 
                                     {FormType === 'editItem' && (
@@ -215,34 +264,6 @@ const ItemCard = ({ item }) => {
                                             )}
                                         />
                                     )}
-                                    <Button
-                                        variant="outline-info"
-                                        className="card-btn-row"
-                                        onClick={starToggle}
-                                    >
-                                        {!item.starredBy.includes(
-                                            user.userID
-                                        ) ? (
-                                            <SVG name="star" width="1.5em" />
-                                        ) : (
-                                            <SVG
-                                                name="star-fill"
-                                                width="1.5em"
-                                            />
-                                        )}
-
-                                        {'    '}
-                                        <Badge>
-                                            {
-                                                itemState[
-                                                    itemState.findIndex(
-                                                        (i) =>
-                                                            i._id === item._id
-                                                    )
-                                                ].stars
-                                            }
-                                        </Badge>
-                                    </Button>
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
