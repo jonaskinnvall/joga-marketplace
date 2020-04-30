@@ -43,12 +43,19 @@ const EditItem = ({ req, onReq }) => {
             <Form.Row>
                 <Form.Group controlId="formImage">
                     <Form.Label>Change Image</Form.Label>
-                    <Form.File
-                        as={Col}
-                        id="formFile"
-                        label="Add image of item (preferably landscape format)"
-                        custom
-                    />
+                    <Form.File id="formFile" custom>
+                        <Form.File.Input
+                            onChange={(e) =>
+                                onReq({
+                                    ...req,
+                                    image: e.target.files[0],
+                                })
+                            }
+                        />
+                        <Form.File.Label data-browse="Add image of item ">
+                            {req.image && req.image.name}
+                        </Form.File.Label>
+                    </Form.File>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formPrice">
                     <Form.Label>Change Price</Form.Label>

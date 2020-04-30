@@ -37,6 +37,7 @@ function App() {
         cat: '',
         desc: '',
         price: '',
+        image: null,
     });
     const [ModalShow, setModalShow] = useState(false);
     const [FormType, setFormType] = useState();
@@ -59,17 +60,61 @@ function App() {
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+        if (!ModalShow)
+            setItemReq({
+                title: '',
+                cat: '',
+                desc: '',
+                price: '',
+                image: null,
+            });
     }, [ModalShow]);
 
-    const postItem = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (typeof itemReq.image === 'string') {
+            console.log(itemReq);
+            dispatchItem();
+            setModalShow(false);
+            setFormType();
+        }
+    }, [itemReq.image]);
+
+    const dispatchItem = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
         await dispatch(addItem(userUpdate, itemReq, token));
-        setModalShow(false);
-        setFormType();
     };
+
+    const readFile = () => {
+        const reader = new FileReader();
+        const image = itemReq.image;
+
+        reader.onloadend = () =>
+            setItemReq({
+                ...itemReq,
+                image: reader.result,
+            });
+        reader.readAsDataURL(image);
+    };
+
+    const postItem = async (e) => {
+        e.preventDefault();
+
+        // const imageURL = window.URL.createObjectURL(itemReq.image);
+        if (itemReq.image) {
+            readFile();
+        } else {
+            dispatchItem();
+            setModalShow(false);
+            setFormType();
+        }
+
+        console.log(itemReq);
+        // setModalShow(false);
+        // setFormType();
+    };
+    console.log(itemReq);
+    console.log(ModalShow);
 
     return (
         <Router history={history}>

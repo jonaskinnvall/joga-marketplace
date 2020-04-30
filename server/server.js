@@ -6,8 +6,6 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const morgan = require('morgan');
 const helmet = require('helmet');
-// const fs = require('fs');
-// TODO Fix so images can be added/uploaded to DB
 
 require('dotenv').config({ path: 'secrets.env' });
 
@@ -24,8 +22,8 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('dev'));
 
 // Create router

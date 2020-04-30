@@ -22,13 +22,21 @@ const ItemCard = ({ item }) => {
         cat: '',
         desc: '',
         price: '',
+        image: null,
     });
     const [ModalShow, setModalShow] = useState(false);
     const [FormType, setFormType] = useState();
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+        if (!ModalShow)
+            setItemReq({
+                title: '',
+                cat: '',
+                desc: '',
+                price: '',
+                image: null,
+            });
     }, [ModalShow]);
 
     const starToggle = async (e) => {
@@ -46,22 +54,57 @@ const ItemCard = ({ item }) => {
         dispatch(toggleStar(userUpdate, itemUpdate, token, starred, id));
     };
 
-    const editItemCard = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (typeof itemReq.image === 'string') {
+            console.log(itemReq);
+            dispatchItem();
+            setModalShow(false);
+            setFormType();
+        }
+    }, [itemReq.image]);
+
+    const dispatchItem = async () => {
         let token = await getTokenSilently();
         let id = itemState.findIndex((i) => i._id === item._id);
         let itemUpdate = { ...item };
+        console.log(itemReq);
         itemUpdate = {
             ...itemUpdate,
             title: itemReq.title,
             category: itemReq.cat,
             desc: itemReq.desc,
             price: itemReq.price,
+            image: itemReq.image,
         };
-
         await dispatch(editItem(itemUpdate, token, id));
-        setModalShow(false);
-        setFormType();
+    };
+
+    const readFile = () => {
+        const reader = new FileReader();
+        const image = itemReq.image;
+
+        reader.onloadend = () =>
+            setItemReq({
+                ...itemReq,
+                image: reader.result,
+            });
+        reader.readAsDataURL(image);
+    };
+
+    const editItemCard = async (e) => {
+        e.preventDefault();
+        console.log(itemReq);
+        if (itemReq.image) {
+            readFile();
+        } else {
+            dispatchItem();
+            setModalShow(false);
+            setFormType();
+        }
+
+        // await dispatch(editItem(itemUpdate, token, id));
+        // setModalShow(false);
+        // setFormType();
     };
 
     const deleteItemCard = async () => {
@@ -72,7 +115,7 @@ const ItemCard = ({ item }) => {
 
         await dispatch(deleteItem(userUpdate, itemDelete, token, id));
     };
-
+    console.log(itemReq);
     return (
         <>
             {loading ? (
@@ -143,6 +186,7 @@ const ItemCard = ({ item }) => {
                                                 setModalShow(true),
                                                 setFormType('editItem'),
                                                 setItemReq({
+                                                    ...itemReq,
                                                     title: item.title,
                                                     cat: item.category,
                                                     desc: item.desc,
@@ -205,7 +249,7 @@ const ItemCard = ({ item }) => {
                                 <Card.Img
                                     className="card-img"
                                     variant="top"
-                                    src={user.image}
+                                    src={item.image}
                                 />
                             </div>
                             <Card.Body>
