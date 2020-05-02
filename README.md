@@ -2,7 +2,7 @@
 
 -   [x] Implement user and item edit forms
 -   [x] Update Home and Featured routes
--   [ ] Make it possible to add images to items
+-   [x] Make it possible to add images to items
 -   [ ] Write more component tests
 -   [ ] Improve UI
 -   [ ] Deploy site
