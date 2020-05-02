@@ -28,7 +28,6 @@ export const fetchItems = () => {
 export const addItem = (user, item, token) => {
     let URL = URI + 'items/';
     let newItem;
-    console.log(item);
 
     return (dispatch) => {
         return axios

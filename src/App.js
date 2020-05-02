@@ -110,7 +110,9 @@ function App() {
 
     return (
         <Router history={history}>
-            {!loading ? (
+            {loading ? (
+                <div> Loading... </div>
+            ) : (
                 <div className="App">
                     <div className="App-header">
                         <Navbar
@@ -223,8 +225,6 @@ function App() {
                         </Container>
                     </div>
                 </div>
-            ) : (
-                <div> Loading... </div>
             )}
         </Router>
     );
