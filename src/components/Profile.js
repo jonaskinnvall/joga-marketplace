@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Container, Col, Row, Button, Image } from 'react-bootstrap';
@@ -25,7 +25,7 @@ const Profile = ({
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
 
-    const [userInfo, setUserInfo] = useState({ favCat: '' });
+    const [userInfo, setUserInfo] = useState({ favCat: '', image: null });
     // const [showAlert, setShowAlert] = useState({
     //     alert: false,
     //     confirm: false,
@@ -44,17 +44,54 @@ const Profile = ({
     //     }
     // };
 
-    const editUserInfo = async (e) => {
-        e.preventDefault();
+    // Clear form inputs after closing modal
+    useEffect(() => {
+        if (!ModalShow)
+            setUserInfo({
+                favCat: '',
+                image: null,
+            });
+    }, [ModalShow]);
+
+    useEffect(() => {
+        if (typeof userInfo.image === 'string' && !FormType) {
+            dispatchUser();
+        }
+    }, [userInfo.image]);
+
+    const dispatchUser = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
 
         userUpdate = {
             ...userUpdate,
             favCat: userInfo.favCat,
+            image: userInfo.image,
         };
 
         await dispatch(editUser(userUpdate, token));
+    };
+
+    const readFile = () => {
+        const reader = new FileReader();
+        const image = userInfo.image;
+
+        reader.onloadend = () =>
+            setUserInfo({
+                ...userInfo,
+                image: reader.result,
+            });
+        reader.readAsDataURL(image);
+    };
+
+    const editUserInfo = async (e) => {
+        e.preventDefault();
+
+        if (typeof userInfo.image === 'object') {
+            readFile();
+        } else {
+            dispatchUser();
+        }
         setModalShow(false);
         setFormType();
     };
@@ -166,7 +203,12 @@ const Profile = ({
                                             variant="info"
                                             onClick={() => (
                                                 setModalShow(true),
-                                                setFormType('editUser')
+                                                setFormType('editUser'),
+                                                setUserInfo({
+                                                    ...userInfo,
+                                                    favCat: userState.favCat,
+                                                    image: userState.image,
+                                                })
                                             )}
                                         >
                                             Edit user

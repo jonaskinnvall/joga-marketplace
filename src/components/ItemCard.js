@@ -9,7 +9,6 @@ import SVG from './icons/SVG';
 import FormModal from './FormModal';
 
 import '../css/ItemCard.css';
-import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
     const { loading, getTokenSilently } = useAuth0();
@@ -55,10 +54,8 @@ const ItemCard = ({ item }) => {
     };
 
     useEffect(() => {
-        if (typeof itemReq.image === 'string') {
+        if (typeof itemReq.image === 'string' && !FormType) {
             dispatchItem();
-            setModalShow(false);
-            setFormType();
         }
     }, [itemReq.image]);
 
@@ -93,13 +90,13 @@ const ItemCard = ({ item }) => {
     const editItemCard = async (e) => {
         e.preventDefault();
 
-        if (itemReq.image) {
+        if (itemReq.image && typeof itemReq.image === 'object') {
             readFile();
         } else {
             dispatchItem();
-            setModalShow(false);
-            setFormType();
         }
+        setModalShow(false);
+        setFormType();
     };
 
     const deleteItemCard = async () => {
@@ -142,7 +139,7 @@ const ItemCard = ({ item }) => {
                                 <Card.Img
                                     className="card-img"
                                     variant="top"
-                                    src={puh}
+                                    src={item.image}
                                 />
                             </div>
                             <Card.Body>
@@ -192,6 +189,7 @@ const ItemCard = ({ item }) => {
                                                         cat: item.category,
                                                         desc: item.desc,
                                                         price: item.price,
+                                                        image: item.image,
                                                     })
                                                 )}
                                             >

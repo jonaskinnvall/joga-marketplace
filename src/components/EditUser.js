@@ -24,9 +24,21 @@ const EditUser = ({ req, onReq }) => {
                 </Form.Control>
             </Form.Group>
             <Form.Group controlId="formImage">
-                <Form.Label>Change profile picture</Form.Label>
-                <Form.File id="formFile" label="Change your picture" custom />
-            </Form.Group>
+                    <Form.Label>Change Image</Form.Label>
+                    <Form.File id="formFile" custom>
+                        <Form.File.Input
+                            onChange={(e) =>
+                                onReq({
+                                    ...req,
+                                    image: e.target.files[0],
+                                })
+                            }
+                        />
+                        <Form.File.Label data-browse="Change profile picture ">
+                            {req.image && req.image.name}
+                        </Form.File.Label>
+                    </Form.File>
+                </Form.Group>
         </Form>
     );
 };
