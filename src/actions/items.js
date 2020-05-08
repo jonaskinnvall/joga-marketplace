@@ -27,39 +27,90 @@ export const fetchItems = () => {
 
 export const addItem = (user, item, token) => {
     let URL = URI + 'items/';
+    let imageURL = URI + 'image-upload';
     let newItem;
 
-    return (dispatch) => {
-        return axios
-            .post(
-                URL,
-                {
-                    userID: user.userID,
-                    user: user.name,
-                    category: item.cat,
-                    title: item.title,
-                    desc: item.desc,
-                    price: item.price,
-                    image: item.image,
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-            .then((res) => {
-                newItem = res.data.body;
-                return dispatch({
-                    type: ADD_ITEM,
-                    payload: { newItem },
+    if (item.image) {
+        return (dispatch) => {
+            return axios
+                .post(
+                    imageURL,
+                    { image: item.image.imageURL, user: user.userID },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then((res) => {
+                    item.image.imageURL = res.data.imageURL;
+                    item.image.imageID = res.data.imageID;
+
+                    return axios
+                        .post(
+                            URL,
+                            {
+                                userID: user.userID,
+                                user: user.name,
+                                category: item.cat,
+                                title: item.title,
+                                desc: item.desc,
+                                price: item.price,
+                                image: {
+                                    imageURL: item.image.imageURL,
+                                    imageID: item.image.imageID,
+                                },
+                            },
+                            { headers: { Authorization: `Bearer ${token}` } }
+                        )
+                        .then((res) => {
+                            newItem = res.data.body;
+                            return dispatch({
+                                type: ADD_ITEM,
+                                payload: { newItem },
+                            });
+                        })
+                        .then((action) => {
+                            user.postedItems = [
+                                ...user.postedItems,
+                                action.payload.newItem._id,
+                            ];
+                            user.nrItems++;
+                            dispatch(editUser(user, token));
+                        });
                 });
-            })
-            .then((action) => {
-                user.postedItems = [
-                    ...user.postedItems,
-                    action.payload.newItem._id,
-                ];
-                user.nrItems++;
-                dispatch(editUser(user, token));
-            });
-    };
+        };
+    } else {
+        return (dispatch) => {
+            return axios
+                .post(
+                    URL,
+                    {
+                        userID: user.userID,
+                        user: user.name,
+                        category: item.cat,
+                        title: item.title,
+                        desc: item.desc,
+                        price: item.price,
+                        image: item.image,
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then((res) => {
+                    newItem = res.data.body;
+                    return dispatch({
+                        type: ADD_ITEM,
+                        payload: { newItem },
+                    });
+                })
+                .then((action) => {
+                    user.postedItems = [
+                        ...user.postedItems,
+                        action.payload.newItem._id,
+                    ];
+                    user.nrItems++;
+                    dispatch(editUser(user, token));
+                });
+        };
+    }
 };
 
 export const editItem = (item, token, id) => {
@@ -160,25 +211,39 @@ export const toggleStar = (user, item, token, starred, id) => {
 
 export const deleteItem = (user, deleteItem, token, id) => {
     let itemURL = URI + 'items/' + deleteItem._id;
+    let imageURL = URI + 'image-delete';
 
     return (dispatch) => {
         return axios
-            .delete(itemURL, { headers: { Authorization: `Bearer ${token}` } })
-            .then((res) => {
-                return dispatch({
-                    type: DELETE_ITEM,
-                    payload: { id },
-                });
-            })
-            .then(() => {
-                dispatch(editAllUsers(user, token, deleteItem));
-            });
+            .post(
+                imageURL,
+                { image: deleteItem.image.imageID },
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            .then(
+                axios
+                    .delete(itemURL, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    })
+                    .then((res) => {
+                        return dispatch({
+                            type: DELETE_ITEM,
+                            payload: { id },
+                        });
+                    })
+                    .then(() => {
+                        dispatch(editAllUsers(user, token, deleteItem));
+                    })
+            );
     };
 };
 
 export const deleteManyItems = (toDelete, updated, token) => {
-    let URL = URI + 'items/';
+    let URL = URI + 'items';
+    // let imageURL = URI + 'image-delete';
+
     return (dispatch) => {
+        console.log('delete items1');
         return axios
             .delete(
                 URL,
@@ -186,6 +251,7 @@ export const deleteManyItems = (toDelete, updated, token) => {
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             .then(() => {
+                console.log('delete items2');
                 dispatch({
                     type: DELETE_ITEMS,
                     payload: { items: updated, all: false },

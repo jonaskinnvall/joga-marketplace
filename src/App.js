@@ -37,7 +37,7 @@ function App() {
         cat: '',
         desc: '',
         price: '',
-        image: null,
+        image: { imageURL: null, imageID: null },
     });
     const [ModalShow, setModalShow] = useState(false);
     const [FormType, setFormType] = useState();
@@ -66,17 +66,17 @@ function App() {
                 cat: '',
                 desc: '',
                 price: '',
-                image: null,
+                image: { imageURL: null, imageID: null },
             });
     }, [ModalShow]);
 
     useEffect(() => {
-        if (typeof itemReq.image === 'string') {
+        if (typeof itemReq.image.imageURL === 'string') {
             dispatchItem();
             setModalShow(false);
             setFormType();
         }
-    }, [itemReq.image]);
+    }, [itemReq.image.imageURL]);
 
     const dispatchItem = async () => {
         let token = await getTokenSilently();
@@ -86,12 +86,12 @@ function App() {
 
     const readFile = () => {
         const reader = new FileReader();
-        const image = itemReq.image;
+        const image = itemReq.image.imageURL;
 
         reader.onloadend = () =>
             setItemReq({
                 ...itemReq,
-                image: reader.result,
+                image: { ...itemReq.image, imageURL: reader.result },
             });
         reader.readAsDataURL(image);
     };

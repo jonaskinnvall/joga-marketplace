@@ -6,6 +6,7 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const cloudinary = require('cloudinary').v2;
 
 require('dotenv').config({ path: 'secrets.env' });
 
@@ -25,6 +26,13 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('dev'));
+
+// Set cloudinary config
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+});
 
 // Create router
 // eslint-disable-next-line babel/new-cap
@@ -222,8 +230,12 @@ router
             title: req.body.title,
             desc: req.body.desc,
             price: req.body.price,
-            image: req.body.image,
+            image: {
+                imageURL: req.body.image.imageURL,
+                imageID: req.body.image.imageID,
+            },
         });
+
         item.save((error) => {
             if (error) return res.status(500).send('Error adding item!');
             res.json({ body: item, message: 'Item added!' });
@@ -260,6 +272,7 @@ router
     .delete(checkJwt, (req, res) => {
         // Delete multiple items that had been uploaded by user
         // who wants to remove them or has deleted their profile
+        console.log(req.body);
         if (Array.isArray(req.body) && req.body.length) {
             Item.deleteMany(
                 { _id: { $in: req.body } },
@@ -321,6 +334,40 @@ router
             res.status(200).json('Removed item!');
         });
     });
+
+router.route('/image-upload').post(checkJwt, (req, res) => {
+    const reqImage = req.body.image;
+
+    return cloudinary.uploader.upload(
+        reqImage,
+        { folder: 'items', tags: [req.body.user] },
+        (error, result) => {
+            const imageURL = result.secure_url;
+            const imageID = result.public_id;
+            return res.status(200).json({ imageURL, imageID });
+        }
+    );
+});
+
+router.route('/image-delete').post(checkJwt, (req, res) => {
+    if (req.body.image) {
+        const toDelete = req.body.image;
+        console.log(toDelete);
+
+        return cloudinary.uploader.destroy(toDelete, (error, result) => {
+            return res.status(200);
+        });
+    } else {
+        const toDelete = req.body.user;
+        console.log(toDelete);
+        return cloudinary.api.delete_resources_by_tag(
+            toDelete,
+            (error, result) => {
+                return res.status(200);
+            }
+        );
+    }
+});
 
 app.use('/api', router);
 

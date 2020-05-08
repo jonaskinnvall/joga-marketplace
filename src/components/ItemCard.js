@@ -136,11 +136,19 @@ const ItemCard = ({ item }) => {
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
-                                <Card.Img
-                                    className="card-img"
-                                    variant="top"
-                                    src={item.image}
-                                />
+                                {item.image && item.image.imageURL ? (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image.imageURL}
+                                    />
+                                ) : (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image}
+                                    />
+                                )}
                             </div>
                             <Card.Body>
                                 <Row className="card-row">
@@ -265,11 +273,19 @@ const ItemCard = ({ item }) => {
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
-                                <Card.Img
-                                    className="card-img"
-                                    variant="top"
-                                    src={item.image}
-                                />
+                                {item.image && item.image.imageURL ? (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image.imageURL}
+                                    />
+                                ) : (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image}
+                                    />
+                                )}
                             </div>
                             <Card.Body>
                                 <Row className="card-row">
