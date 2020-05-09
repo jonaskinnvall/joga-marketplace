@@ -99,7 +99,7 @@ function App() {
     const postItem = async (e) => {
         e.preventDefault();
 
-        if (itemReq.image) {
+        if (itemReq.image.imageURL) {
             readFile();
         } else {
             dispatchItem();

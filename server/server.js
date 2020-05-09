@@ -1,3 +1,4 @@
+/* eslint-disable babel/camelcase */
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -237,7 +238,7 @@ router
         });
 
         item.save((error) => {
-            if (error) return res.status(500).send('Error adding item!');
+            if (error) return res.status(500).send(error);
             res.json({ body: item, message: 'Item added!' });
         });
     })
@@ -269,10 +270,9 @@ router
             }
         );
     })
-    .delete(checkJwt, (req, res) => {
+    .delete((req, res) => {
         // Delete multiple items that had been uploaded by user
         // who wants to remove them or has deleted their profile
-        console.log(req.body);
         if (Array.isArray(req.body) && req.body.length) {
             Item.deleteMany(
                 { _id: { $in: req.body } },
@@ -337,7 +337,7 @@ router
 
 router.route('/image-upload').post(checkJwt, (req, res) => {
     const reqImage = req.body.image;
-
+    console.log('imup, req', req.body);
     return cloudinary.uploader.upload(
         reqImage,
         { folder: 'items', tags: [req.body.user] },
@@ -349,17 +349,18 @@ router.route('/image-upload').post(checkJwt, (req, res) => {
     );
 });
 
-router.route('/image-delete').post(checkJwt, (req, res) => {
+router.route('/image-delete').put(checkJwt, (req, res) => {
+    console.log('imdel, req', req.body);
     if (req.body.image) {
         const toDelete = req.body.image;
-        console.log(toDelete);
+        console.log('item', toDelete);
 
         return cloudinary.uploader.destroy(toDelete, (error, result) => {
             return res.status(200);
         });
     } else {
         const toDelete = req.body.user;
-        console.log(toDelete);
+        console.log('user', toDelete);
         return cloudinary.api.delete_resources_by_tag(
             toDelete,
             (error, result) => {

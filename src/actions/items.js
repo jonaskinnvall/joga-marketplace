@@ -30,7 +30,7 @@ export const addItem = (user, item, token) => {
     let imageURL = URI + 'image-upload';
     let newItem;
 
-    if (item.image) {
+    if (item.image.imageURL) {
         return (dispatch) => {
             return axios
                 .post(
@@ -238,25 +238,25 @@ export const deleteItem = (user, deleteItem, token, id) => {
     };
 };
 
-export const deleteManyItems = (toDelete, updated, token) => {
-    let URL = URI + 'items';
-    // let imageURL = URI + 'image-delete';
+export const deleteManyItems = (toDelete, updated, token, user = null) => {
+    let URL = URI + 'items/';
+    let imageURL = URI + 'image-delete';
 
     return (dispatch) => {
-        console.log('delete items1');
-        return axios
-            .delete(
-                URL,
-                { data: toDelete },
+        axios
+            .put(
+                imageURL,
+                { user: user.userID },
                 { headers: { Authorization: `Bearer ${token}` } }
             )
-            .then(() => {
-                console.log('delete items2');
-                dispatch({
-                    type: DELETE_ITEMS,
-                    payload: { items: updated, all: false },
-                });
-            });
+            .then(
+                axios.delete(URL, { data: toDelete }).then(() => {
+                    return dispatch({
+                        type: DELETE_ITEMS,
+                        payload: { items: updated, all: false },
+                    });
+                })
+            );
     };
 };
 
