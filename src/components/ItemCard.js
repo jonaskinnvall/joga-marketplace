@@ -21,7 +21,7 @@ const ItemCard = ({ item }) => {
         cat: '',
         desc: '',
         price: '',
-        image: null,
+        image: { imageURL: null, imageID: null },
     });
     const [ModalShow, setModalShow] = useState(false);
     const [FormType, setFormType] = useState();
@@ -34,7 +34,7 @@ const ItemCard = ({ item }) => {
                 cat: '',
                 desc: '',
                 price: '',
-                image: null,
+                image: { imageURL: null, imageID: null },
             });
     }, [ModalShow]);
 
@@ -54,15 +54,17 @@ const ItemCard = ({ item }) => {
     };
 
     useEffect(() => {
-        if (typeof itemReq.image === 'string' && !FormType) {
+        if (typeof itemReq.image.imageURL === 'string' && !FormType) {
             dispatchItem();
+            setModalShow(false);
         }
-    }, [itemReq.image]);
+    }, [itemReq.image.imageURL]);
 
     const dispatchItem = async () => {
         let token = await getTokenSilently();
         let id = itemState.findIndex((i) => i._id === item._id);
         let itemUpdate = { ...item };
+        let itemUser = { ...user };
 
         itemUpdate = {
             ...itemUpdate,
@@ -72,17 +74,17 @@ const ItemCard = ({ item }) => {
             price: itemReq.price,
             image: itemReq.image,
         };
-        await dispatch(editItem(itemUpdate, token, id));
+        await dispatch(editItem(itemUpdate, token, id, itemUser));
     };
 
     const readFile = () => {
         const reader = new FileReader();
-        const image = itemReq.image;
+        const image = itemReq.image.imageURL;
 
         reader.onloadend = () =>
             setItemReq({
                 ...itemReq,
-                image: reader.result,
+                image: { ...itemReq.image, imageURL: reader.result },
             });
         reader.readAsDataURL(image);
     };
@@ -90,12 +92,12 @@ const ItemCard = ({ item }) => {
     const editItemCard = async (e) => {
         e.preventDefault();
 
-        if (itemReq.image && typeof itemReq.image === 'object') {
+        if (itemReq.image.imageURL) {
             readFile();
         } else {
             dispatchItem();
+            setModalShow(false);
         }
-        setModalShow(false);
         setFormType();
     };
 
@@ -107,7 +109,6 @@ const ItemCard = ({ item }) => {
 
         await dispatch(deleteItem(userUpdate, itemDelete, token, id));
     };
-
     return (
         <>
             {loading ? (

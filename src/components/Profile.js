@@ -125,15 +125,12 @@ const Profile = ({
         let updatedItems = items.filter(
             (item) => !itemsToDelete.includes(item._id)
         );
-        
+
         await dispatch(editUser(user, token));
-        console.log('pre del');
         await dispatch(
             deleteManyItems(itemsToDelete, updatedItems, token, user)
         );
-        console.log('after del');
         await dispatch(editAllUsers(user, token, itemsToDelete));
-        console.log('done');
         setModalShow(false);
         setFormType();
     };

@@ -337,30 +337,27 @@ router
 
 router.route('/image-upload').post(checkJwt, (req, res) => {
     const reqImage = req.body.image;
-    console.log('imup, req', req.body);
+
     return cloudinary.uploader.upload(
         reqImage,
         { folder: 'items', tags: [req.body.user] },
         (error, result) => {
             const imageURL = result.secure_url;
             const imageID = result.public_id;
+
             return res.status(200).json({ imageURL, imageID });
         }
     );
 });
 
 router.route('/image-delete').put(checkJwt, (req, res) => {
-    console.log('imdel, req', req.body);
     if (req.body.image) {
         const toDelete = req.body.image;
-        console.log('item', toDelete);
-
         return cloudinary.uploader.destroy(toDelete, (error, result) => {
             return res.status(200);
         });
     } else {
         const toDelete = req.body.user;
-        console.log('user', toDelete);
         return cloudinary.api.delete_resources_by_tag(
             toDelete,
             (error, result) => {

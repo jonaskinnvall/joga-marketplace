@@ -48,12 +48,15 @@ const EditItem = ({ req, onReq }) => {
                             onChange={(e) =>
                                 onReq({
                                     ...req,
-                                    image: e.target.files[0],
+                                    image: {
+                                        ...req.image,
+                                        imageURL: e.target.files[0],
+                                    },
                                 })
                             }
                         />
                         <Form.File.Label data-browse="Add image of item ">
-                            {req.image && req.image.name}
+                            {req.image.imageURL && req.image.imageURL.name}
                         </Form.File.Label>
                     </Form.File>
                 </Form.Group>

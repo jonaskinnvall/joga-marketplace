@@ -113,25 +113,72 @@ export const addItem = (user, item, token) => {
     }
 };
 
-export const editItem = (item, token, id) => {
+export const editItem = (item, token, id, user) => {
     let itemURL = URI + 'items/' + item._id;
+    let imageUp = URI + 'image-upload';
+    let imageDel = URI + 'image-delete';
     let updatedItem;
 
-    return (dispatch) => {
-        return axios
-            .put(
-                itemURL,
-                { _id: item._id, item },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-            .then((res) => {
-                updatedItem = res.data;
-                return dispatch({
-                    type: EDIT_ITEM,
-                    payload: { updatedItem, id },
+    if (item.image.imageURL) {
+        return (dispatch) => {
+            return axios
+                .put(
+                    imageDel,
+                    { image: item.image.imageID },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then(
+                    axios
+                        .post(
+                            imageUp,
+                            { image: item.image.imageURL, user: user.userID },
+                            {
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        )
+                        .then((res) => {
+                            item.image.imageURL = res.data.imageURL;
+                            item.image.imageID = res.data.imageID;
+
+                            return axios
+                                .put(
+                                    itemURL,
+                                    { _id: item._id, item },
+                                    {
+                                        headers: {
+                                            Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                )
+                                .then((res) => {
+                                    updatedItem = res.data;
+                                    return dispatch({
+                                        type: EDIT_ITEM,
+                                        payload: { updatedItem, id },
+                                    });
+                                });
+                        })
+                );
+        };
+    } else {
+        return (dispatch) => {
+            return axios
+                .put(
+                    itemURL,
+                    { _id: item._id, item },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then((res) => {
+                    updatedItem = res.data;
+                    return dispatch({
+                        type: EDIT_ITEM,
+                        payload: { updatedItem, id },
+                    });
                 });
-            });
-    };
+        };
+    }
 };
 
 export const editManyItems = (user, items, token) => {
@@ -215,7 +262,7 @@ export const deleteItem = (user, deleteItem, token, id) => {
 
     return (dispatch) => {
         return axios
-            .post(
+            .put(
                 imageURL,
                 { image: deleteItem.image.imageID },
                 { headers: { Authorization: `Bearer ${token}` } }
