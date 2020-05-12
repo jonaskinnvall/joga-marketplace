@@ -9,7 +9,6 @@ import SVG from './icons/SVG';
 import FormModal from './FormModal';
 
 import '../css/ItemCard.css';
-import puh from '../../images/Puh.jpg';
 
 const ItemCard = ({ item }) => {
     const { loading, getTokenSilently } = useAuth0();
@@ -22,13 +21,21 @@ const ItemCard = ({ item }) => {
         cat: '',
         desc: '',
         price: '',
+        image: { imageURL: null, imageID: null },
     });
     const [ModalShow, setModalShow] = useState(false);
     const [FormType, setFormType] = useState();
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+        if (!ModalShow)
+            setItemReq({
+                title: '',
+                cat: '',
+                desc: '',
+                price: '',
+                image: { imageURL: null, imageID: null },
+            });
     }, [ModalShow]);
 
     const starToggle = async (e) => {
@@ -46,21 +53,51 @@ const ItemCard = ({ item }) => {
         dispatch(toggleStar(userUpdate, itemUpdate, token, starred, id));
     };
 
-    const editItemCard = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (typeof itemReq.image.imageURL === 'string' && !FormType) {
+            dispatchItem();
+            setModalShow(false);
+        }
+    }, [itemReq.image.imageURL]);
+
+    const dispatchItem = async () => {
         let token = await getTokenSilently();
         let id = itemState.findIndex((i) => i._id === item._id);
         let itemUpdate = { ...item };
+        let itemUser = { ...user };
+
         itemUpdate = {
             ...itemUpdate,
             title: itemReq.title,
             category: itemReq.cat,
             desc: itemReq.desc,
             price: itemReq.price,
+            image: itemReq.image,
         };
+        await dispatch(editItem(itemUpdate, token, id, itemUser));
+    };
 
-        await dispatch(editItem(itemUpdate, token, id));
-        setModalShow(false);
+    const readFile = () => {
+        const reader = new FileReader();
+        const image = itemReq.image.imageURL;
+
+        reader.onloadend = () =>
+            setItemReq({
+                ...itemReq,
+                image: { ...itemReq.image, imageURL: reader.result },
+            });
+        reader.readAsDataURL(image);
+    };
+
+    const editItemCard = async (e) => {
+        e.preventDefault();
+
+        if (itemReq.image.imageURL) {
+            readFile();
+        } else {
+            dispatchItem();
+            setModalShow(false);
+        }
         setFormType();
     };
 
@@ -72,7 +109,6 @@ const ItemCard = ({ item }) => {
 
         await dispatch(deleteItem(userUpdate, itemDelete, token, id));
     };
-
     return (
         <>
             {loading ? (
@@ -86,21 +122,34 @@ const ItemCard = ({ item }) => {
                                     {item.title}
                                     <Button
                                         variant="outline-info"
-                                        className="card-btn-row"
+                                        // className="card-btn-row"
+                                        className="ml-auto"
                                         disabled
                                     >
-                                        <SVG name="star-fill" width="1.5em" />
+                                        <SVG
+                                            name="star-fill"
+                                            width="1.5em"
+                                            fill="#DEE600"
+                                        />
                                         {'    '}
                                         <Badge>{item.stars}</Badge>
                                     </Button>
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
-                                <Card.Img
-                                    className="card-img"
-                                    variant="top"
-                                    src={puh}
-                                />
+                                {item.image && item.image.imageURL ? (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image.imageURL}
+                                    />
+                                ) : (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image}
+                                    />
+                                )}
                             </div>
                             <Card.Body>
                                 <Row className="card-row">
@@ -136,25 +185,76 @@ const ItemCard = ({ item }) => {
                                 <Row className="card-row" as="h5">
                                     {item.title}
                                     {item.userID === user.userID ? (
+                                        <>
+                                            <Button
+                                                variant="outline-info"
+                                                className="ml-auto"
+                                                onClick={() => (
+                                                    setModalShow(true),
+                                                    setFormType('editItem'),
+                                                    setItemReq({
+                                                        ...itemReq,
+                                                        title: item.title,
+                                                        cat: item.category,
+                                                        desc: item.desc,
+                                                        price: item.price,
+                                                        image: item.image,
+                                                    })
+                                                )}
+                                            >
+                                                {' '}
+                                                <SVG
+                                                    name="gear"
+                                                    width="1.5em"
+                                                />
+                                            </Button>
+                                            <Button
+                                                variant="outline-info"
+                                                disabled
+                                            >
+                                                <SVG
+                                                    name="star-fill"
+                                                    width="1.5em"
+                                                    fill="#DEE600"
+                                                />
+                                                {'    '}
+                                                <Badge>{item.stars}</Badge>
+                                            </Button>
+                                        </>
+                                    ) : (
                                         <Button
                                             variant="outline-info"
                                             className="card-btn-row"
-                                            onClick={() => (
-                                                setModalShow(true),
-                                                setFormType('editItem'),
-                                                setItemReq({
-                                                    title: item.title,
-                                                    cat: item.category,
-                                                    desc: item.desc,
-                                                    price: item.price,
-                                                })
-                                            )}
+                                            onClick={starToggle}
                                         >
-                                            {' '}
-                                            <SVG name="gear" width="1.5em" />
+                                            {!item.starredBy.includes(
+                                                user.userID
+                                            ) ? (
+                                                <SVG
+                                                    name="star"
+                                                    width="1.5em"
+                                                />
+                                            ) : (
+                                                <SVG
+                                                    name="star-fill"
+                                                    width="1.5em"
+                                                    fill="#DEE600"
+                                                />
+                                            )}
+
+                                            {'    '}
+                                            <Badge>
+                                                {
+                                                    itemState[
+                                                        itemState.findIndex(
+                                                            (i) =>
+                                                                i._id ===
+                                                                item._id
+                                                        )
+                                                    ].stars
+                                                }
+                                            </Badge>
                                         </Button>
-                                    ) : (
-                                        <></>
                                     )}
 
                                     {FormType === 'editItem' && (
@@ -171,42 +271,22 @@ const ItemCard = ({ item }) => {
                                             )}
                                         />
                                     )}
-                                    <Button
-                                        variant="outline-info"
-                                        className="card-btn-row"
-                                        onClick={starToggle}
-                                    >
-                                        {!item.starredBy.includes(
-                                            user.userID
-                                        ) ? (
-                                            <SVG name="star" width="1.5em" />
-                                        ) : (
-                                            <SVG
-                                                name="star-fill"
-                                                width="1.5em"
-                                            />
-                                        )}
-
-                                        {'    '}
-                                        <Badge>
-                                            {
-                                                itemState[
-                                                    itemState.findIndex(
-                                                        (i) =>
-                                                            i._id === item._id
-                                                    )
-                                                ].stars
-                                            }
-                                        </Badge>
-                                    </Button>
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
-                                <Card.Img
-                                    className="card-img"
-                                    variant="top"
-                                    src={user.image}
-                                />
+                                {item.image && item.image.imageURL ? (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image.imageURL}
+                                    />
+                                ) : (
+                                    <Card.Img
+                                        className="card-img"
+                                        variant="top"
+                                        src={item.image}
+                                    />
+                                )}
                             </div>
                             <Card.Body>
                                 <Row className="card-row">

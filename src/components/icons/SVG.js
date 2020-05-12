@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 
 import Chevron from './Chevron';
 import Star from './Star';
-import StarFilled from './StarFIlled';
 import Gear from './Gear';
 import Trash from './Trash';
 
 const SVG = (props) => {
-    switch (props.name) {
+    let icon = props.name.split('-')[0];
+
+    switch (icon) {
         case 'chevron':
             return <Chevron {...props} />;
         case 'star':
             return <Star {...props} />;
-        case 'star-fill':
-            return <StarFilled {...props} />;
         case 'gear':
             return <Gear {...props} />;
         case 'trash':

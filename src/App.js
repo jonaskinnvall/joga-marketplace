@@ -37,6 +37,7 @@ function App() {
         cat: '',
         desc: '',
         price: '',
+        image: { imageURL: null, imageID: null },
     });
     const [ModalShow, setModalShow] = useState(false);
     const [FormType, setFormType] = useState();
@@ -59,21 +60,58 @@ function App() {
 
     // Clear form inputs after closing modal
     useEffect(() => {
-        if (!ModalShow) setItemReq({ title: '', cat: '', desc: '', price: '' });
+        if (!ModalShow)
+            setItemReq({
+                title: '',
+                cat: '',
+                desc: '',
+                price: '',
+                image: { imageURL: null, imageID: null },
+            });
     }, [ModalShow]);
 
-    const postItem = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (typeof itemReq.image.imageURL === 'string' && !FormType) {
+            dispatchItem();
+            setModalShow(false);
+        }
+    }, [itemReq.image.imageURL]);
+
+    const dispatchItem = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
         await dispatch(addItem(userUpdate, itemReq, token));
-        setModalShow(false);
+    };
+
+    const readFile = () => {
+        const reader = new FileReader();
+        const image = itemReq.image.imageURL;
+
+        reader.onloadend = () =>
+            setItemReq({
+                ...itemReq,
+                image: { ...itemReq.image, imageURL: reader.result },
+            });
+        reader.readAsDataURL(image);
+    };
+
+    const postItem = async (e) => {
+        e.preventDefault();
+
+        if (itemReq.image.imageURL) {
+            readFile();
+        } else {
+            dispatchItem();
+            setModalShow(false);
+        }
         setFormType();
     };
 
     return (
         <Router history={history}>
-            {!loading ? (
+            {loading ? (
+                <div> Loading... </div>
+            ) : (
                 <div className="App">
                     <div className="App-header">
                         <Navbar
@@ -94,7 +132,7 @@ function App() {
                                     </Nav.Link>
                                 </Nav>
                                 <Nav className="ml-auto">
-                                    {isAuthenticated && userState ? (
+                                    {isAuthenticated && userState.image ? (
                                         <Nav>
                                             <Nav.Link
                                                 onClick={() => (
@@ -123,7 +161,9 @@ function App() {
                                             >
                                                 {user.given_name}{' '}
                                                 <img
-                                                    src={userState.image}
+                                                    src={
+                                                        userState.image.imageURL
+                                                    }
                                                     alt="Profile"
                                                 />
                                             </Nav.Link>
@@ -186,8 +226,6 @@ function App() {
                         </Container>
                     </div>
                 </div>
-            ) : (
-                <div> Loading... </div>
             )}
         </Router>
     );

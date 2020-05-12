@@ -9,7 +9,7 @@ var ItemSchema = new Schema({
     title: { type: String, required: true },
     desc: { type: String, required: true },
     price: { type: Number, required: true },
-    image: { data: Buffer, contentType: String },
+    image: { imageURL: { type: String }, imageID: { type: String } },
     creationDate: { type: Date, default: Date.now },
     stars: { type: Number, default: 0 },
     starredBy: { type: [String] },

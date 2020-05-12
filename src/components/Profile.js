@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Container, Col, Row, Button, Image } from 'react-bootstrap';
 
 import { useAuth0 } from '../Auth/Auth';
-import { editUser, deleteUserDB } from '../actions/users';
-import { deleteAllItems } from '../actions/items';
+import { editUser, editAllUsers, deleteUserDB } from '../actions/users';
+import { deleteManyItems, deleteAllItems } from '../actions/items';
 import ItemGrid from './ItemGrid';
 import FormModal from './FormModal';
 
@@ -25,7 +25,10 @@ const Profile = ({
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
 
-    const [userInfo, setUserInfo] = useState({ favCat: '' });
+    const [userInfo, setUserInfo] = useState({
+        favCat: '',
+        image: { imageURL: null, imageID: null },
+    });
     // const [showAlert, setShowAlert] = useState({
     //     alert: false,
     //     confirm: false,
@@ -44,32 +47,95 @@ const Profile = ({
     //     }
     // };
 
-    const editUserInfo = async (e) => {
-        e.preventDefault();
+    // Clear form inputs after closing modal
+    useEffect(() => {
+        if (!ModalShow)
+            setUserInfo({
+                favCat: '',
+                image: { imageURL: null, imageID: null },
+            });
+    }, [ModalShow]);
+
+    useEffect(() => {
+        if (typeof userInfo.image.imageURL === 'string' && !FormType) {
+            dispatchUser();
+            setModalShow(false);
+        }
+    }, [userInfo.image.imageURL]);
+
+    const dispatchUser = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
-
         userUpdate = {
             ...userUpdate,
             favCat: userInfo.favCat,
+            image: userInfo.image,
         };
 
         await dispatch(editUser(userUpdate, token));
-        setModalShow(false);
+    };
+
+    const readFile = () => {
+        const reader = new FileReader();
+        const image = userInfo.image.imageURL;
+
+        reader.onloadend = () =>
+            setUserInfo({
+                ...userInfo,
+                image: { ...userInfo.image, imageURL: reader.result },
+            });
+        reader.readAsDataURL(image);
+    };
+
+    const editUserInfo = async (e) => {
+        e.preventDefault();
+
+        if (typeof userInfo.image.imageURL === 'object') {
+            readFile();
+        } else {
+            dispatchUser();
+            setModalShow(false);
+        }
         setFormType();
     };
 
     const deleteUser = async () => {
+        let token = await getTokenSilently();
         let user = { ...userState };
         let items = [...itemState];
-        await dispatch(deleteUserDB(user, items));
+        await dispatch(deleteUserDB(user, items, token));
+        setModalShow(false);
+        setFormType();
         logout();
     };
 
     // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB
-    const deleteItems = () => {
+    const deleteItems = async () => {
+        let token = await getTokenSilently();
         let user = { ...userState };
-        dispatch(deleteAllItems(user));
+        dispatch(deleteAllItems(user, token));
+    };
+
+    const deleteMyItems = async () => {
+        let token = await getTokenSilently();
+        let user = { ...userState };
+        let items = [...itemState];
+        let itemsToDelete = user.postedItems;
+        user.nrItems = 0;
+        user.postedItems = user.postedItems.filter(
+            (item) => !itemsToDelete.includes(item)
+        );
+        let updatedItems = items.filter(
+            (item) => !itemsToDelete.includes(item._id)
+        );
+
+        await dispatch(editUser(user, token));
+        await dispatch(
+            deleteManyItems(itemsToDelete, updatedItems, token, user)
+        );
+        await dispatch(editAllUsers(user, token, itemsToDelete));
+        setModalShow(false);
+        setFormType();
     };
 
     return (
@@ -83,7 +149,7 @@ const Profile = ({
                             <div className="prof-img-div">
                                 <Image
                                     className="prof-img"
-                                    src={userState.image}
+                                    src={userState.image.imageURL}
                                     rounded
                                 />
                             </div>
@@ -142,7 +208,12 @@ const Profile = ({
                                             variant="info"
                                             onClick={() => (
                                                 setModalShow(true),
-                                                setFormType('editUser')
+                                                setFormType('editUser'),
+                                                setUserInfo({
+                                                    ...userInfo,
+                                                    favCat: userState.favCat,
+                                                    image: userState.image,
+                                                })
                                             )}
                                         >
                                             Edit user
@@ -152,6 +223,7 @@ const Profile = ({
                                                 formType={FormType}
                                                 confirm={editUserInfo}
                                                 deleteFunc={deleteUser}
+                                                deleteItems={deleteMyItems}
                                                 req={userInfo}
                                                 onReq={setUserInfo}
                                                 show={ModalShow}

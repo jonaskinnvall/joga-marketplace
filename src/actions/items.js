@@ -27,68 +27,180 @@ export const fetchItems = () => {
 
 export const addItem = (user, item, token) => {
     let URL = URI + 'items/';
+    let imageURL = URI + 'image-upload';
     let newItem;
 
-    return (dispatch) => {
-        return axios
-            .post(
-                URL,
-                {
-                    userID: user.userID,
-                    user: user.name,
-                    category: item.cat,
-                    title: item.title,
-                    desc: item.desc,
-                    price: item.price,
-                    image: item.image,
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-            .then((res) => {
-                newItem = res.data.body;
-                return dispatch({
-                    type: ADD_ITEM,
-                    payload: { newItem },
+    if (item.image.imageURL) {
+        return (dispatch) => {
+            return axios
+                .post(
+                    imageURL,
+                    {
+                        image: item.image.imageURL,
+                        user: user.userID,
+                        folder: 'items',
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then((res) => {
+                    item.image.imageURL = res.data.imageURL;
+                    item.image.imageID = res.data.imageID;
+
+                    return axios
+                        .post(
+                            URL,
+                            {
+                                userID: user.userID,
+                                user: user.name,
+                                category: item.cat,
+                                title: item.title,
+                                desc: item.desc,
+                                price: item.price,
+                                image: {
+                                    imageURL: item.image.imageURL,
+                                    imageID: item.image.imageID,
+                                },
+                            },
+                            { headers: { Authorization: `Bearer ${token}` } }
+                        )
+                        .then((res) => {
+                            newItem = res.data.body;
+                            return dispatch({
+                                type: ADD_ITEM,
+                                payload: { newItem },
+                            });
+                        })
+                        .then((action) => {
+                            user.postedItems = [
+                                ...user.postedItems,
+                                action.payload.newItem._id,
+                            ];
+                            user.nrItems++;
+                            dispatch(editUser(user, token));
+                        });
                 });
-            })
-            .then((action) => {
-                user.postedItems = [
-                    ...user.postedItems,
-                    action.payload.newItem._id,
-                ];
-                user.nrItems++;
-                dispatch(editUser(user));
-            });
-    };
+        };
+    } else {
+        return (dispatch) => {
+            return axios
+                .post(
+                    URL,
+                    {
+                        userID: user.userID,
+                        user: user.name,
+                        category: item.cat,
+                        title: item.title,
+                        desc: item.desc,
+                        price: item.price,
+                        image: item.image,
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then((res) => {
+                    newItem = res.data.body;
+                    return dispatch({
+                        type: ADD_ITEM,
+                        payload: { newItem },
+                    });
+                })
+                .then((action) => {
+                    user.postedItems = [
+                        ...user.postedItems,
+                        action.payload.newItem._id,
+                    ];
+                    user.nrItems++;
+                    dispatch(editUser(user, token));
+                });
+        };
+    }
 };
 
-export const editItem = (item, token, id) => {
+export const editItem = (item, token, id, user) => {
     let itemURL = URI + 'items/' + item._id;
+    let imageUp = URI + 'image-upload';
+    let imageDel = URI + 'image-delete';
     let updatedItem;
 
+    if (item.image.imageURL) {
+        return (dispatch) => {
+            return axios
+                .put(
+                    imageDel,
+                    { image: item.image.imageID },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then(
+                    axios
+                        .post(
+                            imageUp,
+                            {
+                                image: item.image.imageURL,
+                                user: user.userID,
+                                folder: 'items',
+                            },
+                            {
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        )
+                        .then((res) => {
+                            item.image.imageURL = res.data.imageURL;
+                            item.image.imageID = res.data.imageID;
+
+                            return axios
+                                .put(
+                                    itemURL,
+                                    { _id: item._id, item },
+                                    {
+                                        headers: {
+                                            Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                )
+                                .then((res) => {
+                                    updatedItem = res.data;
+                                    return dispatch({
+                                        type: EDIT_ITEM,
+                                        payload: { updatedItem, id },
+                                    });
+                                });
+                        })
+                );
+        };
+    } else {
+        return (dispatch) => {
+            return axios
+                .put(
+                    itemURL,
+                    { _id: item._id, item },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then((res) => {
+                    updatedItem = res.data;
+                    return dispatch({
+                        type: EDIT_ITEM,
+                        payload: { updatedItem, id },
+                    });
+                });
+        };
+    }
+};
+
+export const editManyItems = (user, items, token) => {
+    let URL = URI + 'items/';
     return (dispatch) => {
         return axios
             .put(
-                itemURL,
-                { _id: item._id, item },
+                URL,
+                { user: user },
                 { headers: { Authorization: `Bearer ${token}` } }
             )
-            .then((res) => {
-                updatedItem = res.data;
-                return dispatch({
-                    type: EDIT_ITEM,
-                    payload: { updatedItem, id },
-                });
+            .then(() => {
+                dispatch(fetchItems());
             });
-    };
-};
-
-export const editManyItems = (user, items) => {
-    let URL = URI + 'items/';
-    return (dispatch) => {
-        return axios.put(URL, { user: user }).then(() => {
-            dispatch(fetchItems());
-        });
     };
 };
 
@@ -119,7 +231,7 @@ export const toggleStar = (user, item, token, starred, id) => {
                         ...user.starredItems,
                         action.payload.updatedItem._id,
                     ];
-                    dispatch(editUser(user));
+                    dispatch(editUser(user, token));
                 });
         };
     } else {
@@ -146,7 +258,7 @@ export const toggleStar = (user, item, token, starred, id) => {
                     user.starredItems = user.starredItems.filter(
                         (item) => item !== itemID
                     );
-                    dispatch(editUser(user));
+                    dispatch(editUser(user, token));
                 });
         };
     }
@@ -154,39 +266,60 @@ export const toggleStar = (user, item, token, starred, id) => {
 
 export const deleteItem = (user, deleteItem, token, id) => {
     let itemURL = URI + 'items/' + deleteItem._id;
+    let imageURL = URI + 'image-delete';
 
     return (dispatch) => {
         return axios
-            .delete(itemURL, { headers: { Authorization: `Bearer ${token}` } })
-            .then((res) => {
-                return dispatch({
-                    type: DELETE_ITEM,
-                    payload: { id },
-                });
-            })
-            .then(() => {
-                dispatch(editAllUsers(user, deleteItem));
-            });
+            .put(
+                imageURL,
+                { image: deleteItem.image.imageID },
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            .then(
+                axios
+                    .delete(itemURL, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    })
+                    .then((res) => {
+                        return dispatch({
+                            type: DELETE_ITEM,
+                            payload: { id },
+                        });
+                    })
+                    .then(() => {
+                        dispatch(editAllUsers(user, token, deleteItem));
+                    })
+            );
     };
 };
 
-export const deleteManyItems = (items, ids) => {
+export const deleteManyItems = (toDelete, updated, token, user = null) => {
     let URL = URI + 'items/';
+    let imageURL = URI + 'image-delete';
+    console.log('item');
     return (dispatch) => {
-        return axios.delete(URL, { data: items }).then(() => {
-            dispatch({
-                type: DELETE_ITEMS,
-                payload: { items: ids, all: false },
-            });
-        });
+        axios
+            .put(
+                imageURL,
+                { user: user.userID },
+                { headers: { Authorization: `Bearer ${token}` } }
+            )
+            .then(
+                axios.delete(URL, { data: toDelete }).then(() => {
+                    return dispatch({
+                        type: DELETE_ITEMS,
+                        payload: { items: updated, all: false },
+                    });
+                })
+            );
     };
 };
 
-export const deleteAllItems = (user) => {
+export const deleteAllItems = (user, token) => {
     let URL = URI + 'items/';
     return (dispatch) => {
         return axios
-            .delete(URL)
+            .delete(URL, { headers: { Authorization: `Bearer ${token}` } })
             .then(() => {
                 return dispatch({
                     type: DELETE_ITEMS,
@@ -194,7 +327,7 @@ export const deleteAllItems = (user) => {
                 });
             })
             .then(() => {
-                dispatch(editAllUsers(user));
+                dispatch(editAllUsers(user, token));
             });
     };
 };

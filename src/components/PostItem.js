@@ -4,10 +4,10 @@ import { Form, InputGroup, Col } from 'react-bootstrap';
 
 const PostItem = ({ req, onReq }) => {
     return (
-        <Form>
+        <Form encType="multipart/form-data">
             <Form.Row>
                 <Form.Group as={Col} controlId="formTitle">
-                    <Form.Label as="h5">Title</Form.Label>
+                    <Form.Label>Title</Form.Label>
                     <Form.Control
                         size="lg"
                         type="text"
@@ -43,12 +43,22 @@ const PostItem = ({ req, onReq }) => {
             <Form.Row>
                 <Form.Group controlId="formImage">
                     <Form.Label>Image upload</Form.Label>
-                    <Form.File
-                        as={Col}
-                        id="formFile"
-                        label="Add image of item (preferably landscape format)"
-                        custom
-                    />
+                    <Form.File id="formFile" custom>
+                        <Form.File.Input
+                            onChange={(e) =>
+                                onReq({
+                                    ...req,
+                                    image: {
+                                        ...req.image,
+                                        imageURL: e.target.files[0],
+                                    },
+                                })
+                            }
+                        />
+                        <Form.File.Label data-browse="Add image of item ">
+                            {req.image.imageURL && req.image.imageURL.name}
+                        </Form.File.Label>
+                    </Form.File>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formPrice">
                     <Form.Label>Price</Form.Label>

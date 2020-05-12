@@ -17,25 +17,9 @@ const ItemGrid = ({ itemsFromState, title, rowLength }) => {
                 <div> Loading... </div>
             ) : (
                 <Container fluid>
-                    {!pressed ? (
-                        <div>
-                            <h2>{title}</h2>
-                        </div>
-                    ) : (
-                        <div>
-                            <Row className="header-row">
-                                <h2>{title}</h2>
-                                {'        '}
-                                <Button
-                                    variant="info"
-                                    onClick={() => setPressed(false)}
-                                >
-                                    {' '}
-                                    Hide{' '}
-                                </Button>
-                            </Row>
-                        </div>
-                    )}
+                    <div>
+                        <h2>{title}</h2>
+                    </div>
 
                     {items.length > rowLength && pressed == false ? (
                         <>
@@ -50,16 +34,29 @@ const ItemGrid = ({ itemsFromState, title, rowLength }) => {
                                     variant="light"
                                     className="grid-btn-row"
                                 >
-                                    <SVG name="chevron" width="32" />
+                                    <SVG name="chevron-down" width="32" />
                                 </Button>
                             </Row>
                         </>
                     ) : (
-                        <Row className="grid-row">
-                            {items.map((item) => (
-                                <ItemCard key={item._id} item={item} />
-                            ))}
-                        </Row>
+                        <>
+                            <Row className="grid-row">
+                                {items.map((item) => (
+                                    <ItemCard key={item._id} item={item} />
+                                ))}
+                            </Row>
+                            {pressed == true && (
+                                <Row>
+                                    <Button
+                                        onClick={() => setPressed(false)}
+                                        variant="light"
+                                        className="grid-btn-row"
+                                    >
+                                        <SVG name="chevron-up" width="32" />
+                                    </Button>
+                                </Row>
+                            )}
+                        </>
                     )}
                 </Container>
             )}

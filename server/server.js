@@ -1,3 +1,4 @@
+/* eslint-disable babel/camelcase */
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -6,8 +7,7 @@ const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 const morgan = require('morgan');
 const helmet = require('helmet');
-// const fs = require('fs');
-// TODO Fix so images can be added/uploaded to DB
+const cloudinary = require('cloudinary').v2;
 
 require('dotenv').config({ path: 'secrets.env' });
 
@@ -24,9 +24,16 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('dev'));
+
+// Set cloudinary config
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+});
 
 // Create router
 // eslint-disable-next-line babel/new-cap
@@ -80,47 +87,7 @@ const checkJwt = jwt({
 });
 
 // ----------USER ROUTES----------
-//  Route to make changes, delete or retrieve specific users
-router
-    .route('/users/:id')
-    .get((req, res) => {
-        User.findOne({ userID: req.params.id }, (error, user) => {
-            if (error)
-                return res.status(500).send('Error retrieving user!', error);
-            else if (!user)
-                return res.status(404).send('User could not be found!');
-            res.status(200).json(user);
-        });
-    })
-    .put((req, res) => {
-        // Update user with changes, found with userID
-        User.findOneAndUpdate(
-            { userID: req.params.id },
-            req.body.userUpdate,
-            { new: true },
-            (error, updatedUser) => {
-                if (error)
-                    return res.status(500).send('Error updating user!', error);
-                else if (!updatedUser)
-                    return res.status(404).send('User could not be found!');
-                res.status(200).json(updatedUser);
-            }
-        );
-    })
-    .delete((req, res) => {
-        // Delete user based on userID
-        User.findOneAndRemove(
-            { userID: req.params.id },
-            (error, removedUser) => {
-                if (error)
-                    return res.status(500).send('Error removing user!', error);
-                else if (!removedUser)
-                    return res.status(404).send('User could not be found!');
-                res.status(200).json('Removed user!');
-            }
-        );
-    });
-
+// Route to add user and update multiple users
 router
     .route('/users')
     // Route to add user to DB if current user doesn't already exist
@@ -143,8 +110,8 @@ router
             } else res.json({ message: 'User already exists.' });
         });
     })
-    // Route to update all users in DB if items are deleted
-    .put((req, res) => {
+    // Route to update multiple users in DB if items are deleted
+    .put(checkJwt, (req, res) => {
         if (req.body.updateDB.hasOwnProperty('nrItems')) {
             User.updateMany(
                 {
@@ -204,8 +171,49 @@ router
         res.status(500);
     });
 
+//  Route to make changes, delete or retrieve specific users
+router
+    .route('/users/:id')
+    .get((req, res) => {
+        User.findOne({ userID: req.params.id }, (error, user) => {
+            if (error)
+                return res.status(500).send('Error retrieving user!', error);
+            else if (!user)
+                return res.status(404).send('User could not be found!');
+            res.status(200).json(user);
+        });
+    })
+    .put(checkJwt, (req, res) => {
+        // Update user with changes, found with userID
+        User.findOneAndUpdate(
+            { userID: req.params.id },
+            req.body.userUpdate,
+            { new: true },
+            (error, updatedUser) => {
+                if (error)
+                    return res.status(500).send('Error updating user!', error);
+                else if (!updatedUser)
+                    return res.status(404).send('User could not be found!');
+                res.status(200).json(updatedUser);
+            }
+        );
+    })
+    .delete(checkJwt, (req, res) => {
+        // Delete user based on userID
+        User.findOneAndRemove(
+            { userID: req.params.id },
+            (error, removedUser) => {
+                if (error)
+                    return res.status(500).send('Error removing user!', error);
+                else if (!removedUser)
+                    return res.status(404).send('User could not be found!');
+                res.status(200).json('Removed user!');
+            }
+        );
+    });
+
 // ----------ITEM ROUTES----------
-// Route to add items and retrieve all items in DB
+// Route to add items, edit and delete multiple items and retrieve all items in DB
 router
     .route('/items')
     .get((req, res) => {
@@ -223,15 +231,19 @@ router
             title: req.body.title,
             desc: req.body.desc,
             price: req.body.price,
-            image: req.body.image,
+            image: {
+                imageURL: req.body.image.imageURL,
+                imageID: req.body.image.imageID,
+            },
         });
+
         item.save((error) => {
-            if (error) return res.status(500).send('Error adding item!');
+            if (error) return res.status(500).send(error);
             res.json({ body: item, message: 'Item added!' });
         });
     })
     // Route to update many items in DB if user is deleted
-    .put((req, res) => {
+    .put(checkJwt, (req, res) => {
         Item.updateMany(
             {
                 starredBy: { $in: req.body.user.userID },
@@ -259,7 +271,8 @@ router
         );
     })
     .delete((req, res) => {
-        // Delete items that had been uploaded by deleted user
+        // Delete multiple items that had been uploaded by user
+        // who wants to remove them or has deleted their profile
         if (Array.isArray(req.body) && req.body.length) {
             Item.deleteMany(
                 { _id: { $in: req.body } },
@@ -287,7 +300,7 @@ router
         }
     });
 
-// Route to retrieve, update and delete items based on item's ID
+// Route to retrieve, update and delete specific items based on item's ID
 router
     .route('/items/:_id')
     .get((req, res) => {
@@ -321,6 +334,38 @@ router
             res.status(200).json('Removed item!');
         });
     });
+
+router.route('/image-upload').post(checkJwt, (req, res) => {
+    const reqImage = req.body.image;
+
+    return cloudinary.uploader.upload(
+        reqImage,
+        { folder: req.body.folder, tags: [req.body.user] },
+        (error, result) => {
+            const imageURL = result.secure_url;
+            const imageID = result.public_id;
+
+            return res.status(200).json({ imageURL, imageID });
+        }
+    );
+});
+
+router.route('/image-delete').put(checkJwt, (req, res) => {
+    if (req.body.image) {
+        const toDelete = req.body.image;
+        return cloudinary.uploader.destroy(toDelete, (error, result) => {
+            return res.status(200);
+        });
+    } else {
+        const toDelete = req.body.user;
+        return cloudinary.api.delete_resources_by_tag(
+            toDelete,
+            (error, result) => {
+                return res.status(200);
+            }
+        );
+    }
+});
 
 app.use('/api', router);
 
