@@ -20,6 +20,6 @@ The items will be added to a database that's created to keep track of the items 
 
 -   **Frontend:** The site uses _React_, _Redux_ and _react-bootstrap_ along with _Webpack_ with _Babel_ to bundle the code to one minified output file and compile ES6 code.
 
--   **Backend:** The site uses _Node.js_ with _Express.js_, _MongoDB_ with _Mongoose_ for managing the sites data and _Auth0_ to integrate Google signin.
+-   **Backend:** The site uses _Node.js_ with _Express.js_, _MongoDB_ with _Mongoose_ for managing the sites data, _Cloudinary_ to store images and _Auth0_ to integrate Google signin.
 
 -   **Testing** Some component tests has been written with _Jest_ and _Enzyme_ and more will probably be written a bit later.
