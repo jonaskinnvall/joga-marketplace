@@ -25,7 +25,10 @@ const Profile = ({
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
 
-    const [userInfo, setUserInfo] = useState({ favCat: '', image: null });
+    const [userInfo, setUserInfo] = useState({
+        favCat: '',
+        image: { imageURL: null, imageID: null },
+    });
     // const [showAlert, setShowAlert] = useState({
     //     alert: false,
     //     confirm: false,
@@ -49,20 +52,20 @@ const Profile = ({
         if (!ModalShow)
             setUserInfo({
                 favCat: '',
-                image: null,
+                image: { imageURL: null, imageID: null },
             });
     }, [ModalShow]);
 
     useEffect(() => {
-        if (typeof userInfo.image === 'string' && !FormType) {
+        if (typeof userInfo.image.imageURL === 'string' && !FormType) {
             dispatchUser();
+            setModalShow(false);
         }
-    }, [userInfo.image]);
+    }, [userInfo.image.imageURL]);
 
     const dispatchUser = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
-
         userUpdate = {
             ...userUpdate,
             favCat: userInfo.favCat,
@@ -74,12 +77,12 @@ const Profile = ({
 
     const readFile = () => {
         const reader = new FileReader();
-        const image = userInfo.image;
+        const image = userInfo.image.imageURL;
 
         reader.onloadend = () =>
             setUserInfo({
                 ...userInfo,
-                image: reader.result,
+                image: { ...userInfo.image, imageURL: reader.result },
             });
         reader.readAsDataURL(image);
     };
@@ -87,12 +90,12 @@ const Profile = ({
     const editUserInfo = async (e) => {
         e.preventDefault();
 
-        if (typeof userInfo.image === 'object') {
+        if (typeof userInfo.image.imageURL === 'object') {
             readFile();
         } else {
             dispatchUser();
+            setModalShow(false);
         }
-        setModalShow(false);
         setFormType();
     };
 
@@ -146,7 +149,7 @@ const Profile = ({
                             <div className="prof-img-div">
                                 <Image
                                     className="prof-img"
-                                    src={userState.image}
+                                    src={userState.image.imageURL}
                                     rounded
                                 />
                             </div>

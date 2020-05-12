@@ -29,7 +29,9 @@ export const setUser = (user) => {
                         .post(URL, {
                             userID: userID,
                             name: user.name,
-                            image: user.picture,
+                            image: {
+                                imageURL: user.picture,
+                            },
                         })
                         .then((res) => {
                             DB = res.data.body;
@@ -46,24 +48,75 @@ export const setUser = (user) => {
 
 export const editUser = (userUpdate, token) => {
     let idURL = URI + 'users/' + userUpdate.userID;
+    let imageUp = URI + 'image-upload';
+    let imageDel = URI + 'image-delete';
     let updatedUser;
 
-    return (dispatch) =>
-        axios
-            .put(
-                idURL,
-                { userID: userUpdate.userID, userUpdate },
-                { headers: { Authorization: `Bearer ${token}` } }
-            )
-            .then((res) => {
-                updatedUser = res.data;
-                dispatch({ type: EDIT_USER, payload: { updatedUser } });
-            });
+    if (userUpdate.image.imageURL.includes('base64')) {
+        return (dispatch) => {
+            return axios
+                .put(
+                    imageDel,
+                    { image: userUpdate.image.imageID },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then(
+                    axios
+                        .post(
+                            imageUp,
+                            {
+                                image: userUpdate.image.imageURL,
+                                user: userUpdate.userID,
+                                folder: 'users',
+                            },
+                            {
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        )
+                        .then((res) => {
+                            userUpdate.image.imageURL = res.data.imageURL;
+                            userUpdate.image.imageID = res.data.imageID;
+
+                            return axios
+                                .put(
+                                    idURL,
+                                    { userID: userUpdate.userID, userUpdate },
+                                    {
+                                        headers: {
+                                            Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                )
+                                .then((res) => {
+                                    updatedUser = res.data;
+                                    return dispatch({
+                                        type: EDIT_USER,
+                                        payload: { updatedUser },
+                                    });
+                                });
+                        })
+                );
+        };
+    } else {
+        return (dispatch) =>
+            axios
+                .put(
+                    idURL,
+                    { userID: userUpdate.userID, userUpdate },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
+                .then((res) => {
+                    updatedUser = res.data;
+                    dispatch({ type: EDIT_USER, payload: { updatedUser } });
+                });
+    }
 };
 
 export const editAllUsers = (user, token, items = null) => {
     let URL = URI + 'users/';
-
+    console.log('all');
     //If all items are deleted, delete items from all users
     if (!items) {
         let updatedUser = { ...user };
@@ -102,11 +155,13 @@ export const editAllUsers = (user, token, items = null) => {
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 .then(() => {
+                    console.log('edit end');
                     return;
                 })
                 .catch((error) => {
                     // Return regardless of api call
                     // responds with 404 or not
+                    console.log('edit end 404');
                     return;
                 });
         };
@@ -141,35 +196,96 @@ export const editAllUsers = (user, token, items = null) => {
 
 export const deleteUserDB = (user, items, token) => {
     let idURL = URI + 'users/' + user.userID;
+    let imageDel = URI + 'image-delete';
     let itemsToDelete = user.postedItems;
     let itemsToggleStar = user.starredItems;
     let updatedItems = items.filter(
         (item) => !itemsToDelete.includes(item._id)
     );
 
-    return (dispatch) => {
-        return axios
-            .delete(idURL, { headers: { Authorization: `Bearer ${token}` } })
-            .then(() => {
-                // If user has starred items, remove those stars
-                if (Array.isArray(itemsToggleStar) && itemsToggleStar.length) {
-                    return dispatch(
-                        editManyItems(user, itemsToggleStar, token)
-                    );
-                }
-            })
-            .then(() => {
-                // If user has posted items, delete those items too
-                // along with editing all users that has starred the items
-                if (Array.isArray(itemsToDelete) && itemsToDelete.length) {
-                    return dispatch(
-                        deleteManyItems(itemsToDelete, updatedItems, token)
-                    ).then(() => {
+    if (user.image.imageID) {
+        return (dispatch) => {
+            axios
+                .put(
+                    imageDel,
+                    { image: user.image.imageID },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                )
+                .then(
+                    axios
+                        .delete(idURL, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        })
+                        .then(() => {
+                            // If user has starred items, remove those stars
+                            if (
+                                Array.isArray(itemsToggleStar) &&
+                                itemsToggleStar.length
+                            ) {
+                                dispatch(
+                                    editManyItems(user, itemsToggleStar, token)
+                                );
+                            }
+                        })
+                        .then(() => {
+                            // If user has posted items, delete those items too
+                            // along with editing all users that has starred the items
+                            if (
+                                Array.isArray(itemsToDelete) &&
+                                itemsToDelete.length
+                            ) {
+                                dispatch(
+                                    deleteManyItems(
+                                        itemsToDelete,
+                                        updatedItems,
+                                        token,
+                                        user
+                                    )
+                                );
+
+                                return dispatch(
+                                    editAllUsers(user, token, itemsToDelete)
+                                );
+                            }
+                        })
+                );
+        };
+    } else {
+        return (dispatch) => {
+            return axios
+                .delete(idURL, {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                .then(() => {
+                    // If user has starred items, remove those stars
+                    if (
+                        Array.isArray(itemsToggleStar) &&
+                        itemsToggleStar.length
+                    ) {
+                        return dispatch(
+                            editManyItems(user, itemsToggleStar, token)
+                        );
+                    }
+                })
+                .then(() => {
+                    // If user has posted items, delete those items too
+                    // along with editing all users that has starred the items
+                    if (Array.isArray(itemsToDelete) && itemsToDelete.length) {
+                        dispatch(
+                            deleteManyItems(
+                                itemsToDelete,
+                                updatedItems,
+                                token,
+                                user
+                            )
+                        );
                         return dispatch(
                             editAllUsers(user, token, itemsToDelete)
                         );
-                    });
-                }
-            });
-    };
+                    }
+                });
+        };
+    }
 };

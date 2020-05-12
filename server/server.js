@@ -340,7 +340,7 @@ router.route('/image-upload').post(checkJwt, (req, res) => {
 
     return cloudinary.uploader.upload(
         reqImage,
-        { folder: 'items', tags: [req.body.user] },
+        { folder: req.body.folder, tags: [req.body.user] },
         (error, result) => {
             const imageURL = result.secure_url;
             const imageID = result.public_id;

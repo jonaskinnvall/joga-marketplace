@@ -71,10 +71,9 @@ function App() {
     }, [ModalShow]);
 
     useEffect(() => {
-        if (typeof itemReq.image.imageURL === 'string') {
+        if (typeof itemReq.image.imageURL === 'string' && !FormType) {
             dispatchItem();
             setModalShow(false);
-            setFormType();
         }
     }, [itemReq.image.imageURL]);
 
@@ -104,8 +103,8 @@ function App() {
         } else {
             dispatchItem();
             setModalShow(false);
-            setFormType();
         }
+        setFormType();
     };
 
     return (
@@ -133,7 +132,7 @@ function App() {
                                     </Nav.Link>
                                 </Nav>
                                 <Nav className="ml-auto">
-                                    {isAuthenticated && userState ? (
+                                    {isAuthenticated && userState.image ? (
                                         <Nav>
                                             <Nav.Link
                                                 onClick={() => (
@@ -162,7 +161,9 @@ function App() {
                                             >
                                                 {user.given_name}{' '}
                                                 <img
-                                                    src={userState.image}
+                                                    src={
+                                                        userState.image.imageURL
+                                                    }
                                                     alt="Profile"
                                                 />
                                             </Nav.Link>

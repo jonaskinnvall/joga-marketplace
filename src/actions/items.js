@@ -35,7 +35,11 @@ export const addItem = (user, item, token) => {
             return axios
                 .post(
                     imageURL,
-                    { image: item.image.imageURL, user: user.userID },
+                    {
+                        image: item.image.imageURL,
+                        user: user.userID,
+                        folder: 'items',
+                    },
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -133,7 +137,11 @@ export const editItem = (item, token, id, user) => {
                     axios
                         .post(
                             imageUp,
-                            { image: item.image.imageURL, user: user.userID },
+                            {
+                                image: item.image.imageURL,
+                                user: user.userID,
+                                folder: 'items',
+                            },
                             {
                                 headers: { Authorization: `Bearer ${token}` },
                             }
@@ -288,7 +296,7 @@ export const deleteItem = (user, deleteItem, token, id) => {
 export const deleteManyItems = (toDelete, updated, token, user = null) => {
     let URL = URI + 'items/';
     let imageURL = URI + 'image-delete';
-
+    console.log('item');
     return (dispatch) => {
         axios
             .put(
