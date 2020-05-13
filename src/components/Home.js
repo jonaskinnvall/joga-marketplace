@@ -15,7 +15,7 @@ const Home = () => {
             .sort((a, b) => {
                 return b.stars - a.stars;
             })
-            .slice(0, 3);
+            .slice(0, 4);
 
         return items;
     };
