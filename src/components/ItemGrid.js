@@ -7,8 +7,7 @@ import ItemCard from './ItemCard';
 import SVG from './icons/SVG';
 import '../css/ItemGrid.css';
 
-const ItemGrid = ({ itemsFromState, title, rowLength, page }) => {
-    let items = [...itemsFromState];
+const ItemGrid = ({ items, title, rowLength, page }) => {
     const [pressed, setPressed] = useState(false);
 
     let text;
@@ -75,7 +74,7 @@ const ItemGrid = ({ itemsFromState, title, rowLength, page }) => {
 export default ItemGrid;
 
 ItemGrid.propTypes = {
-    itemsFromState: PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     rowLength: PropTypes.number,
     page: PropTypes.string,

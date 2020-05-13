@@ -9,6 +9,17 @@ import '../css/ItemCard.css';
 const Home = () => {
     const itemState = useSelector((state) => state.itemState);
 
+    // Function to get the most liked items
+    const featuredItems = (itemsFromState) => {
+        let items = itemsFromState
+            .sort((a, b) => {
+                return b.stars - a.stars;
+            })
+            .slice(0, 3);
+
+        return items;
+    };
+
     return (
         <>
             {!Array.isArray(itemState) || !itemState.length ? (
@@ -18,16 +29,14 @@ const Home = () => {
             ) : (
                 <>
                     <ItemGrid
-                        itemsFromState={itemState.filter(
-                            (item) => item.stars >= 1
-                        )}
-                        title={'Featured Items (1 star or more for now)'}
+                        items={featuredItems([...itemState])}
+                        title={'Featured Items'}
                         rowLength={4}
                         page={'feat'}
                     />
 
                     <ItemGrid
-                        itemsFromState={itemState}
+                        items={[...itemState]}
                         title={'All Items'}
                         rowLength={4}
                     />

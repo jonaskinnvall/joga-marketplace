@@ -37,9 +37,11 @@ const Categories = () => {
                                 return (
                                     <ItemGrid
                                         key={catID}
-                                        itemsFromState={itemState.filter(
-                                            (item) => item.category === cat
-                                        )}
+                                        items={[
+                                            ...itemState.filter(
+                                                (item) => item.category === cat
+                                            ),
+                                        ]}
                                         title={cat}
                                         rowLength={4}
                                     />
@@ -57,10 +59,13 @@ const Categories = () => {
                                 </Row>
                             ) : (
                                 <ItemGrid
-                                    itemsFromState={itemState.filter(
-                                        (item) =>
-                                            item.category === userState.favCat
-                                    )}
+                                    items={[
+                                        ...itemState.filter(
+                                            (item) =>
+                                                item.category ===
+                                                userState.favCat
+                                        ),
+                                    ]}
                                     title={userState.favCat}
                                     rowLength={4}
                                 />
@@ -72,9 +77,12 @@ const Categories = () => {
                                     return (
                                         <ItemGrid
                                             key={catID}
-                                            itemsFromState={itemState.filter(
-                                                (item) => item.category === cat
-                                            )}
+                                            items={[
+                                                ...itemState.filter(
+                                                    (item) =>
+                                                        item.category === cat
+                                                ),
+                                            ]}
                                             title={cat}
                                             rowLength={4}
                                         />

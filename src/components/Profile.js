@@ -245,9 +245,13 @@ const Profile = ({
                                 </Row>
                             ) : (
                                 <ItemGrid
-                                    itemsFromState={itemState.filter((item) =>
-                                        userState.postedItems.includes(item._id)
-                                    )}
+                                    items={[
+                                        ...itemState.filter((item) =>
+                                            userState.postedItems.includes(
+                                                item._id
+                                            )
+                                        ),
+                                    ]}
                                     title={'Your items'}
                                     rowLength={3}
                                 />
@@ -261,11 +265,13 @@ const Profile = ({
                                 </Row>
                             ) : (
                                 <ItemGrid
-                                    itemsFromState={itemState.filter((item) =>
-                                        userState.starredItems.includes(
-                                            item._id
-                                        )
-                                    )}
+                                    items={[
+                                        ...itemState.filter((item) =>
+                                            userState.starredItems.includes(
+                                                item._id
+                                            )
+                                        ),
+                                    ]}
                                     title={'Your favorite items'}
                                     rowLength={3}
                                 />
