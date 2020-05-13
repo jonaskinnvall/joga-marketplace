@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Row } from 'react-bootstrap';
 
 import ItemGrid from './ItemGrid';
-import '../css/Categories.css';
+import '../css/ItemGrid.css';
 
 const Categories = () => {
     const userState = useSelector((state) => state.userState);
@@ -26,7 +26,9 @@ const Categories = () => {
     return (
         <>
             {!Array.isArray(itemState) || !itemState.length ? (
-                <div>Loading...</div>
+                <Row className="empty-row">
+                    <h2>There are currently no items in any category</h2>
+                </Row>
             ) : (
                 <>
                     {!userState.favCat ? (
@@ -47,7 +49,7 @@ const Categories = () => {
                     ) : (
                         <>
                             {!cats.includes(userState.favCat) ? (
-                                <Row className="fave-row">
+                                <Row className="empty-row">
                                     <h2>
                                         There are currently no items in your
                                         favorite category

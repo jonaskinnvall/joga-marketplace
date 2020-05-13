@@ -7,14 +7,23 @@ import ItemCard from './ItemCard';
 import SVG from './icons/SVG';
 import '../css/ItemGrid.css';
 
-const ItemGrid = ({ itemsFromState, title, rowLength }) => {
+const ItemGrid = ({ itemsFromState, title, rowLength, page }) => {
     let items = [...itemsFromState];
-
     const [pressed, setPressed] = useState(false);
+
+    let text;
+
+    if (page === 'feat') {
+        text = 'There are currently no starred items';
+    }
+
     return (
         <>
             {!Array.isArray(items) || !items.length ? (
-                <div> Loading... </div>
+                <Row className="empty-row">
+                    {' '}
+                    <h2>{text}</h2>{' '}
+                </Row>
             ) : (
                 <Container fluid>
                     <div>
@@ -69,4 +78,5 @@ ItemGrid.propTypes = {
     itemsFromState: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     rowLength: PropTypes.number,
+    page: PropTypes.string,
 };

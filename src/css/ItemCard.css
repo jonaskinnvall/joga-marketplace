@@ -23,3 +23,8 @@
     max-width: 100%;
     width: auto;
 }
+
+.empty-row {
+    justify-content: center;
+    margin: 50px;
+}

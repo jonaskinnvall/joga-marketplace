@@ -240,7 +240,9 @@ const Profile = ({
                         <Col xs={9}>
                             {!Array.isArray(userState.postedItems) ||
                             !userState.postedItems.length ? (
-                                <h1>You have not posted any items yet!</h1>
+                                <Row className="empty-row">
+                                    <h2>You have not posted any items yet!</h2>
+                                </Row>
                             ) : (
                                 <ItemGrid
                                     itemsFromState={itemState.filter((item) =>
@@ -253,7 +255,10 @@ const Profile = ({
 
                             {!Array.isArray(userState.starredItems) ||
                             !userState.starredItems.length ? (
-                                <h1>You have not starred any items yet!</h1>
+                                <Row className="empty-row">
+                                    {' '}
+                                    <h2>You have not starred any items yet!</h2>
+                                </Row>
                             ) : (
                                 <ItemGrid
                                     itemsFromState={itemState.filter((item) =>

@@ -122,7 +122,6 @@ const ItemCard = ({ item }) => {
                                     {item.title}
                                     <Button
                                         variant="outline-info"
-                                        // className="card-btn-row"
                                         className="ml-auto"
                                         disabled
                                     >
@@ -137,18 +136,14 @@ const ItemCard = ({ item }) => {
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
-                                {item.image && item.image.imageURL ? (
+                                {item.image.imageURL ? (
                                     <Card.Img
                                         className="card-img"
                                         variant="top"
                                         src={item.image.imageURL}
                                     />
                                 ) : (
-                                    <Card.Img
-                                        className="card-img"
-                                        variant="top"
-                                        src={item.image}
-                                    />
+                                    <></>
                                 )}
                             </div>
                             <Card.Body>
@@ -274,18 +269,14 @@ const ItemCard = ({ item }) => {
                                 </Row>
                             </Card.Header>
                             <div className="card-img-div">
-                                {item.image && item.image.imageURL ? (
+                                {item.image.imageURL ? (
                                     <Card.Img
                                         className="card-img"
                                         variant="top"
                                         src={item.image.imageURL}
                                     />
                                 ) : (
-                                    <Card.Img
-                                        className="card-img"
-                                        variant="top"
-                                        src={item.image}
-                                    />
+                                    <div />
                                 )}
                             </div>
                             <Card.Body>

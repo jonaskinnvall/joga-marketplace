@@ -37,3 +37,8 @@
 .btn-row button {
     width: 5.75rem;
 }
+
+.empty-row {
+    justify-content: center;
+    margin: 50px;
+}
