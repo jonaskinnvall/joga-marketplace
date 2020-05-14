@@ -1,12 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Row } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 // Import components
 import ItemGrid from './ItemGrid';
 import '../css/ItemCard.css';
 
-const Home = () => {
+const Home = ({ loading }) => {
     const itemState = useSelector((state) => state.itemState);
 
     // Function to get the most liked items
@@ -22,24 +23,31 @@ const Home = () => {
 
     return (
         <>
-            {!Array.isArray(itemState) || !itemState.length ? (
-                <Row className="empty-row">
-                    <h2>There are no items added to the site</h2>
-                </Row>
+            {loading ? (
+                <div>Loading...</div>
             ) : (
                 <>
-                    <ItemGrid
-                        items={featuredItems([...itemState])}
-                        title={'Featured Items'}
-                        rowLength={4}
-                        page={'feat'}
-                    />
+                    {!Array.isArray(itemState) ||
+                    (!itemState.length && !loading) ? (
+                        <Row className="empty-row">
+                            <h2>There are no items added to the site</h2>
+                        </Row>
+                    ) : (
+                        <>
+                            <ItemGrid
+                                items={featuredItems([...itemState])}
+                                title={'Featured Items'}
+                                rowLength={4}
+                                page={'feat'}
+                            />
 
-                    <ItemGrid
-                        items={[...itemState]}
-                        title={'All Items'}
-                        rowLength={4}
-                    />
+                            <ItemGrid
+                                items={[...itemState]}
+                                title={'All Items'}
+                                rowLength={4}
+                            />
+                        </>
+                    )}
                 </>
             )}
         </>
@@ -47,3 +55,7 @@ const Home = () => {
 };
 
 export default Home;
+
+Home.propTypes = {
+    loading: PropTypes.any,
+};

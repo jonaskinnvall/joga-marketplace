@@ -106,7 +106,7 @@ function App() {
         }
         setFormType();
     };
-
+    console.log(loading);
     return (
         <Router history={history}>
             {loading ? (
@@ -188,7 +188,11 @@ function App() {
                     </div>
                     <div className="App-main">
                         <Switch>
-                            <Route exact path="/" component={Home} />
+                            <Route
+                                exact
+                                path="/"
+                                render={(props) => <Home loading={loading} />}
+                            />
                             <Route path="/categories" component={Categories} />
                             <PrivateRoute
                                 path="/profile"
