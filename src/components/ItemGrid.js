@@ -10,12 +10,16 @@ import '../css/ItemGrid.css';
 const ItemGrid = ({ items, title, rowLength, page }) => {
     const [pressed, setPressed] = useState(false);
 
+    // Check if the page props is included and holds 'feat'
+    // If it does, set text to string in case their are no starred items
     let text;
-
     if (page === 'feat') {
         text = 'There are currently no starred items';
     }
 
+    // Checks if pressed is true and how many items there are in props
+    // If more than 4 items and pressed is false, only show 4 otherwise
+    // show all and expand if necessary
     return (
         <>
             {!Array.isArray(items) || !items.length ? (

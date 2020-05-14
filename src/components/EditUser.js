@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
 
+// Edit user form used in FormModal
 const EditUser = ({ req, onReq }) => {
     return (
         <Form>

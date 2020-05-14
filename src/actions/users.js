@@ -9,6 +9,9 @@ const URI =
         ? 'http://localhost:3001/api/'
         : '/api/';
 
+// Set user, first try to fetch user from DB
+// if user doesn't exist, add new one to DB
+// and dispatch SET_USER actions
 export const setUser = (user) => {
     if (user) {
         let userID = user.sub;
@@ -46,6 +49,8 @@ export const setUser = (user) => {
     }
 };
 
+// Edit user, first change image in CLoudinary if included in user edit
+// then upload update to DB and dispatch EDIT_USER action
 export const editUser = (userUpdate, token) => {
     let idURL = URI + 'users/' + userUpdate.userID;
     let imageUp = URI + 'image-upload';
@@ -114,9 +119,11 @@ export const editUser = (userUpdate, token) => {
     }
 };
 
+// Edit all users, e.g. when users items are deleted
+// to remove items from user's "starredItems"
 export const editAllUsers = (user, token, items = null) => {
     let URL = URI + 'users/';
-    console.log('all');
+
     //If all items are deleted, delete items from all users
     if (!items) {
         let updatedUser = { ...user };
@@ -155,13 +162,11 @@ export const editAllUsers = (user, token, items = null) => {
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                 .then(() => {
-                    console.log('edit end');
                     return;
                 })
                 .catch((error) => {
                     // Return regardless of api call
                     // responds with 404 or not
-                    console.log('edit end 404');
                     return;
                 });
         };
@@ -194,6 +199,9 @@ export const editAllUsers = (user, token, items = null) => {
     }
 };
 
+// Delete user, first delete profile picture from Cloudinary if exists
+// then delete user from DB and dispatch editManyItems (to toggle stars)
+// then delete items posted by user and lastly dispatch editAllUsers
 export const deleteUserDB = (user, items, token) => {
     let idURL = URI + 'users/' + user.userID;
     let imageDel = URI + 'image-delete';

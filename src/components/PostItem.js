@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, InputGroup, Col } from 'react-bootstrap';
 
+// Post item form used in FormModal
 const PostItem = ({ req, onReq }) => {
     return (
         <Form encType="multipart/form-data">
@@ -41,8 +42,8 @@ const PostItem = ({ req, onReq }) => {
                 </Form.Group>
             </Form.Row>
             <Form.Row>
-                <Form.Group controlId="formImage">
-                    <Form.Label>Image upload</Form.Label>
+                <Form.Group as={Col} controlId="formImage">
+                    <Form.Label>Image of item</Form.Label>
                     <Form.File id="formFile" custom>
                         <Form.File.Input
                             onChange={(e) =>
@@ -55,17 +56,17 @@ const PostItem = ({ req, onReq }) => {
                                 })
                             }
                         />
-                        <Form.File.Label data-browse="Add image of item ">
+                        <Form.File.Label data-browse="Add image ">
                             {req.image.imageURL && req.image.imageURL.name}
                         </Form.File.Label>
                     </Form.File>
                 </Form.Group>
-                <Form.Group as={Col} controlId="formPrice">
-                    <Form.Label>Price</Form.Label>
+                <Form.Group as={Col} md="auto" controlId="formPrice">
+                    <Form.Label>Desired price for item</Form.Label>
                     <InputGroup>
                         <Form.Control
                             type="text"
-                            placeholder="Input desired price for item (number)"
+                            placeholder="Price (number)"
                             value={req.price}
                             onChange={(e) =>
                                 onReq({
@@ -74,14 +75,12 @@ const PostItem = ({ req, onReq }) => {
                                 })
                             }
                         />
-
                         <InputGroup.Append>
                             <InputGroup.Text>kr</InputGroup.Text>
                         </InputGroup.Append>
                     </InputGroup>
                 </Form.Group>
             </Form.Row>
-
             <Form.Group controlId="formDesc">
                 <Form.Label>Description</Form.Label>
                 <Form.Control

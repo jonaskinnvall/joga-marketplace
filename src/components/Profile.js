@@ -24,28 +24,10 @@ const Profile = ({
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-
     const [userInfo, setUserInfo] = useState({
         favCat: '',
         image: { imageURL: null, imageID: null },
     });
-    // const [showAlert, setShowAlert] = useState({
-    //     alert: false,
-    //     confirm: false,
-    // });
-
-    // TODO Function to confirm user wants to delete
-    // const deleteConfirm = async () => {
-    //     console.log('deleteConfirm');
-
-    //     setShowAlert({ alert: true });
-    //     console.log(showAlert);
-
-    //     if (showAlert.confirm) {
-    //         console.log('in confirm');
-    //         // deleteUser();
-    //     }
-    // };
 
     // Clear form inputs after closing modal
     useEffect(() => {
@@ -56,6 +38,7 @@ const Profile = ({
             });
     }, [ModalShow]);
 
+    // Dispatch item after image has been converted to base64 string if image is included
     useEffect(() => {
         if (typeof userInfo.image.imageURL === 'string' && !FormType) {
             dispatchUser();
@@ -63,6 +46,7 @@ const Profile = ({
         }
     }, [userInfo.image.imageURL]);
 
+    // Function to dispatch user update
     const dispatchUser = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
@@ -75,6 +59,7 @@ const Profile = ({
         await dispatch(editUser(userUpdate, token));
     };
 
+    // Read file from form and convert to base64 string
     const readFile = () => {
         const reader = new FileReader();
         const image = userInfo.image.imageURL;
@@ -87,6 +72,8 @@ const Profile = ({
         reader.readAsDataURL(image);
     };
 
+    // Check if image is uploaded with user edit, if it is call readFile,
+    // if not go directly to dispatch user
     const editUserInfo = async (e) => {
         e.preventDefault();
 
@@ -99,6 +86,7 @@ const Profile = ({
         setFormType();
     };
 
+    // Get user and items and dispatch deleteUserDB
     const deleteUser = async () => {
         let token = await getTokenSilently();
         let user = { ...userState };
@@ -116,6 +104,10 @@ const Profile = ({
         dispatch(deleteAllItems(user, token));
     };
 
+    // Function to delete all users items if they want
+    // Get user and it's posted items, make updates
+    // to user's nrItems and posted and dispatch editUser
+    // folllowd by deleteManyItems then editAllUsers
     const deleteMyItems = async () => {
         let token = await getTokenSilently();
         let user = { ...userState };

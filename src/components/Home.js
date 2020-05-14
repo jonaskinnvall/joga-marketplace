@@ -57,5 +57,5 @@ const Home = ({ loading }) => {
 export default Home;
 
 Home.propTypes = {
-    loading: PropTypes.any,
+    loading: PropTypes.bool,
 };

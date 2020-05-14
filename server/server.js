@@ -23,7 +23,6 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
-
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('dev'));
@@ -335,9 +334,11 @@ router
         });
     });
 
+// ----------IMAGE ROUTES----------
+// Route to upload image to Cloudinary and
+// return URL and public_id of image to be stored in DB
 router.route('/image-upload').post(checkJwt, (req, res) => {
     const reqImage = req.body.image;
-
     return cloudinary.uploader.upload(
         reqImage,
         { folder: req.body.folder, tags: [req.body.user] },
@@ -350,6 +351,8 @@ router.route('/image-upload').post(checkJwt, (req, res) => {
     );
 });
 
+// Route to delete images from Cloudinary,
+// either one image or multiple images uploaded by same user
 router.route('/image-delete').put(checkJwt, (req, res) => {
     if (req.body.image) {
         const toDelete = req.body.image;

@@ -9,19 +9,9 @@ const Categories = () => {
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
 
+    // Get the different categories that currently has items,
+    // to be used to get ItemGrid for every category in use
     let cats = [...new Set(itemState.map((item) => item.category))];
-
-    // ? Could be used to place categories with more items over those with lower
-    // let countedCats = itemState.reduce((categories, item) => {
-    //     if (item.category in categories) {
-    //         categories[item.category]++;
-    //     } else {
-    //         categories[item.category] = 1;
-    //     }
-    //     return categories;
-    // }, {});
-
-    // console.log(countedCats);
 
     return (
         <>

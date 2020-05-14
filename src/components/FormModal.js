@@ -18,8 +18,9 @@ const FormModal = (props) => {
         ...rest
     } = props;
 
+    // Check which formType is used and set title,
+    // button and render compoent accordingly
     let title, component, buttonCap;
-
     if (formType === 'addItem' || formType === 'addItemProfile') {
         title = 'Fill out the form to post a new item';
         component = <PostItem req={req} onReq={onReq} />;
@@ -61,10 +62,7 @@ const FormModal = (props) => {
                         </Button>
                     ) : formType === 'editUser' ? (
                         <>
-                            <Button
-                                variant="danger"
-                                onClick={deleteFunc}
-                            >
+                            <Button variant="danger" onClick={deleteFunc}>
                                 <SVG name="trash" width="1.5em" /> Delete User
                             </Button>
                             <Button

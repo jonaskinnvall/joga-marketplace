@@ -31,7 +31,8 @@ function App() {
     const dispatch = useDispatch();
     const userState = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-
+    const [ModalShow, setModalShow] = useState(false);
+    const [FormType, setFormType] = useState();
     const [itemReq, setItemReq] = useState({
         title: '',
         cat: '',
@@ -39,8 +40,6 @@ function App() {
         price: '',
         image: { imageURL: null, imageID: null },
     });
-    const [ModalShow, setModalShow] = useState(false);
-    const [FormType, setFormType] = useState();
 
     // Re-render when loading from Auth0 changes
     // and dispatch user to DB and redux state
@@ -70,6 +69,7 @@ function App() {
             });
     }, [ModalShow]);
 
+    // Dispatch item after image has been converted to base64 string if image is included
     useEffect(() => {
         if (typeof itemReq.image.imageURL === 'string' && !FormType) {
             dispatchItem();
@@ -77,12 +77,14 @@ function App() {
         }
     }, [itemReq.image.imageURL]);
 
+    // Function to dispatch new item
     const dispatchItem = async () => {
         let token = await getTokenSilently();
         let userUpdate = { ...userState };
         await dispatch(addItem(userUpdate, itemReq, token));
     };
 
+    // Read file from form and convert to base64 string
     const readFile = () => {
         const reader = new FileReader();
         const image = itemReq.image.imageURL;
@@ -95,6 +97,8 @@ function App() {
         reader.readAsDataURL(image);
     };
 
+    // Check if image is uploaded with item, if it is call readFile,
+    // if not go directly to dispatch item
     const postItem = async (e) => {
         e.preventDefault();
 
@@ -106,7 +110,7 @@ function App() {
         }
         setFormType();
     };
-    console.log(loading);
+
     return (
         <Router history={history}>
             {loading ? (

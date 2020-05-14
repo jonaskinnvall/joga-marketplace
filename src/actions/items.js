@@ -15,6 +15,7 @@ const URI =
         ? 'http://localhost:3001/api/'
         : '/api/';
 
+// Fetch all items from DB and dispatch FETCH_ITEMS action to reducer
 export const fetchItems = () => {
     let URL = URI + 'items/';
     let items;
@@ -25,6 +26,10 @@ export const fetchItems = () => {
         });
 };
 
+// Add item, check if image is included, if so upload
+// to CLoudinary and save response URL to items imageURL
+// If not, go directly to add to DB followed by dispatch
+// ADD_ITEM action and then dispatch editUser
 export const addItem = (user, item, token) => {
     let URL = URI + 'items/';
     let imageURL = URI + 'image-upload';
@@ -117,6 +122,9 @@ export const addItem = (user, item, token) => {
     }
 };
 
+// Edit item, check if image is included, if so,
+// remove previous image from Cloudinary and
+// upload new image then dispatch EDIT_ITEM action
 export const editItem = (item, token, id, user) => {
     let itemURL = URI + 'items/' + item._id;
     let imageUp = URI + 'image-upload';
@@ -189,6 +197,8 @@ export const editItem = (item, token, id, user) => {
     }
 };
 
+// Edit multiple items, e.g. when user is deleted
+// Update all relevant items in DB then dispatch fetchItems
 export const editManyItems = (user, items, token) => {
     let URL = URI + 'items/';
     return (dispatch) => {
@@ -204,6 +214,9 @@ export const editManyItems = (user, items, token) => {
     };
 };
 
+// Toogle star of item, check if item is already starred,
+// if so, remove star, otherwise add star then dispatch
+// EDIT_ITEM action followed by editUser
 export const toggleStar = (user, item, token, starred, id) => {
     let itemURL = URI + 'items/' + item._id;
     let updatedItem;
@@ -264,6 +277,9 @@ export const toggleStar = (user, item, token, starred, id) => {
     }
 };
 
+// Delete item, remove image from Cloudinary
+// then remove item from DB followed by
+// dispatching DELETE_ITEM action and dispatch editAllUsers
 export const deleteItem = (user, deleteItem, token, id) => {
     let itemURL = URI + 'items/' + deleteItem._id;
     let imageURL = URI + 'image-delete';
@@ -293,10 +309,12 @@ export const deleteItem = (user, deleteItem, token, id) => {
     };
 };
 
+// Delete multiple items, delete relevant images from Cloudinary
+// then delete items from DB followed by dispatching DELETE_ITEMS action
 export const deleteManyItems = (toDelete, updated, token, user = null) => {
     let URL = URI + 'items/';
     let imageURL = URI + 'image-delete';
-    console.log('item');
+
     return (dispatch) => {
         axios
             .put(

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, InputGroup, Col } from 'react-bootstrap';
 
+// Edit item form used in FormModal
 const EditItem = ({ req, onReq }) => {
     return (
         <Form>

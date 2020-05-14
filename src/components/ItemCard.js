@@ -15,7 +15,8 @@ const ItemCard = ({ item }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.userState);
     const itemState = useSelector((state) => state.itemState);
-
+    const [ModalShow, setModalShow] = useState(false);
+    const [FormType, setFormType] = useState();
     const [itemReq, setItemReq] = useState({
         title: '',
         cat: '',
@@ -23,8 +24,6 @@ const ItemCard = ({ item }) => {
         price: '',
         image: { imageURL: null, imageID: null },
     });
-    const [ModalShow, setModalShow] = useState(false);
-    const [FormType, setFormType] = useState();
 
     // Clear form inputs after closing modal
     useEffect(() => {
@@ -38,6 +37,7 @@ const ItemCard = ({ item }) => {
             });
     }, [ModalShow]);
 
+    // Function to get correct item and dispatch toggleStar
     const starToggle = async (e) => {
         e.preventDefault();
         let token = await getTokenSilently();
@@ -53,6 +53,7 @@ const ItemCard = ({ item }) => {
         dispatch(toggleStar(userUpdate, itemUpdate, token, starred, id));
     };
 
+    // Dispatch item after image has been converted to base64 string if image is included
     useEffect(() => {
         if (typeof itemReq.image.imageURL === 'string' && !FormType) {
             dispatchItem();
@@ -60,6 +61,7 @@ const ItemCard = ({ item }) => {
         }
     }, [itemReq.image.imageURL]);
 
+    // Function to dispatch item changes
     const dispatchItem = async () => {
         let token = await getTokenSilently();
         let id = itemState.findIndex((i) => i._id === item._id);
@@ -77,6 +79,7 @@ const ItemCard = ({ item }) => {
         await dispatch(editItem(itemUpdate, token, id, itemUser));
     };
 
+    // Read file from form and convert to base64 string
     const readFile = () => {
         const reader = new FileReader();
         const image = itemReq.image.imageURL;
@@ -89,6 +92,9 @@ const ItemCard = ({ item }) => {
         reader.readAsDataURL(image);
     };
 
+    // Check if image is uploaded with item change,
+    // if it is call readFile, if not go directly
+    // to dispatch item
     const editItemCard = async (e) => {
         e.preventDefault();
 
@@ -101,6 +107,7 @@ const ItemCard = ({ item }) => {
         setFormType();
     };
 
+    // Get current card to delete and dispatch deleteItem
     const deleteItemCard = async () => {
         let token = await getTokenSilently();
         let id = itemState.findIndex((i) => i._id === item._id);
@@ -109,6 +116,9 @@ const ItemCard = ({ item }) => {
 
         await dispatch(deleteItem(userUpdate, itemDelete, token, id));
     };
+
+    // Check if user is signed in, if so check which items are uploaded by said user
+    // Users' items have a "edit button" while other items "star button" is made pressable
     return (
         <>
             {loading ? (
