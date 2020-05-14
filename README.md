@@ -3,8 +3,7 @@
 -   [x] Implement user and item edit forms
 -   [x] Update Home and Featured routes
 -   [x] Make it possible to add images to items
--   [ ] Write more component tests
--   [ ] Improve UI
+-   [x] Improve UI
 -   [ ] Deploy site
 -   [ ] Screencasts
 
