@@ -16,9 +16,11 @@ import axios from 'axios';
 //         : '/api/';
 
 const URI =
-    window.location.href === 'localhost:3000'
+    window.location.href === 'http://localhost:3000/'
         ? 'http://localhost:3001/api/'
         : 'joga.herokuapp.com/api/';
+
+console.log(URI);
 
 // Fetch all items from DB and dispatch FETCH_ITEMS action to reducer
 export const fetchItems = () => {

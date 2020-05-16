@@ -10,9 +10,12 @@ import { editManyItems, deleteManyItems } from './items';
 //         : '/api/';
 
 const URI =
-    window.location.href === 'localhost:3000'
+    window.location.href === 'http://localhost:3000/'
         ? 'http://localhost:3001/api/'
         : 'joga.herokuapp.com/api/';
+
+console.log(window.location.href);
+console.log(URI);
 
 // Set user, first try to fetch user from DB
 // if user doesn't exist, add new one to DB
