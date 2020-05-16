@@ -12,7 +12,7 @@ import { editManyItems, deleteManyItems } from './items';
 const URI =
     window.location.href === 'http://localhost:3000/'
         ? 'http://localhost:3001/api/'
-        : 'joga.herokuapp.com/api/';
+        : 'https://joga-market.herokuapp.com/';
 
 console.log(window.location.href);
 console.log(URI);
