@@ -10,17 +10,10 @@ import { editUser, editAllUsers } from './users';
 
 import axios from 'axios';
 
-// const URI =
-//     location.href.indexOf('localhost') > 0
-//         ? 'http://localhost:3001/api/'
-//         : '/api/';
-
 const URI =
-    window.location.href === 'http://localhost:3000/'
+    location.href.indexOf('localhost') > 0
         ? 'http://localhost:3001/api/'
         : 'https://joga-market.herokuapp.com/';
-
-console.log(URI);
 
 // Fetch all items from DB and dispatch FETCH_ITEMS action to reducer
 export const fetchItems = () => {
