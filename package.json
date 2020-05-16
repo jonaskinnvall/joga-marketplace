@@ -4,12 +4,13 @@
     "description": "We plan to make a website were a user can create an account and log in to use the sites functions of adding items for sale for example. These items will be added to a dataset that we create to keep track of everything on the site.",
     "main": "./src/js/client.js",
     "scripts": {
-        "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
+        "start": "concurrently --kill-others \"npm run server-dev\" \"npm run client\"",
         "test": "jest",
         "test:watch": "npm test --watch",
         "build": "webpack --mode production",
         "client": "webpack-dev-server --mode development --inline --hot --open",
-        "server": "nodemon server/server.js"
+        "server-dev": "nodemon server/server.js",
+        "server": "node server/server.js"
     },
     "repository": {
         "type": "git",
@@ -17,6 +18,9 @@
     },
     "author": "Jonas Kinnvall & Gabriel Berthold",
     "license": "ISC",
+    "engines": {
+        "node": "13.8.0"
+    },
     "jest": {
         "verbose": true,
         "setupFilesAfterEnv": [

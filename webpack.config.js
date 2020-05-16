@@ -1,16 +1,15 @@
-//const debug = process.env.NODE_ENV !== "production";
 const debug = process.argv[process.argv.indexOf('--mode') + 1] !== 'production';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-//const webpack = require("webpack");
+// const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-    //context: path.join(__dirname, "src"),
+    mode: debug ? 'development' : 'production',
     devtool: debug ? 'eval-source-map' : false,
     entry: './src/client.js',
     output: {
-        path: path.join(__dirname, 'dist'),
-        filename: 'client.min.js',
+        path: path.resolve(__dirname, 'dist'),
+        filename: debug ? 'client.min.js' : 'client.[hash].min.js',
         publicPath: '/',
     },
     module: {
@@ -45,21 +44,23 @@ module.exports = {
             },
         ],
     },
-    devServer: {
-        historyApiFallback: true,
-        contentBase: './dist',
-        watchContentBase: true,
-        port: 3000,
-        proxy: [
-            {
-                context: '/api/',
-                target: 'http://localhost:3001',
-                secure: false,
-                changeOrigin: true,
-            },
-        ],
-    },
-    plugins: /*debug ? [] : */ [
+    devServer: debug
+        ? {
+              historyApiFallback: true,
+              contentBase: './dist',
+              watchContentBase: true,
+              port: 3000,
+              proxy: [
+                  {
+                      context: '/api/',
+                      target: 'http://localhost:3001',
+                      secure: false,
+                      changeOrigin: true,
+                  },
+              ],
+          }
+        : {},
+    plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
             filename: './index.html',

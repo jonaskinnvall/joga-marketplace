@@ -4,10 +4,15 @@ import axios from 'axios';
 
 import { editManyItems, deleteManyItems } from './items';
 
+// const URI =
+//     location.href.indexOf('localhost') > 0
+//         ? 'http://localhost:3001/api/'
+//         : '/api/';
+
 const URI =
-    location.href.indexOf('localhost') > 0
+    window.location.href === 'localhost:3000'
         ? 'http://localhost:3001/api/'
-        : '/api/';
+        : 'joga.herokuapp.com/api/';
 
 // Set user, first try to fetch user from DB
 // if user doesn't exist, add new one to DB
