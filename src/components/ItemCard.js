@@ -98,7 +98,7 @@ const ItemCard = ({ item }) => {
     const editItemCard = async (e) => {
         e.preventDefault();
 
-        if (itemReq.image.imageURL) {
+        if (typeof itemReq.image.imageURL === 'object') {
             readFile();
         } else {
             dispatchItem();

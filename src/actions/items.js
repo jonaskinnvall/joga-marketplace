@@ -131,7 +131,7 @@ export const editItem = (item, token, id, user) => {
     let imageDel = URI + 'image-delete';
     let updatedItem;
 
-    if (item.image.imageURL) {
+    if (item.image.imageURL.includes('base64')) {
         return (dispatch) => {
             return axios
                 .put(
