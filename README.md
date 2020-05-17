@@ -4,11 +4,11 @@
 -   [x] Update Home and Featured routes
 -   [x] Make it possible to add images to items
 -   [x] Improve UI
--   [/] Screencasts
+-   [ ] Screencasts
 
 # Screencasts
 
-Project screencast [youtube](https://www.youtube.com/watch?v=SVw91nmwZks)
+Project screencast on [Youtube](https://www.youtube.com/watch?v=SVw91nmwZks)
 
 Code screencast coming...
 
@@ -22,7 +22,7 @@ The items are added to a MongoDB database that's created to keep track of the it
 
 # Technical Specification
 
--   **Frontend:** The site uses _React_, _Redux_ and _react-bootstrap_ along with _Webpack_ with _Babel_ to bundle the code to one minified output file and compile ES6 code.
+-   **Frontend:** The site uses _React_, _Redux_ and _Bootstrap_ along with _Webpack_ with _Babel_ to bundle the code to one minified output file and compile ES6 code.
 
 -   **Backend:** The site uses _Node.js_ with _Express.js_, _MongoDB_ with _Mongoose_ for managing the sites data, _Cloudinary_ to store images and _Auth0_ to integrate Google signin.
 
