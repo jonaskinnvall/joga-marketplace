@@ -13,6 +13,7 @@ const Home = ({ loading }) => {
     // Function to get the most liked items
     const featuredItems = (itemsFromState) => {
         let items = itemsFromState
+            .filter((item) => item.stars >= 1)
             .sort((a, b) => {
                 return b.stars - a.stars;
             })

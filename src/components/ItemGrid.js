@@ -23,10 +23,15 @@ const ItemGrid = ({ items, title, rowLength, page }) => {
     return (
         <>
             {!Array.isArray(items) || !items.length ? (
-                <Row className="empty-row">
-                    {' '}
-                    <h2>{text}</h2>{' '}
-                </Row>
+                <Container fluid>
+                    <div>
+                        <h2>{title}</h2>
+                    </div>
+                    <Row className="empty-row">
+                        {' '}
+                        <h2>{text}</h2>{' '}
+                    </Row>
+                </Container>
             ) : (
                 <Container fluid>
                     <div>
