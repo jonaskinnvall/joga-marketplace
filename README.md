@@ -4,7 +4,13 @@
 -   [x] Update Home and Featured routes
 -   [x] Make it possible to add images to items
 -   [x] Improve UI
--   [ ] Screencasts
+-   [/] Screencasts
+
+# Screencasts
+
+Project screencast [youtube](https://www.youtube.com/watch?v=SVw91nmwZks)
+
+Code screencast coming...
 
 # Functional Specification
 
