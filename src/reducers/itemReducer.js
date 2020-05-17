@@ -25,11 +25,6 @@ export const itemReducer = produce((draft, action) => {
             return;
 
         case DELETE_ITEMS:
-            // Check if we're going to delete all items or many of them
-            if (action.payload.all) {
-                return action.payload.items;
-            } else {
-                return action.payload.items;
-            }
+            return action.payload.items;
     }
 }, []);

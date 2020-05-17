@@ -5,7 +5,7 @@ import { Container, Col, Row, Button, Image } from 'react-bootstrap';
 
 import { useAuth0 } from '../Auth/Auth';
 import { editUser, editAllUsers, deleteUserDB } from '../actions/users';
-import { deleteManyItems, deleteAllItems } from '../actions/items';
+import { deleteManyItems } from '../actions/items';
 import ItemGrid from './ItemGrid';
 import FormModal from './FormModal';
 
@@ -87,6 +87,7 @@ const Profile = ({
     };
 
     // Get user and items and dispatch deleteUserDB
+    // Then logout
     const deleteUser = async () => {
         let token = await getTokenSilently();
         let user = { ...userState };
@@ -94,14 +95,7 @@ const Profile = ({
         await dispatch(deleteUserDB(user, items, token));
         setModalShow(false);
         setFormType();
-        logout();
-    };
-
-    // JUST FOR NOW TO TEST AROUND: Function to delete all items in DB
-    const deleteItems = async () => {
-        let token = await getTokenSilently();
-        let user = { ...userState };
-        dispatch(deleteAllItems(user, token));
+        setTimeout(logout(), 750);
     };
 
     // Function to delete all users items if they want
@@ -268,11 +262,6 @@ const Profile = ({
                                     rowLength={3}
                                 />
                             )}
-                            <>
-                                <button onClick={deleteItems}>
-                                    Delete items
-                                </button>
-                            </>
                         </Col>
                     </Row>
                 </Container>

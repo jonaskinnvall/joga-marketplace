@@ -272,31 +272,13 @@ router
     .delete((req, res) => {
         // Delete multiple items that had been uploaded by user
         // who wants to remove them or has deleted their profile
-        if (Array.isArray(req.body) && req.body.length) {
-            Item.deleteMany(
-                { _id: { $in: req.body } },
-                (error, removedItems) => {
-                    if (error)
-                        return res
-                            .status(500)
-                            .send('Error removing items!', error);
-                    else if (!removedItems)
-                        return res
-                            .status(404)
-                            .send('Items could not be found!');
-                    res.status(200).json('Removed items!');
-                }
-            );
-        } else {
-            // Delete all items from collection
-            Item.deleteMany((error, removedItems) => {
-                if (error)
-                    return res.status(500).send('Error removing items!', error);
-                else if (!removedItems)
-                    return res.status(404).send('Items could not be found!');
-                res.status(200).json('Removed all items!');
-            });
-        }
+        Item.deleteMany({ _id: { $in: req.body } }, (error, removedItems) => {
+            if (error)
+                return res.status(500).send('Error removing items!', error);
+            else if (!removedItems)
+                return res.status(404).send('Items could not be found!');
+            res.status(200).json('Removed items!');
+        });
     });
 
 // Route to retrieve, update and delete specific items based on item's ID

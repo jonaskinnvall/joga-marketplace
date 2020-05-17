@@ -314,7 +314,6 @@ export const deleteItem = (user, deleteItem, token, id) => {
 export const deleteManyItems = (toDelete, updated, token, user = null) => {
     let URL = URI + 'items/';
     let imageURL = URI + 'image-delete';
-
     return (dispatch) => {
         axios
             .put(
@@ -326,26 +325,9 @@ export const deleteManyItems = (toDelete, updated, token, user = null) => {
                 axios.delete(URL, { data: toDelete }).then(() => {
                     return dispatch({
                         type: DELETE_ITEMS,
-                        payload: { items: updated, all: false },
+                        payload: { items: updated },
                     });
                 })
             );
-    };
-};
-
-export const deleteAllItems = (user, token) => {
-    let URL = URI + 'items/';
-    return (dispatch) => {
-        return axios
-            .delete(URL, { headers: { Authorization: `Bearer ${token}` } })
-            .then(() => {
-                return dispatch({
-                    type: DELETE_ITEMS,
-                    payload: { items: [], all: true },
-                });
-            })
-            .then(() => {
-                dispatch(editAllUsers(user, token));
-            });
     };
 };
