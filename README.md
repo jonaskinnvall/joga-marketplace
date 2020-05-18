@@ -26,4 +26,4 @@ The items are added to a MongoDB database that's created to keep track of the it
 
 -   **Backend:** The site uses _Node.js_ with _Express.js_, _MongoDB_ with _Mongoose_ for managing the sites data, _Cloudinary_ to store images and _Auth0_ to integrate Google signin.
 
--   **Testing** Some component tests has been written with _Jest_ and _Enzyme_ and more will probably be written a bit later.
+-   **Testing** Some component tests has been written with _Jest_ and _Enzyme_.

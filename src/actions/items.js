@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
     ADD_ITEM,
     FETCH_ITEMS,
@@ -5,10 +6,7 @@ import {
     DELETE_ITEM,
     DELETE_ITEMS,
 } from '../actions/actionTypes';
-
 import { editUser, editAllUsers } from './users';
-
-import axios from 'axios';
 
 const URI =
     location.href.indexOf('localhost') > 0

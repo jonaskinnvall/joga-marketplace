@@ -1,7 +1,5 @@
-// import axios from 'axios';
-import { SET_USER, EDIT_USER } from './actionTypes';
 import axios from 'axios';
-
+import { SET_USER, EDIT_USER } from './actionTypes';
 import { editManyItems, deleteManyItems } from './items';
 
 const URI =
